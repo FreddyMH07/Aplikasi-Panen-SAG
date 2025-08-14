@@ -9,12 +9,13 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
         libonig-dev \
         libxml2-dev \
         libzip-dev \
+        libpq-dev \
         zip \
         unzip \
         git \
         sqlite3 \
         libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd zip
+    && docker-php-ext-install pdo pdo_mysql pdo_sqlite pdo_pgsql pgsql mbstring exif pcntl bcmath gd zip
 
 WORKDIR /var/www
 
