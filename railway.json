@@ -6,7 +6,7 @@
 
   },
   "deploy": {
-  "startCommand": "bash -c 'set -e \n cp .env.railway .env \n mkdir -p $(dirname $DB_DATABASE) \n [ -f $DB_DATABASE ] || touch $DB_DATABASE \n php artisan key:generate --force || true \n composer dump-autoload -o \n php artisan migrate --force --no-interaction \n php artisan db:seed --force --no-interaction \n php artisan config:cache \n php artisan route:cache \n php artisan view:cache \n php artisan optimize:clear \n php artisan serve --host=0.0.0.0 --port=$PORT'",
+  "startCommand": "bash -c 'set -e \n cp .env.railway .env || cp .env.railway.postgres.example .env \n php artisan key:generate --force || true \n composer dump-autoload -o \n php artisan migrate --force --no-interaction \n php artisan db:seed --force --no-interaction \n php artisan config:cache \n php artisan route:cache \n php artisan view:cache \n php artisan optimize:clear \n php artisan serve --host=0.0.0.0 --port=$PORT'",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
