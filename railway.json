@@ -5,7 +5,7 @@
     "buildCommand": "composer install --no-dev && composer dump-autoload && npm ci && npm run build"
   },
   "deploy": {
-    "startCommand": "bash -lc 'set -e; [ -f .env ] || cp .env.railway.postgres.example .env 2>/dev/null || true; php artisan key:generate --force || true; echo ==== ENV SUMMARY ====; echo DB_HOST=[$DB_HOST] DB_PORT=[$DB_PORT] DB_DATABASE=[$DB_DATABASE] DB_USERNAME=[$DB_USERNAME] PGSSLMODE=[$PGSSLMODE]; chmod +x scripts/pg_diag.sh || true; echo ==== PG DIAG (PRE) ====; ./scripts/pg_diag.sh || true; php artisan config:clear; echo ==== MIGRATE ====; if ! php artisan migrate --force -vvv; then echo '---- MIGRATION FAILED ----'; echo ==== PG DIAG (ON FAIL) ====; ./scripts/pg_diag.sh || true; exit 1; fi; echo ==== SEED ====; php artisan db:seed --force --no-interaction || true; php artisan serve --host=0.0.0.0 --port=$PORT'",
+  "startCommand": "bash -lc 'set -e; [ -f .env ] || cp .env.railway.postgres.example .env 2>/dev/null || true; php artisan key:generate --force || true; echo ====ENV-SUMMARY====; echo DB_HOST=[$DB_HOST] DB_PORT=[$DB_PORT] DB_DATABASE=[$DB_DATABASE] DB_USERNAME=[$DB_USERNAME] PGSSLMODE=[$PGSSLMODE]; chmod +x scripts/pg_diag.sh || true; echo ====PG-DIAG-PRE====; ./scripts/pg_diag.sh || true; php artisan config:clear; echo ====MIGRATE====; if ! php artisan migrate --force -vvv; then echo ====MIGRATION-FAILED====; ./scripts/pg_diag.sh || true; exit 1; fi; echo ====SEED====; php artisan db:seed --force --no-interaction || true; php artisan serve --host=0.0.0.0 --port=$PORT'",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
