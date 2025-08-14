@@ -259,6 +259,26 @@ QUEUE_CONNECTION=sync
 - Jangan commit file `database.sqlite` di produksi; gunakan migrasi + seeder.
 - Perbaharui CSV lalu redeploy untuk refresh data awal.
 
+### Jika Railway Tidak Mendukung Volume
+Railway free tertentu tidak menyediakan penyimpanan persisten untuk file SQLite.
+Solusi sementara:
+1. Backup manual sebelum redeploy besar:
+   ```bash
+   php artisan app:backup-sqlite
+   ```
+2. Limit jumlah backup (misal simpan 5 terbaru tanpa zip):
+   ```bash
+   php artisan app:backup-sqlite --keep=5 --no-compress
+   ```
+3. Download file backup di `storage/app/backups/` (via shell Railway: zip & download artifact).
+4. Pulihkan (restore) dengan mengganti file database (stop service, upload, start lagi) atau buat command restore terpisah.
+5. Alternatif jangka panjang: migrasi ke Postgres (provision Postgres di Railway lalu set variabel DB_* dan redeploy).
+
+Command tambahan (reseed cepat tanpa hapus file backup):
+```bash
+php artisan migrate:fresh --force && php artisan app:seed-csv
+```
+
 ## 🧪 Test Data Refresh Cepat (Lokal)
 ```bash
 rm -f database/database.sqlite
