@@ -3,10 +3,9 @@
   "build": {
     "builder": "NIXPACKS",
     "buildCommand": "composer install --no-dev && composer dump-autoload && npm ci && npm run build"
-
   },
   "deploy": {
-  "startCommand": "bash -c 'set -e \n cp .env.railway .env || cp .env.railway.postgres.example .env \n php artisan key:generate --force || true \n composer dump-autoload -o \n php artisan migrate --force --no-interaction \n php artisan db:seed --force --no-interaction \n php artisan config:cache \n php artisan route:cache \n php artisan view:cache \n php artisan optimize:clear \n php artisan serve --host=0.0.0.0 --port=$PORT'",
+    "startCommand": "bash -lc 'set -e; cp .env.railway .env || cp .env.railway.postgres.example .env; php artisan key:generate --force || true; composer dump-autoload -o; echo Waiting for Postgres $DB_HOST:$DB_PORT ...; for i in $(seq 1 40); do (echo > /dev/tcp/$DB_HOST/$DB_PORT) >/dev/null 2>&1 && echo DB port open && break || echo wait...; sleep 2; done; if [ $i -eq 40 ]; then echo Postgres not reachable; exit 1; fi; php artisan migrate --force --no-interaction; php artisan db:seed --force --no-interaction; php artisan config:cache; php artisan route:cache; php artisan view:cache; php artisan optimize:clear; php artisan serve --host=0.0.0.0 --port=$PORT'",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
