@@ -96,8 +96,8 @@ return [
             'search_path' => env('PG_SCHEMA', 'public'),
             // Allow overriding sslmode (disable|allow|prefer|require|verify-ca|verify-full)
             'sslmode' => env('PGSSLMODE', 'prefer'),
-            // Optional tuning for small user base (3 concurrent users) – keep connections minimal
-            'options' => env('DB_PG_OPTIONS'), // e.g. "--client_encoding=UTF8"
+            // NOTE: Removed 'options' => env('DB_PG_OPTIONS') because Laravel expects an array of PDO options, not a string.
+            // If you need PDO options, define them here manually as key => value pairs using PDO::ATTR_* constants.
         ],
 
         'sqlsrv' => [
