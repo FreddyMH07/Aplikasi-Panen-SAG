@@ -11,31 +11,40 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $domain = env('USER_EMAIL_DOMAIN', 'sahabatagro.co.id');
+
         $users = [
             [
                 'name' => 'Administrator',
-                'email' => 'admin@panensawit.com',
-                'password' => Hash::make('admin123'),
-                'email_verified_at' => now(),
+                'local' => 'admin',
+                'password_env' => 'ADMIN_PASSWORD',
+                'default_password' => 'Admin@123',
             ],
             [
                 'name' => 'Manager Kebun',
-                'email' => 'manager@panensawit.com',
-                'password' => Hash::make('manager123'),
-                'email_verified_at' => now(),
+                'local' => 'manager',
+                'password_env' => 'MANAGER_PASSWORD',
+                'default_password' => 'Manager@123',
             ],
             [
                 'name' => 'Operator',
-                'email' => 'operator@panensawit.com',
-                'password' => Hash::make('operator123'),
-                'email_verified_at' => now(),
+                'local' => 'operator',
+                'password_env' => 'OPERATOR_PASSWORD',
+                'default_password' => 'Operator@123',
             ],
         ];
 
-        foreach ($users as $user) {
+        foreach ($users as $u) {
+            $email = $u['local'].'@'.$domain;
+            $passwordPlain = env($u['password_env'], $u['default_password']);
             User::firstOrCreate(
-                ['email' => $user['email']],
-                $user
+                ['email' => $email],
+                [
+                    'name' => $u['name'],
+                    'email' => $email,
+                    'password' => Hash::make($passwordPlain),
+                    'email_verified_at' => now(),
+                ]
             );
         }
     }
