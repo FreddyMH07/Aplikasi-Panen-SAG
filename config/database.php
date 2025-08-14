@@ -93,8 +93,11 @@ return [
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
-            'search_path' => 'public',
-            'sslmode' => 'prefer',
+            'search_path' => env('PG_SCHEMA', 'public'),
+            // Allow overriding sslmode (disable|allow|prefer|require|verify-ca|verify-full)
+            'sslmode' => env('PGSSLMODE', 'prefer'),
+            // Optional tuning for small user base (3 concurrent users) – keep connections minimal
+            'options' => env('DB_PG_OPTIONS'), // e.g. "--client_encoding=UTF8"
         ],
 
         'sqlsrv' => [
