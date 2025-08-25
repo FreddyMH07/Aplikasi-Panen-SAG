@@ -41,7 +41,17 @@ class KebunSeeder extends Seeder
         ];
 
         foreach ($kebuns as $kebun) {
-            Kebun::create($kebun);
+            // Idempotent: keyed by unique kode_kebun
+            Kebun::updateOrCreate(
+                ['kode_kebun' => $kebun['kode_kebun']],
+                [
+                    'nama_kebun' => $kebun['nama_kebun'],
+                    'alamat' => $kebun['alamat'],
+                    'luas_total' => $kebun['luas_total'],
+                    'sph_panen' => $kebun['sph_panen'],
+                    'is_active' => $kebun['is_active'],
+                ]
+            );
         }
     }
 }

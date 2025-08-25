@@ -2,6 +2,28 @@
 
 use Illuminate\Support\Str;
 
+// Parse DATABASE_URL (supports pgsql:// or postgresql://) into parts we can reuse below
+$__databaseUrl = env('DATABASE_URL');
+$__pgFromUrl = null;
+if ($__databaseUrl && is_string($__databaseUrl)) {
+    $parts = @parse_url($__databaseUrl);
+    if (is_array($parts)) {
+        $host = $parts['host'] ?? null;
+        $port = isset($parts['port']) ? (string)$parts['port'] : null;
+        $user = $parts['user'] ?? null;
+        $pass = $parts['pass'] ?? null;
+        $path = $parts['path'] ?? '';
+        $db = is_string($path) ? ltrim($path, '/') : null;
+        $__pgFromUrl = [
+            'host' => $host,
+            'port' => $port,
+            'database' => $db,
+            'username' => $user ? urldecode($user) : null,
+            'password' => $pass ? urldecode($pass) : null,
+        ];
+    }
+}
+
 return [
 
     /*
@@ -16,7 +38,8 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    // If DATABASE_URL is present, prefer pgsql by default; otherwise fall back to sqlite
+    'default' => env('DB_CONNECTION', $__databaseUrl ? 'pgsql' : 'sqlite'),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,32 +53,6 @@ return [
     */
 
     'connections' => [
-
-        // Derive Postgres connection parts from DATABASE_URL (supports pgsql:// or postgresql://)
-        // This ensures we don't fall back to 127.0.0.1 when DATABASE_URL is set.
-        'pg_from_url' => (function() {
-            $url = env('DATABASE_URL');
-            if (!$url || !is_string($url)) {
-                return null;
-            }
-            $parts = @parse_url($url);
-            if (!$parts || !is_array($parts)) {
-                return null;
-            }
-            $host = $parts['host'] ?? null;
-            $port = isset($parts['port']) ? (string)$parts['port'] : null;
-            $user = $parts['user'] ?? null;
-            $pass = $parts['pass'] ?? null;
-            $path = $parts['path'] ?? '';
-            $db = is_string($path) ? ltrim($path, '/') : null;
-            return [
-                'host' => $host,
-                'port' => $port,
-                'database' => $db,
-                'username' => $user ? urldecode($user) : null,
-                'password' => $pass ? urldecode($pass) : null,
-            ];
-        })(),
 
         'sqlite' => [
             'driver' => 'sqlite',
@@ -113,11 +110,11 @@ return [
             'driver' => 'pgsql',
             // Use DATABASE_URL parts if present; fallback to explicit envs, else sensible defaults
             'url' => env('DATABASE_URL'),
-            'host' => (function() { $p = config('database.connections.pg_from_url'); return $p['host'] ?? env('DB_HOST', '127.0.0.1'); })(),
-            'port' => (function() { $p = config('database.connections.pg_from_url'); return $p['port'] ?? env('DB_PORT', '5432'); })(),
-            'database' => (function() { $p = config('database.connections.pg_from_url'); return $p['database'] ?? env('DB_DATABASE', 'laravel'); })(),
-            'username' => (function() { $p = config('database.connections.pg_from_url'); return $p['username'] ?? env('DB_USERNAME', 'root'); })(),
-            'password' => (function() { $p = config('database.connections.pg_from_url'); return $p['password'] ?? env('DB_PASSWORD', ''); })(),
+            'host' => $__pgFromUrl['host'] ?? env('DB_HOST', '127.0.0.1'),
+            'port' => $__pgFromUrl['port'] ?? env('DB_PORT', '5432'),
+            'database' => $__pgFromUrl['database'] ?? env('DB_DATABASE', 'laravel'),
+            'username' => $__pgFromUrl['username'] ?? env('DB_USERNAME', 'root'),
+            'password' => $__pgFromUrl['password'] ?? env('DB_PASSWORD', ''),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,

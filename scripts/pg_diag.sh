@@ -1,6 +1,35 @@
 #!/usr/bin/env bash
 set -euo pipefail
-HOST="${DB_HOST:?unset}"; PORT="${DB_PORT:-5432}"; DB="${DB_DATABASE:?unset}"; USER="${DB_USERNAME:?unset}";
+
+# If only DATABASE_URL is provided, extract parts for diagnostics
+if [ -z "${DB_HOST:-}" ] && [ -n "${DATABASE_URL:-}" ]; then
+	# Strip protocol
+	_url_no_proto="${DATABASE_URL#*://}"  # user:pass@host:port/db?query
+	_creds_host_port_db="${_url_no_proto}" 
+	# Separate creds from host
+	_after_at="${_creds_host_port_db#*@}"  # if no @ returns same string
+	if [ "$_after_at" != "$_creds_host_port_db" ]; then
+		_host_port_db="$_after_at"
+	_creds_part="${_creds_host_port_db%@*}"
+	# Extract user and password
+	DB_USERNAME="${_creds_part%%:*}"
+	DB_PASSWORD="${_creds_part#*:}"
+	else
+		_host_port_db="$_creds_host_port_db"
+	fi
+	_host_port="${_host_port_db%%/*}"          # host:port
+	_db_and_q="${_host_port_db#*/}"            # db?query
+	DB_DATABASE="${_db_and_q%%\?*}"           # remove ?...
+	DB_HOST="${_host_port%%:*}"
+	_maybe_port="${_host_port#*:}"
+	if [ "$_maybe_port" != "$_host_port" ]; then
+		DB_PORT="$_maybe_port"
+	else
+		DB_PORT=5432
+	fi
+fi
+
+HOST="${DB_HOST:?unset}"; PORT="${DB_PORT:-5432}"; DB="${DB_DATABASE:?unset}"; USER="${DB_USERNAME:-(unknown)}";
 echo "[pg_diag] Host=$HOST Port=$PORT DB=$DB User=$USER SSLMODE=${PGSSLMODE:-(unset)}";
 echo "[pg_diag] Date=$(date -u +%Y-%m-%dT%H:%M:%SZ)";
 

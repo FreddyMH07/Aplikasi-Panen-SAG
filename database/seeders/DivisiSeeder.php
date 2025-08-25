@@ -50,7 +50,18 @@ class DivisiSeeder extends Seeder
             ];
 
             foreach ($divisis as $divisi) {
-                Divisi::create($divisi);
+                // Idempotent: unique kode_divisi already, but also scope to kebun_id
+                Divisi::updateOrCreate(
+                    [
+                        'kode_divisi' => $divisi['kode_divisi'],
+                    ],
+                    [
+                        'nama_divisi' => $divisi['nama_divisi'],
+                        'kebun_id' => $divisi['kebun_id'],
+                        'luas_divisi' => $divisi['luas_divisi'],
+                        'is_active' => $divisi['is_active'],
+                    ]
+                );
             }
         }
     }
