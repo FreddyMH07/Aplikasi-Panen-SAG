@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PanenHarianController;
@@ -13,6 +15,71 @@ use App\Http\Controllers\MasterDataController;
 Route::get('/', [AuthController::class, 'showLogin'])->name('home');
 // Simple health check (no auth) for Railway
 Route::get('/health', function() { return response()->json(['status' => 'ok']); });
+// Lightweight diagnostics (no auth): DB connectivity and schema snapshot
+Route::get('/diag', function() {
+    $out = [
+        'app_env' => config('app.env'),
+        'php_version' => PHP_VERSION,
+        'driver' => null,
+        'database' => null,
+        'db_ok' => false,
+        'tables' => [],
+        'panen_harians' => [
+            'exists' => false,
+            'ketrek' => [
+                'exists' => false,
+                'data_type' => null,
+            ],
+        ],
+        'error' => null,
+    ];
+    try {
+        $out['driver'] = DB::getDriverName();
+        if ($out['driver'] === 'pgsql') {
+            $out['database'] = optional(DB::selectOne('select current_database() as db'))?->db;
+        }
+        if ($out['driver'] === 'mysql' || $out['driver'] === 'mariadb') {
+            $out['database'] = optional(DB::selectOne('select database() as db'))?->db;
+        }
+        DB::select('select 1');
+        $out['db_ok'] = true;
+
+        // Tables
+        if ($out['driver'] === 'pgsql') {
+            $tables = collect(DB::select("select tablename from pg_tables where schemaname = coalesce(current_schema(),'public') order by tablename"))
+                ->map(fn($r) => $r->tablename)->all();
+        } else {
+            $tables = collect(DB::select('select * from information_schema.tables'))
+                ->map(function($r){ return $r->table_name ?? $r->TABLE_NAME ?? null; })
+                ->filter()->unique()->values()->all();
+        }
+        $out['tables'] = $tables;
+
+        // panen_harians + ketrek column type
+        if (in_array('panen_harians', $tables)) {
+            $out['panen_harians']['exists'] = true;
+            if ($out['driver'] === 'pgsql') {
+                $col = DB::table('information_schema.columns')
+                    ->select('data_type')
+                    ->where('table_name','panen_harians')
+                    ->where('column_name','ketrek')
+                    ->first();
+                if ($col) {
+                    $out['panen_harians']['ketrek']['exists'] = true;
+                    $out['panen_harians']['ketrek']['data_type'] = $col->data_type;
+                }
+            } else {
+                try {
+                    $exists = Schema::hasColumn('panen_harians','ketrek');
+                    $out['panen_harians']['ketrek']['exists'] = $exists;
+                } catch (\Throwable $e) {}
+            }
+        }
+    } catch (\Throwable $e) {
+        $out['error'] = $e->getMessage();
+    }
+    return response()->json($out);
+});
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
