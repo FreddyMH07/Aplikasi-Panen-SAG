@@ -16,7 +16,7 @@ return new class extends Migration
         $driver = DB::getDriverName();
 
         if ($driver === 'pgsql') {
-            // Postgres: use explicit USING clause and safe checks
+            // Postgres: use explicit USING clause and safe checks; use dollar-quoted strings to avoid quote issues
             DB::unprepared(<<<'SQL'
 DO $$
 BEGIN
@@ -26,8 +26,8 @@ BEGIN
           AND data_type IN ('character varying','text')
     ) THEN
         -- Empty string -> NULL then cast
-        EXECUTE 'UPDATE panen_harians SET ketrek = NULL WHERE ketrek = '''''';';
-        EXECUTE 'ALTER TABLE panen_harians ALTER COLUMN ketrek TYPE double precision USING (ketrek::double precision)';
+        EXECUTE $$UPDATE panen_harians SET ketrek = NULL WHERE ketrek = ''$$;
+        EXECUTE $$ALTER TABLE panen_harians ALTER COLUMN ketrek TYPE double precision USING (ketrek::double precision)$$;
     END IF;
 END $$;
 SQL);
