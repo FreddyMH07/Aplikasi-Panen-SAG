@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Str;
 
-// Parse Postgres connection from common envs (DATABASE_URL, POSTGRES_URL, PG* vars) into parts
-$__databaseUrl = env('DATABASE_URL') ?: env('POSTGRES_URL') ?: env('POSTGRESQL_URL');
+// Parse Postgres connection from common envs (DATABASE_URL, POSTGRES_URL, DATABASE_PUBLIC_URL, PG* vars) into parts
+$__databaseUrl = env('DATABASE_URL') ?: env('POSTGRES_URL') ?: env('POSTGRESQL_URL') ?: env('DATABASE_PUBLIC_URL');
 $__pgFromUrl = null;
 if ($__databaseUrl && is_string($__databaseUrl)) {
     $parts = @parse_url($__databaseUrl);
@@ -23,15 +23,23 @@ if ($__databaseUrl && is_string($__databaseUrl)) {
         ];
     }
 }
-// If URL not set, try PG* environment variables (Railway/Heroku compatible)
-if (!$__pgFromUrl) {
+// Compute PG* envs version (Railway/Heroku compatible)
+$__pgFromPgVars = null;
+{
     $pgHost = env('PGHOST');
     $pgDb   = env('PGDATABASE');
     $pgUser = env('PGUSER');
     $pgPass = env('PGPASSWORD');
     $pgPort = env('PGPORT');
+    if (!$pgHost) {
+        // Fallback to Railway TCP proxy vars if provided
+        $tcpHost = env('RAILWAY_TCP_PROXY_DOMAIN');
+        $tcpPort = env('RAILWAY_TCP_PROXY_PORT');
+        if ($tcpHost) { $pgHost = $tcpHost; }
+        if ($tcpPort) { $pgPort = $tcpPort; }
+    }
     if ($pgHost && $pgDb && $pgUser) {
-        $__pgFromUrl = [
+        $__pgFromPgVars = [
             'host' => $pgHost,
             'port' => $pgPort ?: '5432',
             'database' => $pgDb,
@@ -39,6 +47,18 @@ if (!$__pgFromUrl) {
             'password' => $pgPass,
         ];
     }
+}
+// Prefer PG* envs if URL points to localhost or this web service itself
+if ($__pgFromUrl) {
+    $host = strtolower((string)($__pgFromUrl['host'] ?? ''));
+    $self = strtolower((string)env('RAILWAY_PRIVATE_DOMAIN', ''));
+    $looksLocal = in_array($host, ['127.0.0.1','localhost'], true) || str_ends_with($host, '.internal');
+    $pointsToSelf = $self && $host === strtolower($self);
+    if (($looksLocal || $pointsToSelf) && $__pgFromPgVars) {
+        $__pgFromUrl = $__pgFromPgVars;
+    }
+} elseif (!$__pgFromUrl && $__pgFromPgVars) {
+    $__pgFromUrl = $__pgFromPgVars;
 }
 
 return [
@@ -126,7 +146,7 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             // Use DATABASE_URL parts if present; fallback to explicit envs, else sensible defaults
-            'url' => env('DATABASE_URL') ?: env('POSTGRES_URL') ?: env('POSTGRESQL_URL'),
+            'url' => env('DATABASE_URL') ?: env('POSTGRES_URL') ?: env('POSTGRESQL_URL') ?: env('DATABASE_PUBLIC_URL'),
             'host' => $__pgFromUrl['host'] ?? env('DB_HOST', '127.0.0.1'),
             'port' => $__pgFromUrl['port'] ?? env('DB_PORT', '5432'),
             'database' => $__pgFromUrl['database'] ?? env('DB_DATABASE', 'laravel'),
