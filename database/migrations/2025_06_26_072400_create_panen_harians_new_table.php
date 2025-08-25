@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Rename old table
-        Schema::rename('panen_harians', 'panen_harians_old');
+        // Rename old table if exists
+        if (Schema::hasTable('panen_harians')) {
+            Schema::rename('panen_harians', 'panen_harians_old');
+        }
         
         // Create new table with complete structure
         Schema::create('panen_harians', function (Blueprint $table) {
@@ -56,6 +58,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('panen_harians');
-        Schema::rename('panen_harians_old', 'panen_harians');
+        if (Schema::hasTable('panen_harians_old')) {
+            Schema::rename('panen_harians_old', 'panen_harians');
+        }
     }
 };
