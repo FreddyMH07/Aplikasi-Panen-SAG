@@ -23,6 +23,7 @@ Route::get('/diag', function() {
         'driver' => null,
         'database' => null,
         'db_ok' => false,
+        'pgsql_resolved' => null,
         'tables' => [],
         'panen_harians' => [
             'exists' => false,
@@ -35,6 +36,16 @@ Route::get('/diag', function() {
     ];
     try {
         $out['driver'] = DB::getDriverName();
+        if ($out['driver'] === 'pgsql') {
+            $out['pgsql_resolved'] = [
+                'host' => config('database.connections.pgsql.host'),
+                'port' => config('database.connections.pgsql.port'),
+                'database' => config('database.connections.pgsql.database'),
+                'username' => config('database.connections.pgsql.username'),
+                'sslmode' => config('database.connections.pgsql.sslmode'),
+                'search_path' => config('database.connections.pgsql.search_path'),
+            ];
+        }
         if ($out['driver'] === 'pgsql') {
             $out['database'] = optional(DB::selectOne('select current_database() as db'))?->db;
         }

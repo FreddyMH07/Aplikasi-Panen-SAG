@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Str;
 
-// Parse DATABASE_URL (supports pgsql:// or postgresql://) into parts we can reuse below
-$__databaseUrl = env('DATABASE_URL');
+// Parse Postgres connection from common envs (DATABASE_URL, POSTGRES_URL, PG* vars) into parts
+$__databaseUrl = env('DATABASE_URL') ?: env('POSTGRES_URL') ?: env('POSTGRESQL_URL');
 $__pgFromUrl = null;
 if ($__databaseUrl && is_string($__databaseUrl)) {
     $parts = @parse_url($__databaseUrl);
@@ -23,6 +23,23 @@ if ($__databaseUrl && is_string($__databaseUrl)) {
         ];
     }
 }
+// If URL not set, try PG* environment variables (Railway/Heroku compatible)
+if (!$__pgFromUrl) {
+    $pgHost = env('PGHOST');
+    $pgDb   = env('PGDATABASE');
+    $pgUser = env('PGUSER');
+    $pgPass = env('PGPASSWORD');
+    $pgPort = env('PGPORT');
+    if ($pgHost && $pgDb && $pgUser) {
+        $__pgFromUrl = [
+            'host' => $pgHost,
+            'port' => $pgPort ?: '5432',
+            'database' => $pgDb,
+            'username' => $pgUser,
+            'password' => $pgPass,
+        ];
+    }
+}
 
 return [
 
@@ -38,8 +55,8 @@ return [
     |
     */
 
-    // If DATABASE_URL is present, prefer pgsql by default; otherwise fall back to sqlite
-    'default' => env('DB_CONNECTION', $__databaseUrl ? 'pgsql' : 'sqlite'),
+    // If a Postgres URL or PG* vars are present, prefer pgsql by default; otherwise fall back to sqlite
+    'default' => env('DB_CONNECTION', ($__databaseUrl || $__pgFromUrl) ? 'pgsql' : 'sqlite'),
 
     /*
     |--------------------------------------------------------------------------
@@ -109,7 +126,7 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             // Use DATABASE_URL parts if present; fallback to explicit envs, else sensible defaults
-            'url' => env('DATABASE_URL'),
+            'url' => env('DATABASE_URL') ?: env('POSTGRES_URL') ?: env('POSTGRESQL_URL'),
             'host' => $__pgFromUrl['host'] ?? env('DB_HOST', '127.0.0.1'),
             'port' => $__pgFromUrl['port'] ?? env('DB_PORT', '5432'),
             'database' => $__pgFromUrl['database'] ?? env('DB_DATABASE', 'laravel'),
