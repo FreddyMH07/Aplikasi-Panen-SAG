@@ -18,7 +18,8 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    // Default to file in production to avoid DB table requirements
+    'driver' => env('SESSION_DRIVER', env('APP_ENV') === 'production' ? 'file' : 'database'),
 
     /*
     |--------------------------------------------------------------------------
