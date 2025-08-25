@@ -15,7 +15,8 @@ return [
     |
     */
 
-    'default' => env('CACHE_STORE', 'database'),
+    // Prefer file cache in production to avoid DB cache table dependency on first boot
+    'default' => env('CACHE_STORE', env('APP_ENV') === 'production' ? 'file' : 'database'),
 
     /*
     |--------------------------------------------------------------------------
