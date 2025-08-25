@@ -16,21 +16,21 @@ return new class extends Migration
         $driver = DB::getDriverName();
 
         if ($driver === 'pgsql') {
-            // Postgres: use explicit USING clause and safe checks; use dollar-quoted strings to avoid quote issues
-            DB::unprepared(<<<'SQL'
-DO $$
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name='panen_harians' AND column_name='ketrek' 
-          AND data_type IN ('character varying','text')
-    ) THEN
-        -- Empty string -> NULL then cast
-        EXECUTE $$UPDATE panen_harians SET ketrek = NULL WHERE ketrek = ''$$;
-        EXECUTE $$ALTER TABLE panen_harians ALTER COLUMN ketrek TYPE double precision USING (ketrek::double precision)$$;
-    END IF;
-END $$;
-SQL);
+            // Postgres: check current type, then update and alter only when needed
+            try {
+                $col = DB::table('information_schema.columns')
+                    ->select('data_type')
+                    ->where('table_name', 'panen_harians')
+                    ->where('column_name', 'ketrek')
+                    ->first();
+            } catch (\Throwable $e) {
+                $col = null;
+            }
+
+            if ($col && in_array($col->data_type, ['character varying', 'text'])) {
+                DB::statement("UPDATE panen_harians SET ketrek = NULL WHERE ketrek = ''");
+                DB::statement("ALTER TABLE panen_harians ALTER COLUMN ketrek TYPE double precision USING (ketrek::double precision)");
+            }
         } elseif (in_array($driver, ['mysql', 'mariadb'])) {
             // MySQL/MariaDB: attempt a direct type change if column exists
             if (Schema::hasColumn('panen_harians', 'ketrek')) {
@@ -75,18 +75,18 @@ SQL);
     {
         $driver = DB::getDriverName();
         if ($driver === 'pgsql') {
-            DB::unprepared(<<<'SQL'
-DO $$
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name='panen_harians' AND column_name='ketrek' 
-          AND data_type = 'double precision'
-    ) THEN
-        EXECUTE 'ALTER TABLE panen_harians ALTER COLUMN ketrek TYPE varchar(64) USING (ketrek::varchar)';
-    END IF;
-END $$;
-SQL);
+            try {
+                $col = DB::table('information_schema.columns')
+                    ->select('data_type')
+                    ->where('table_name', 'panen_harians')
+                    ->where('column_name', 'ketrek')
+                    ->first();
+            } catch (\Throwable $e) {
+                $col = null;
+            }
+            if ($col && $col->data_type === 'double precision') {
+                DB::statement("ALTER TABLE panen_harians ALTER COLUMN ketrek TYPE varchar(64) USING (ketrek::varchar)");
+            }
         } elseif (in_array($driver, ['mysql', 'mariadb'])) {
             if (Schema::hasColumn('panen_harians', 'ketrek')) {
                 Schema::table('panen_harians', function (Blueprint $table) {
