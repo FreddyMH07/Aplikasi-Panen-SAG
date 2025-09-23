@@ -108,7 +108,13 @@ class TableColumnSeeder extends Seeder
         ];
 
         foreach ($panenHarianColumns as $column) {
-            TableColumn::create($column);
+            TableColumn::updateOrCreate(
+                [
+                    'table_name' => $column['table_name'],
+                    'column_name' => $column['column_name']
+                ],
+                $column
+            );
         }
 
         // Kolom untuk tabel panen_bulanan
@@ -152,7 +158,13 @@ class TableColumnSeeder extends Seeder
         ];
 
         foreach ($panenBulananColumns as $column) {
-            TableColumn::create($column);
+            TableColumn::updateOrCreate(
+                [
+                    'table_name' => $column['table_name'],
+                    'column_name' => $column['column_name']
+                ],
+                $column
+            );
         }
     }
 }
