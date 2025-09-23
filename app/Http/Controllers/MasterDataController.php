@@ -227,15 +227,13 @@ class MasterDataController extends Controller
         $kebun = $request->get('kebun');
         $divisi = $request->get('divisi');
         $tahun = $request->get('tahun', date('Y'));
-    $bulanRaw = $request->get('bulan', date('F'));
-    $bulan = $this->monthToEnglish($bulanRaw);
+        $bulanRaw = $request->get('bulan', date('F'));
+        $bulan = $this->monthToEnglish($bulanRaw);
 
         $masterData = MasterData::getByKebunDivisi($kebun, $divisi, $tahun, $bulan);
         
         return response()->json($masterData);
     }
-}
-
     /**
      * Konversi nama bulan Indonesia -> English (untuk konsistensi penyimpanan DB)
      */
@@ -247,6 +245,6 @@ class MasterDataController extends Controller
             'Agustus' => 'August', 'September' => 'September', 'Oktober' => 'October',
             'November' => 'November', 'Desember' => 'December'
         ];
-        // Jika sudah English atau tidak ada di map, kembalikan original
         return $map[$value] ?? $value;
     }
+}
