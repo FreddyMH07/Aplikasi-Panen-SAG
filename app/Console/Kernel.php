@@ -8,6 +8,14 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     /**
+     * The Artisan commands provided by your application.
+     * (Optional explicit registration; directory auto-load tetap berjalan.)
+     */
+    protected $commands = [
+        \App\Console\Commands\DiagDbCommand::class,
+    \App\Console\Commands\DbSnapshotCommand::class,
+    ];
+    /**
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void

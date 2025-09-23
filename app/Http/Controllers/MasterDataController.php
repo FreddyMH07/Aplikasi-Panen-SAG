@@ -20,6 +20,16 @@ class MasterDataController extends Controller
     {
         $query = MasterData::query();
 
+        // Normalisasi nama bulan Indonesia -> English jika dikirim dari UI
+        $bulanParam = $request->get('bulan');
+        if ($bulanParam) {
+            $normalized = $this->monthToEnglish($bulanParam);
+            if ($normalized !== $bulanParam) {
+                // Inject ke request agar konsisten (tidak memodifikasi original superglobal)
+                $request->merge(['bulan' => $normalized]);
+            }
+        }
+
         // Filter berdasarkan tahun
         if ($request->filled('tahun')) {
             $query->where('tahun', $request->tahun);
@@ -217,10 +227,26 @@ class MasterDataController extends Controller
         $kebun = $request->get('kebun');
         $divisi = $request->get('divisi');
         $tahun = $request->get('tahun', date('Y'));
-        $bulan = $request->get('bulan', date('F'));
+    $bulanRaw = $request->get('bulan', date('F'));
+    $bulan = $this->monthToEnglish($bulanRaw);
 
         $masterData = MasterData::getByKebunDivisi($kebun, $divisi, $tahun, $bulan);
         
         return response()->json($masterData);
     }
 }
+
+    /**
+     * Konversi nama bulan Indonesia -> English (untuk konsistensi penyimpanan DB)
+     */
+    private function monthToEnglish(string $value): string
+    {
+        $map = [
+            'Januari' => 'January', 'Februari' => 'February', 'Maret' => 'March',
+            'April' => 'April', 'Mei' => 'May', 'Juni' => 'June', 'Juli' => 'July',
+            'Agustus' => 'August', 'September' => 'September', 'Oktober' => 'October',
+            'November' => 'November', 'Desember' => 'December'
+        ];
+        // Jika sudah English atau tidak ada di map, kembalikan original
+        return $map[$value] ?? $value;
+    }
