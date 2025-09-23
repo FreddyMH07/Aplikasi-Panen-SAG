@@ -131,24 +131,17 @@
                 </button>
             </form>
             
-            <!-- Demo Accounts -->
+            {{-- Blok akun demo dihilangkan untuk keamanan. Jika perlu tampilkan di lingkungan lokal saja, bisa aktifkan kembali contoh berikut: --}}
+            {{-- @env('local')
             <div class="mt-8 p-4 bg-gray-50 rounded-lg">
-                <h3 class="text-sm font-medium text-gray-700 mb-3">Akun Demo:</h3>
-                <div class="space-y-2 text-xs text-gray-600">
-                    <div class="flex justify-between">
-                        <span>Admin:</span>
-                        <span>admin@panensawit.com / admin123</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Manager:</span>
-                        <span>manager@panensawit.com / manager123</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Operator:</span>
-                        <span>operator@panensawit.com / operator123</span>
-                    </div>
-                </div>
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Akun Demo (Lokal)</h3>
+                <ul class="text-xs text-gray-600 list-disc list-inside space-y-1">
+                    <li>admin@sahabatagro.co.id / Admin@123</li>
+                    <li>manager@sahabatagro.co.id / Manager@123</li>
+                    <li>operator@sahabatagro.co.id / Operator@123</li>
+                </ul>
             </div>
+            @endenv --}}
         </div>
         
         <!-- Footer -->
