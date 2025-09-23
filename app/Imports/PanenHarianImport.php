@@ -94,26 +94,31 @@ class PanenHarianImport implements ToModel, WithHeadingRow, WithValidation
             return is_numeric($cleanValue) ? (int)$cleanValue : $default;
         };
 
-        $parsePercentage = function($value) {
-            if (empty($value) || $value === '' || $value === null) {
-                return null;
+        $parsePercentage = function($value, $default = 0) {
+            if ($value === '' || $value === null || $value === '-') {
+                return $default;
             }
-            
-            // Remove % sign and convert to decimal
-            $cleanValue = str_replace(['%', ' '], '', $value);
-            return is_numeric($cleanValue) ? $cleanValue : null;
+            // Remove % sign and spaces
+            $cleanValue = str_replace(['%', ' '], '', (string)$value);
+            return is_numeric($cleanValue) ? (float)$cleanValue : $default;
         };
 
         // Parse bulan dan tahun dari tanggal
         $bulan = $tanggalPanen ? $tanggalPanen->format('F') : null;
         $tahun = $tanggalPanen ? $tanggalPanen->year : null;
 
-        return new PanenHarian([
+        $kebun = $row['kebun'] ?? '';
+        $divisi = $row['divisi'] ?? '';
+
+        $attributes = [
             'tanggal_panen' => $tanggalPanen,
+            'kebun' => $kebun,
+            'divisi' => $divisi,
+        ];
+
+        $values = [
             'bulan' => $bulan,
             'tahun' => $tahun,
-            'kebun' => $row['kebun'] ?? '',
-            'divisi' => $row['divisi'] ?? '',
             'akp_panen' => $parsePercentage($row['akp_panen']),
             'jumlah_tk_panen' => $parseInt($row['jumlah_tk_panen'], 0),
             'luas_panen_ha' => $parseNumeric($row['luas_panen_ha'], 0),
@@ -123,7 +128,7 @@ class PanenHarianImport implements ToModel, WithHeadingRow, WithValidation
             'total_jjg_kirim_jjg' => $parseInt($row['total_jjg_kirim_jjg'], 0),
             'tonase_panen_kg' => $parseNumeric($row['tonase_panen_kg'], 0),
             'refraksi_kg' => $parseNumeric($row['refraksi_kg'], 0),
-            'refraksi_persen' => $parsePercentage($row['refraksi_persen']),
+            'refraksi_persen' => $parsePercentage($row['refraksi_persen'], 0),
             'restant_jjg' => $parseInt($row['restant_jjg'], 0),
             'bjr_hari_ini' => $parseNumeric($row['bjr_hari_ini'], 0),
             'output_kg_hk' => $parseNumeric($row['output_kg_hk'], 0),
@@ -133,7 +138,11 @@ class PanenHarianImport implements ToModel, WithHeadingRow, WithValidation
             'timbang_pks_harian' => $parseNumeric($row['timbang_pks_harian'], 0),
             'rotasi_panen' => $parseNumeric($row['rotasi_panen'], 0),
             'input_by' => $row['input_by'] ?? 'Import',
-        ]);
+        ];
+
+        // Upsert by (tanggal_panen, kebun, divisi)
+        PanenHarian::updateOrCreate($attributes, $values);
+        return null;
     }
 
     public function rules(): array
