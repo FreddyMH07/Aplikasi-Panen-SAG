@@ -18,65 +18,106 @@ class MasterDataController extends Controller
 
     public function getData(Request $request)
     {
-        $query = MasterData::query();
+        // Base query
+        $baseQuery = MasterData::query();
 
-        // Normalisasi nama bulan Indonesia -> English jika dikirim dari UI
-        $bulanParam = $request->get('bulan');
-        if ($bulanParam) {
-            $normalized = $this->monthToEnglish($bulanParam);
-            if ($normalized !== $bulanParam) {
-                // Inject ke request agar konsisten (tidak memodifikasi original superglobal)
-                $request->merge(['bulan' => $normalized]);
-            }
-        }
-
-        // Filter berdasarkan tahun
-        if ($request->filled('tahun')) {
-            $query->where('tahun', $request->tahun);
-        }
-
-        // Filter berdasarkan bulan
+        // Normalisasi bulan (ID -> EN)
         if ($request->filled('bulan')) {
-            $query->where('bulan', $request->bulan);
+            $normalized = $this->monthToEnglish($request->get('bulan'));
+            $request->merge(['bulan' => $normalized]);
         }
 
-        // Filter berdasarkan kebun
+        // Filters
+        if ($request->filled('tahun')) {
+            $baseQuery->where('tahun', $request->tahun);
+        }
+        if ($request->filled('bulan')) {
+            $baseQuery->where('bulan', $request->bulan);
+        }
         if ($request->filled('kebun')) {
-            $query->where('kebun', 'like', '%' . $request->kebun . '%');
+            $baseQuery->where('kebun', 'like', '%' . $request->kebun . '%');
         }
 
-        return DataTables::of($query)
-            ->addColumn('nama_bulan_indonesia', function ($row) {
-                return $row->nama_bulan_indonesia;
-            })
-            ->addColumn('actions', function ($row) {
-                return '
-                    <div class="flex space-x-2">
-                        <button onclick="editRecord(' . $row->id . ')" 
-                                class="text-blue-600 hover:text-blue-800">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deleteRecord(' . $row->id . ')" 
-                                class="text-red-600 hover:text-red-800">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                ';
-            })
-            ->editColumn('sph_panen', function ($row) {
-                return number_format($row->sph_panen, 0);
-            })
-            ->editColumn('luas_tm', function ($row) {
-                return number_format($row->luas_tm, 2) . ' Ha';
-            })
-            ->editColumn('budget_alokasi', function ($row) {
-                return 'Rp ' . number_format($row->budget_alokasi, 0, ',', '.');
-            })
-            ->editColumn('pkk', function ($row) {
-                return number_format($row->pkk, 0);
-            })
-            ->rawColumns(['actions'])
-            ->make(true);
+        // DataTables server-side params
+        $draw   = (int)$request->get('draw', 1);
+        $start  = (int)$request->get('start', 0);          // offset
+        $length = (int)$request->get('length', 25);        // page size
+        if ($length <= 0) { $length = 25; }
+
+        // Global search
+        $searchValue = $request->input('search.value');
+        $filteredQuery = clone $baseQuery;
+        if ($searchValue) {
+            $filteredQuery->where(function ($q) use ($searchValue) {
+                $q->where('kebun', 'like', "%$searchValue%")
+                  ->orWhere('divisi', 'like', "%$searchValue%")
+                  ->orWhere('bulan', 'like', "%$searchValue%")
+                  ->orWhere('tahun', 'like', "%$searchValue%");
+            });
+        }
+
+        $recordsTotal = MasterData::count(); // total tanpa filter apapun
+        // total setelah filter (tahun/bulan/kebun + search)
+        $recordsFiltered = (clone $filteredQuery)->count();
+
+        // Ordering (DataTables sends order[0][column], order[0][dir])
+        $orderColumnIndex = $request->input('order.0.column');
+        $orderDir = $request->input('order.0.dir', 'asc');
+        $columns = [
+            0 => 'kebun',
+            1 => 'divisi',
+            2 => 'sph_panen',
+            3 => 'luas_tm',
+            4 => 'budget_alokasi',
+            5 => 'pkk',
+            6 => 'bulan', // kita tampilkan nama_bulan_indonesia, tetap order by bulan english
+            7 => 'tahun',
+        ];
+        if ($orderColumnIndex !== null && array_key_exists($orderColumnIndex, $columns)) {
+            $col = $columns[$orderColumnIndex];
+            if (!in_array(strtolower($orderDir), ['asc', 'desc'])) { $orderDir = 'asc'; }
+            $filteredQuery->orderBy($col, $orderDir);
+        } else {
+            // Default order sama dengan definisi DataTables di view
+            $filteredQuery->orderBy('tahun', 'desc')->orderBy('bulan', 'asc')->orderBy('kebun', 'asc');
+        }
+
+        // Pagination
+        $data = $filteredQuery->skip($start)->take($length)->get();
+
+        // Transform rows (tambahkan formatted & raw numeric utk sort front-end jika diperlukan)
+        $rows = $data->map(function ($row) {
+            return [
+                'id' => $row->id,
+                'kebun' => $row->kebun,
+                'divisi' => $row->divisi,
+                'sph_panen_raw' => $row->sph_panen,
+                'sph_panen' => number_format($row->sph_panen, 0),
+                'luas_tm_raw' => $row->luas_tm,
+                'luas_tm' => number_format($row->luas_tm, 2) . ' Ha',
+                'budget_alokasi_raw' => $row->budget_alokasi,
+                'budget_alokasi' => $this->formatRupiah($row->budget_alokasi),
+                'pkk_raw' => $row->pkk,
+                'pkk' => number_format($row->pkk, 0),
+                'bulan' => $row->bulan,
+                'nama_bulan_indonesia' => $row->nama_bulan_indonesia,
+                'tahun' => $row->tahun,
+                'is_active' => (bool)$row->is_active,
+                'created_at' => $row->created_at?->toISOString(),
+                'updated_at' => $row->updated_at?->toISOString(),
+                'actions' => '<div class="flex space-x-2">'
+                    .'<button onclick="editRecord(' . $row->id . ')" class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></button>'
+                    .'<button onclick="deleteRecord(' . $row->id . ')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>'
+                    .'</div>'
+            ];
+        });
+
+        return response()->json([
+            'draw' => $draw,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data' => $rows,
+        ]);
     }
 
     public function create()
@@ -246,5 +287,13 @@ class MasterDataController extends Controller
             'November' => 'November', 'Desember' => 'December'
         ];
         return $map[$value] ?? $value;
+    }
+
+    /**
+     * Format angka menjadi Rupiah singkat standar (tanpa desimal, thousand separator titik)
+     */
+    private function formatRupiah($number): string
+    {
+        return 'Rp ' . number_format((float)$number, 0, ',', '.');
     }
 }
