@@ -1,6 +1,6 @@
 # Sistem Report Panen Sawit Digital
 
-Aplikasi web untuk mengelola dan melaporkan data panen kelapa sawit dengan fitur lengkap dan modern.
+Aplikasi web untuk mengelola dan melaporkan data panen kelapa sawit dengan fitur autentikasi, dashboard interaktif, impor/ekspor data, dan analitik produksi.
 
 ## 🌟 Fitur Utama
 
@@ -50,7 +50,7 @@ Aplikasi web untuk mengelola dan melaporkan data panen kelapa sawit dengan fitur
 
 - **Backend**: Laravel 12 (PHP 8.3)
 - **Frontend**: Tailwind CSS, Alpine.js
-- **Database**: SQLite (dapat diganti MySQL/PostgreSQL)
+- **Database**: SQLite secara default (dapat diganti PostgreSQL / MySQL). Rekomendasi produksi: PostgreSQL.
 - **Charts**: Chart.js
 - **Tables**: DataTables
 - **Excel**: Maatwebsite/Laravel-Excel
@@ -95,13 +95,15 @@ Aplikasi web untuk mengelola dan melaporkan data panen kelapa sawit dengan fitur
    - URL: http://localhost:8000
    - Login dengan akun demo (lihat di halaman login)
 
-## 👥 Akun Demo
+## 👥 Akun Demo (Contoh)
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@panensawit.com | admin123 |
-| Manager | manager@panensawit.com | manager123 |
-| Operator | operator@panensawit.com | operator123 |
+| Role      | Email                              | Password   |
+|-----------|------------------------------------|------------|
+| Admin     | admin@sahabatagro.co.id            | Admin@123  |
+| Manager   | manager@sahabatagro.co.id          | Manager@123|
+| Operator  | operator@sahabatagro.co.id         | Operator@123 |
+
+Catatan: Password dapat dioverride dengan variabel ENV `ADMIN_PASSWORD`, `MANAGER_PASSWORD`, `OPERATOR_PASSWORD` sebelum menjalankan seeder.
 
 ## 📁 Struktur Aplikasi
 
@@ -129,11 +131,20 @@ sistem-panen-sawit/
 ## 🔧 Konfigurasi
 
 ### Database
-Edit file `.env` untuk konfigurasi database:
+Edit file `.env` untuk konfigurasi database.
+
+Mode cepat (SQLite lokal):
 ```env
 DB_CONNECTION=sqlite
-DB_DATABASE=/path/to/database.sqlite
+DB_DATABASE=database/database.sqlite
 ```
+
+Contoh Postgres:
+```env
+DB_CONNECTION=pgsql
+DATABASE_URL=postgresql://user:password@host:5432/nama_db?sslmode=prefer
+```
+Atau gunakan variabel PGHOST, PGDATABASE, PGUSER, PGPASSWORD jika provider memberi secara terpisah.
 
 ### Email (Opsional)
 Untuk fitur reset password:
@@ -218,14 +229,15 @@ composer self-update
 composer update
 ```
 
-## � Deployment (Railway + SQLite)
+## 🚀 Deployment (Railway)
 
 ### Build & Deploy
 Railway menggunakan `railway.json` untuk menjalankan build:
 1. Install composer (tanpa dev) & dump autoload
 2. Install npm dependencies dan build aset Vite
-3. Copy `.env.railway` menjadi `.env`
-4. Jalankan migrasi dan seeder (`php artisan migrate --force && php artisan db:seed --force`)
+3. Copy `.env.railway.postgres.example` (atau `.env.railway`) menjadi `.env`
+4. Set variabel Postgres di Railway (jika memakai PostgreSQL)
+5. Jalankan migrasi dan seeder (`php artisan migrate --force && php artisan db:seed --force`)
 
 ### Seeder CSV Otomatis
 Dua file CSV berikut dipakai otomatis saat seeding:
@@ -238,7 +250,7 @@ Pastikan file tersebut ikut dipush agar data awal ter-inject. Seeder terkait:
 
 Jika Anda ingin skip injeksi CSV (misal staging kosong), hapus/komentari seeder tersebut dari `DatabaseSeeder`.
 
-### Variabel Environment Minimum (SQLite)
+### Variabel Environment Minimum (PostgreSQL)
 ```
 APP_ENV=production
 APP_DEBUG=false
@@ -246,12 +258,18 @@ APP_KEY=base64:isi_key_generate
 APP_URL=https://your-app.railway.app
 LOG_CHANNEL=stack
 
-DB_CONNECTION=sqlite
-DB_DATABASE=/app/database/database.sqlite
+DB_CONNECTION=pgsql
+DATABASE_URL=postgresql://user:password@host:5432/nama_db?sslmode=prefer
 
 CACHE_DRIVER=file
 SESSION_DRIVER=file
 QUEUE_CONNECTION=sync
+```
+
+SQLite (opsional, dev cepat):
+```
+DB_CONNECTION=sqlite
+DB_DATABASE=/app/database/database.sqlite
 ```
 
 ### Tips Produksi
@@ -259,27 +277,14 @@ QUEUE_CONNECTION=sync
 - Jangan commit file `database.sqlite` di produksi; gunakan migrasi + seeder.
 - Perbaharui CSV lalu redeploy untuk refresh data awal.
 
-### Jika Railway Tidak Mendukung Volume
-Railway free tertentu tidak menyediakan penyimpanan persisten untuk file SQLite.
-Solusi sementara:
-1. Backup manual sebelum redeploy besar:
-   ```bash
-   php artisan app:backup-sqlite
-   ```
-2. Limit jumlah backup (misal simpan 5 terbaru tanpa zip):
-   ```bash
-   php artisan app:backup-sqlite --keep=5 --no-compress
-   ```
-3. Download file backup di `storage/app/backups/` (via shell Railway: zip & download artifact).
-4. Pulihkan (restore) dengan mengganti file database (stop service, upload, start lagi) atau buat command restore terpisah.
-5. Alternatif jangka panjang: migrasi ke Postgres (provision Postgres di Railway lalu set variabel DB_* dan redeploy).
+### Migrasi dari SQLite ke PostgreSQL
+1. Tambah service/database PostgreSQL.
+2. Set `DATABASE_URL` atau variabel `PG*` di environment.
+3. Jalankan `php artisan migrate --force`.
+4. (Opsional) Jalankan `php artisan db:seed --force` untuk seed awal.
+5. Hapus / abaikan file SQLite lama agar tidak bingung.
 
-Command tambahan (reseed cepat tanpa hapus file backup):
-```bash
-php artisan migrate:fresh --force && php artisan app:seed-csv
-```
-
-## 🧪 Test Data Refresh Cepat (Lokal)
+## 🧪 Refresh Data Cepat (Lokal)
 ```bash
 rm -f database/database.sqlite
 touch database/database.sqlite
@@ -287,7 +292,7 @@ php artisan migrate --seed
 ```
 
 
-## �📞 Support
+## 📞 Support
 
 Untuk bantuan teknis atau pertanyaan:
 - Email: support@panensawit.com
