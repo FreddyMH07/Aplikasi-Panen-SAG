@@ -10,6 +10,7 @@ use App\Http\Controllers\PanenBulananController;
 use App\Http\Controllers\KebunController;
 use App\Http\Controllers\DivisiController;
 use App\Http\Controllers\MasterDataController;
+use App\Http\Controllers\DatabaseOverviewController;
 
 // Authentication Routes
 Route::get('/', [AuthController::class, 'showLogin'])->name('home');
@@ -143,6 +144,9 @@ Route::middleware('auth')->group(function () {
             Route::post('/import/excel', [MasterDataController::class, 'import'])->name('import');
         });
     });
+    
+    // Database Overview Route
+    Route::get('/db/overview', [DatabaseOverviewController::class, 'index'])->name('db.overview');
     
     // API Routes for AJAX
     Route::prefix('api')->name('api.')->group(function () {
