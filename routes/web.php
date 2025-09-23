@@ -11,6 +11,7 @@ use App\Http\Controllers\KebunController;
 use App\Http\Controllers\DivisiController;
 use App\Http\Controllers\MasterDataController;
 use App\Http\Controllers\DatabaseOverviewController;
+use App\Http\Controllers\TableColumnController;
 
 // Authentication Routes
 Route::get('/', [AuthController::class, 'showLogin'])->name('home');
@@ -147,6 +148,17 @@ Route::middleware('auth')->group(function () {
     
     // Database Overview Route
     Route::get('/db/overview', [DatabaseOverviewController::class, 'index'])->name('db.overview');
+
+    // Table Columns Management Routes
+    Route::prefix('table-columns')->name('table-columns.')->group(function () {
+        Route::get('/', [TableColumnController::class, 'index'])->name('index');
+        Route::get('/data', [TableColumnController::class, 'getData'])->name('data');
+        Route::get('/create', [TableColumnController::class, 'create'])->name('create');
+        Route::post('/', [TableColumnController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [TableColumnController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [TableColumnController::class, 'update'])->name('update');
+        Route::delete('/{id}', [TableColumnController::class, 'destroy'])->name('destroy');
+    });
     
     // API Routes for AJAX
     Route::prefix('api')->name('api.')->group(function () {
