@@ -13,7 +13,9 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\DiagDbCommand::class,
-    \App\Console\Commands\DbSnapshotCommand::class,
+        \App\Console\Commands\DbSnapshotCommand::class,
+        \App\Console\Commands\BulkImportPanenCommand::class,
+        \App\Console\Commands\PanenDiagCommand::class,
     ];
     /**
      * Define the application's command schedule.
