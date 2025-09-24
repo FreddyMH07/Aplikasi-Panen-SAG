@@ -25,9 +25,9 @@
                 <label for="kebun" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kebun</label>
                 <select name="kebun" id="kebun" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-green-500 focus:ring-green-500">
                     <option value="">Semua Kebun</option>
-                    @foreach($kebunList as $kebun)
-                        <option value="{{ $kebun->id }}" {{ request('kebun') == $kebun->id ? 'selected' : '' }}>
-                            {{ $kebun->nama_kebun }}
+                    @foreach($kebunList as $k)
+                        <option value="{{ $k }}" {{ request('kebun') == $k ? 'selected' : '' }}>
+                            {{ $k }}
                         </option>
                     @endforeach
                 </select>
@@ -36,9 +36,9 @@
                 <label for="divisi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Divisi</label>
                 <select name="divisi" id="divisi" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-green-500 focus:ring-green-500">
                     <option value="">Semua Divisi</option>
-                    @foreach($divisiList as $divisi)
-                        <option value="{{ $divisi->id }}" {{ request('divisi') == $divisi->id ? 'selected' : '' }}>
-                            {{ $divisi->nama_divisi }}
+                    @foreach($divisiList as $d)
+                        <option value="{{ $d }}" {{ request('divisi') == $d ? 'selected' : '' }}>
+                            {{ $d }}
                         </option>
                     @endforeach
                 </select>
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
         type: 'line',
         data: {
             labels: dailyData.map(item => {
-                const date = new Date(item.tanggal);
+                const date = new Date(item.tanggal_panen);
                 return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
             }),
             datasets: [{

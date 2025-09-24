@@ -19,9 +19,14 @@ class DashboardController extends Controller
         $currentYear = Carbon::now()->year;
         $currentMonthName = Carbon::now()->format('F');
 
-        // Get list of kebun and divisi for filter
-        $kebunList = Kebun::orderBy('nama_kebun')->get();
-        $divisiList = Divisi::orderBy('nama_divisi')->get();
+        // Get list of kebun and divisi for filter from MasterData (current structure)
+        $kebunList = MasterData::select('kebun')->distinct()->orderBy('kebun')->pluck('kebun');
+        if ($request->filled('kebun')) {
+            $divisiList = MasterData::where('kebun', $request->kebun)
+                ->select('divisi')->distinct()->orderBy('divisi')->pluck('divisi');
+        } else {
+            $divisiList = MasterData::select('divisi')->distinct()->orderBy('divisi')->pluck('divisi');
+        }
 
         // Build query with filters for today
         $query = PanenHarian::whereDate('tanggal_panen', $today);
@@ -115,13 +120,13 @@ class DashboardController extends Controller
 
     private function getChartData(Request $request)
     {
-        // Build query for last 7 days
+        // Build query for last 7 days (filter by kebun/divisi names, not legacy IDs)
         $query7Days = PanenHarian::whereDate('tanggal_panen', '>=', Carbon::now()->subDays(7));
         if ($request->filled('kebun')) {
-            $query7Days->where('kebun_id', $request->kebun);
+            $query7Days->where('kebun', $request->kebun);
         }
         if ($request->filled('divisi')) {
-            $query7Days->where('divisi_id', $request->divisi);
+            $query7Days->where('divisi', $request->divisi);
         }
 
         // Data 7 hari terakhir
