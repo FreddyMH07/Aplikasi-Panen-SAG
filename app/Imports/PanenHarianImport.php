@@ -10,6 +10,64 @@ use Carbon\Carbon;
 
 class PanenHarianImport implements ToModel, WithHeadingRow, WithValidation
 {
+    /**
+     * Normalize various date formats commonly found in CSV/Excel exports.
+     * Accepts numeric Excel serials, M/D/Y and D/M/Y with '/' or '-', and ISO-like forms.
+     */
+    private function parseTanggalPanen($value): ?Carbon
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        // If numeric, treat as Excel serial date (1900 system, account for leap-year bug)
+        if (is_numeric($value)) {
+            try {
+                $serial = (int)$value;
+                // Guard: ignore obviously invalid serials
+                if ($serial > 0 && $serial < 60000) { // ~ 2064-11-20 upper bound
+                    return Carbon::createFromFormat('Y-m-d', '1900-01-01')->addDays($serial - 2);
+                }
+            } catch (\Exception $e) {
+                // fall through to other strategies
+            }
+        }
+
+        // Coerce to string and trim
+        $dateStr = trim((string)$value);
+
+        // Replace '.' with '/' if any, to unify delimiters
+        $dateStr = str_replace('.', '/', $dateStr);
+
+        // Try common explicit formats. Prefer M/D/Y first (as seen in provided CSV),
+        // then D/M/Y for Indonesian-style dates. Support single-digit month/day.
+        $formats = [
+            'n/j/Y', 'm/d/Y', // M/D/Y
+            'j/n/Y', 'd/m/Y', // D/M/Y
+            'Y-m-d', 'Y/m/d', 'd-m-Y', 'm-d-Y', // other common
+        ];
+
+        foreach ($formats as $fmt) {
+            try {
+                $dt = Carbon::createFromFormat($fmt, $dateStr);
+                // Ensure no trailing characters by re-formatting back
+                if ($dt !== false) {
+                    return $dt;
+                }
+            } catch (\Exception $e) {
+                // try next format
+            }
+        }
+
+        // Last resort: Carbon::parse (handles some locale/ISO variants)
+        try {
+            $dt = Carbon::parse($dateStr);
+            return $dt;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     public function headingRow(): int
     {
         return 1;
@@ -50,25 +108,42 @@ class PanenHarianImport implements ToModel, WithHeadingRow, WithValidation
 
     public function model(array $row)
     {
-        // Parse tanggal dengan format dd/mm/yyyy
-        $tanggalPanen = null;
-        if (!empty($row['tanggal_panen'])) {
-            try {
-                if (is_numeric($row['tanggal_panen'])) {
-                    // Excel date format
-                    $tanggalPanen = Carbon::createFromFormat('Y-m-d', '1900-01-01')->addDays($row['tanggal_panen'] - 2);
-                } else {
-                    // String date format (dd/mm/yyyy)
-                    $dateStr = $row['tanggal_panen'];
-                    if (strpos($dateStr, '/') !== false) {
-                        $tanggalPanen = Carbon::createFromFormat('d/m/Y', $dateStr);
-                    } else {
-                        $tanggalPanen = Carbon::parse($dateStr);
+        // Robust parse for tanggal (accept M/D/Y and D/M/Y and Excel serials)
+        $tanggalPanen = $this->parseTanggalPanen($row['tanggal_panen'] ?? null);
+
+        // Guard against out-of-range years (e.g., mis-parsed 2026/2027 due to format swap).
+        // If year is implausible (> current year + 1 or < 2000), attempt swapping interpretation once more.
+        if ($tanggalPanen) {
+            $year = (int)$tanggalPanen->year;
+            $currentYear = (int) now()->year;
+            if ($year > $currentYear + 1 || $year < 2000) {
+                // Try the alternate day/month interpretation if original was slash-delimited
+                $raw = $row['tanggal_panen'] ?? '';
+                if (is_string($raw) && strpos($raw, '/') !== false) {
+                    // Swap by trying the opposite primary formats
+                    $altFormats = [
+                        'j/n/Y', 'd/m/Y', 'n/j/Y', 'm/d/Y'
+                    ];
+                    $altParsed = null;
+                    foreach ($altFormats as $fmt) {
+                        try {
+                            $altParsed = Carbon::createFromFormat($fmt, trim($raw));
+                            if ($altParsed) break;
+                        } catch (\Exception $e) {}
+                    }
+                    if ($altParsed) {
+                        $altYear = (int)$altParsed->year;
+                        if (!($altYear > $currentYear + 1 || $altYear < 2000)) {
+                            $tanggalPanen = $altParsed;
+                        }
                     }
                 }
-            } catch (\Exception $e) {
-                $tanggalPanen = Carbon::now();
             }
+        }
+
+        // If still not parsable, skip this row to avoid corrupt dates
+        if (!$tanggalPanen) {
+            return null;
         }
 
         // Helper function untuk parse nilai dengan format yang beragam
