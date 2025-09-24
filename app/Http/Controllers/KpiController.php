@@ -117,20 +117,26 @@ class KpiController extends Controller
     public function quality(Request $request)
     {
         $filters = $this->filters($request);
-        $data = DB::table('panen_harians')
-            ->select('tanggal_panen','kebun','divisi',
-                DB::raw('COALESCE(akp_panen,0) as akp_panen'),
-                DB::raw('COALESCE(akp_calculated,0) as akp_calc'),
-                DB::raw('COALESCE(bjr_hari_ini,0) as bjr_hari_ini'),
-                DB::raw('COALESCE(bjr_calculated,0) as bjr_calc'),
-                DB::raw('(COALESCE(akp_panen,0) - COALESCE(akp_calculated,0)) as akp_bias'),
-                DB::raw('(COALESCE(bjr_hari_ini,0) - COALESCE(bjr_calculated,0)) as bjr_bias')
+        $data = DB::table('panen_harians as ph')
+            ->leftJoin('master_data as md', function($j){
+                $j->on('md.kebun','=','ph.kebun')
+                  ->on('md.divisi','=','ph.divisi')
+                  ->on('md.tahun','=','ph.tahun')
+                  ->on('md.bulan','=','ph.bulan');
+            })
+            ->select('ph.tanggal_panen','ph.kebun','ph.divisi',
+                DB::raw('COALESCE(ph.akp_panen,0) as akp_panen'),
+                DB::raw('CASE WHEN COALESCE(ph.luas_panen_ha,0)*COALESCE(md.sph_panen,0)=0 THEN 0 ELSE COALESCE(ph.jjg_panen_jjg,0) / NULLIF(COALESCE(ph.luas_panen_ha,0)*COALESCE(md.sph_panen,0),0) END as akp_calc'),
+                DB::raw('COALESCE(ph.bjr_hari_ini,0) as bjr_hari_ini'),
+                DB::raw('CASE WHEN COALESCE(ph.jjg_panen_jjg,0)=0 THEN 0 ELSE COALESCE(ph.timbang_kebun_harian,0) / NULLIF(COALESCE(ph.jjg_panen_jjg,0),0) END as bjr_calc'),
+                DB::raw('(COALESCE(ph.akp_panen,0) - (CASE WHEN COALESCE(ph.luas_panen_ha,0)*COALESCE(md.sph_panen,0)=0 THEN 0 ELSE COALESCE(ph.jjg_panen_jjg,0) / NULLIF(COALESCE(ph.luas_panen_ha,0)*COALESCE(md.sph_panen,0),0) END)) as akp_bias'),
+                DB::raw('(COALESCE(ph.bjr_hari_ini,0) - (CASE WHEN COALESCE(ph.jjg_panen_jjg,0)=0 THEN 0 ELSE COALESCE(ph.timbang_kebun_harian,0) / NULLIF(COALESCE(ph.jjg_panen_jjg,0),0) END)) as bjr_bias')
             )
-            ->when($filters['kebun'], fn($q)=>$q->where('kebun',$filters['kebun']))
-            ->when($filters['divisi'], fn($q)=>$q->where('divisi',$filters['divisi']))
-            ->when($filters['start'], fn($q)=>$q->whereDate('tanggal_panen','>=',$filters['start']))
-            ->when($filters['end'], fn($q)=>$q->whereDate('tanggal_panen','<=',$filters['end']))
-            ->orderBy('tanggal_panen')
+            ->when($filters['kebun'], fn($q)=>$q->where('ph.kebun',$filters['kebun']))
+            ->when($filters['divisi'], fn($q)=>$q->where('ph.divisi',$filters['divisi']))
+            ->when($filters['start'], fn($q)=>$q->whereDate('ph.tanggal_panen','>=',$filters['start']))
+            ->when($filters['end'], fn($q)=>$q->whereDate('ph.tanggal_panen','<=',$filters['end']))
+            ->orderBy('ph.tanggal_panen')
             ->get();
         return view('kpi.quality', compact('data','filters'));
     }
@@ -139,25 +145,31 @@ class KpiController extends Controller
     public function anomali(Request $request)
     {
         $filters = $this->filters($request);
-        $base = DB::table('panen_harians')
-            ->select('tanggal_panen','kebun','divisi',
-                DB::raw('COALESCE(refraksi_persen,0) as refraksi_persen'),
-                DB::raw('COALESCE(ketrek,0) as ketrek'),
-                DB::raw("CASE WHEN COALESCE(timbang_kebun_harian,0)=0 THEN 0 ELSE (COALESCE(timbang_pks_harian,0)-COALESCE(timbang_kebun_harian,0))/NULLIF(timbang_kebun_harian,0)*100 END as loss_pct"),
-                DB::raw('COALESCE(restant_jjg,0) as restant_jjg'),
-                DB::raw('COALESCE(jjg_panen_jjg,0) as jjg_panen_jjg'),
-                DB::raw('COALESCE(akp_panen,0) as akp_panen'),
-                DB::raw('COALESCE(akp_calculated,0) as akp_calc'),
-                DB::raw('COALESCE(bjr_hari_ini,0) as bjr_hari_ini'),
-                DB::raw('COALESCE(bjr_calculated,0) as bjr_calc'),
-                DB::raw('(COALESCE(akp_panen,0) - COALESCE(akp_calculated,0)) as akp_bias'),
-                DB::raw('(COALESCE(bjr_hari_ini,0) - COALESCE(bjr_calculated,0)) as bjr_bias')
+        $base = DB::table('panen_harians as ph')
+            ->leftJoin('master_data as md', function($j){
+                $j->on('md.kebun','=','ph.kebun')
+                  ->on('md.divisi','=','ph.divisi')
+                  ->on('md.tahun','=','ph.tahun')
+                  ->on('md.bulan','=','ph.bulan');
+            })
+            ->select('ph.tanggal_panen','ph.kebun','ph.divisi',
+                DB::raw('COALESCE(ph.refraksi_persen,0) as refraksi_persen'),
+                DB::raw('COALESCE(ph.ketrek,0) as ketrek'),
+                DB::raw("CASE WHEN COALESCE(ph.timbang_kebun_harian,0)=0 THEN 0 ELSE (COALESCE(ph.timbang_pks_harian,0)-COALESCE(ph.timbang_kebun_harian,0))/NULLIF(ph.timbang_kebun_harian,0)*100 END as loss_pct"),
+                DB::raw('COALESCE(ph.restant_jjg,0) as restant_jjg'),
+                DB::raw('COALESCE(ph.jjg_panen_jjg,0) as jjg_panen_jjg'),
+                DB::raw('COALESCE(ph.akp_panen,0) as akp_panen'),
+                DB::raw('CASE WHEN COALESCE(ph.luas_panen_ha,0)*COALESCE(md.sph_panen,0)=0 THEN 0 ELSE COALESCE(ph.jjg_panen_jjg,0) / NULLIF(COALESCE(ph.luas_panen_ha,0)*COALESCE(md.sph_panen,0),0) END as akp_calc'),
+                DB::raw('COALESCE(ph.bjr_hari_ini,0) as bjr_hari_ini'),
+                DB::raw('CASE WHEN COALESCE(ph.jjg_panen_jjg,0)=0 THEN 0 ELSE COALESCE(ph.timbang_kebun_harian,0) / NULLIF(COALESCE(ph.jjg_panen_jjg,0),0) END as bjr_calc'),
+                DB::raw('(COALESCE(ph.akp_panen,0) - (CASE WHEN COALESCE(ph.luas_panen_ha,0)*COALESCE(md.sph_panen,0)=0 THEN 0 ELSE COALESCE(ph.jjg_panen_jjg,0) / NULLIF(COALESCE(ph.luas_panen_ha,0)*COALESCE(md.sph_panen,0),0) END)) as akp_bias'),
+                DB::raw('(COALESCE(ph.bjr_hari_ini,0) - (CASE WHEN COALESCE(ph.jjg_panen_jjg,0)=0 THEN 0 ELSE COALESCE(ph.timbang_kebun_harian,0) / NULLIF(COALESCE(ph.jjg_panen_jjg,0),0) END)) as bjr_bias')
             )
-            ->when($filters['kebun'], fn($q)=>$q->where('kebun',$filters['kebun']))
-            ->when($filters['divisi'], fn($q)=>$q->where('divisi',$filters['divisi']))
-            ->when($filters['start'], fn($q)=>$q->whereDate('tanggal_panen','>=',$filters['start']))
-            ->when($filters['end'], fn($q)=>$q->whereDate('tanggal_panen','<=',$filters['end']))
-            ->orderBy('tanggal_panen')
+            ->when($filters['kebun'], fn($q)=>$q->where('ph.kebun',$filters['kebun']))
+            ->when($filters['divisi'], fn($q)=>$q->where('ph.divisi',$filters['divisi']))
+            ->when($filters['start'], fn($q)=>$q->whereDate('ph.tanggal_panen','>=',$filters['start']))
+            ->when($filters['end'], fn($q)=>$q->whereDate('ph.tanggal_panen','<=',$filters['end']))
+            ->orderBy('ph.tanggal_panen')
             ->get();
 
         // Compute 3-sigma thresholds per metric
