@@ -198,5 +198,19 @@ Route::middleware('auth')->group(function () {
             }
             return $query->pluck('divisi');
         })->name('master-data.divisi-list');
+
+        // MasterData: summary statistics for cards
+        Route::get('/master-data/summary', function() {
+            $total = \App\Models\MasterData::count();
+            $kebun = \App\Models\MasterData::select('kebun')->distinct()->count('kebun');
+            $divisi = \App\Models\MasterData::select('divisi')->distinct()->count('divisi');
+            $tahun = \App\Models\MasterData::select('tahun')->distinct()->count('tahun');
+            return response()->json([
+                'total' => $total,
+                'kebun' => $kebun,
+                'divisi' => $divisi,
+                'tahun' => $tahun,
+            ]);
+        })->name('master-data.summary');
     });
 });

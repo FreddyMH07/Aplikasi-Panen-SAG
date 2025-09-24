@@ -297,12 +297,17 @@ function resetFilters() {
 }
 
 function updateSummaryCards() {
-    // This would typically make an AJAX call to get summary statistics
-    // For now, we'll use placeholder values
-    $('#totalData').text(dataTable.page.info().recordsTotal);
-    $('#totalKebun').text('-');
-    $('#totalDivisi').text('-');
-    $('#totalTahun').text('-');
+    $.get('{{ route("api.master-data.summary", [], false) }}')
+        .done(function(stats) {
+            $('#totalData').text(stats.total ?? '-');
+            $('#totalKebun').text(stats.kebun ?? '-');
+            $('#totalDivisi').text(stats.divisi ?? '-');
+            $('#totalTahun').text(stats.tahun ?? '-');
+        })
+        .fail(function() {
+            // fallback: show table total for totalData only
+            $('#totalData').text(dataTable.page.info().recordsTotal);
+        });
 }
 
 function exportData() {
