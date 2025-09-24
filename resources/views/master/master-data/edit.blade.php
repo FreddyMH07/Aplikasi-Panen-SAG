@@ -20,7 +20,7 @@
             </div>
         </div>
         
-        <form action="{{ route('master.master-data.update', $masterData->id) }}" method="POST" class="p-6">
+        <form action="{{ route('master.master-data.update', $masterData->id, false) }}" method="POST" class="p-6">
             @csrf
             @method('PUT')
             

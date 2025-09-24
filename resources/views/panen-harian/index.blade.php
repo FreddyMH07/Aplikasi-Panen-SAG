@@ -286,7 +286,7 @@
             </button>
         </div>
         
-        <form id="importForm" action="{{ route('panen-harian.import') }}" method="POST" enctype="multipart/form-data">
+        <form id="importForm" action="{{ route('panen-harian.import', [], false) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

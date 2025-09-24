@@ -4,7 +4,7 @@
 @section('content')
 <div class="max-w-xl mx-auto space-y-6">
   <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-    <form method="POST" action="{{ route('table-columns.update',$column->id) }}" class="space-y-4">
+    <form method="POST" action="{{ route('table-columns.update', $column->id, false) }}" class="space-y-4">
       @csrf
       @method('PUT')
       <div>

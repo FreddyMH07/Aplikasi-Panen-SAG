@@ -20,7 +20,7 @@
             </div>
         </div>
         
-        <form action="{{ route('panen-harian.store') }}" method="POST" class="p-6">
+        <form action="{{ route('panen-harian.store', [], false) }}" method="POST" class="p-6">
             @csrf
             
             <!-- Basic Information -->

@@ -61,7 +61,7 @@
                 </div>
             @endif
             
-            <form method="POST" action="{{ route('login.submit') }}" @submit="loading = true">
+            <form method="POST" action="{{ route('login.submit', [], false) }}" @submit="loading = true">
                 @csrf
                 
                 <!-- Email Field -->

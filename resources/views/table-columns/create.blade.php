@@ -4,7 +4,7 @@
 @section('content')
 <div class="max-w-xl mx-auto space-y-6">
   <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
-    <form method="POST" action="{{ route('table-columns.store') }}" class="space-y-4">
+    <form method="POST" action="{{ route('table-columns.store', [], false) }}" class="space-y-4">
       @csrf
       <div>
         <label class="block text-sm font-medium mb-1">Nama Tabel</label>

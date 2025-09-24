@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\DbSnapshotCommand::class,
         \App\Console\Commands\BulkImportPanenCommand::class,
         \App\Console\Commands\PanenDiagCommand::class,
+        \App\Console\Commands\ResetPanenHarianCommand::class, // Register new command to reset and re-import panen harian
+        \App\Console\Commands\ResetPanenDataCommand::class, // Register wipe command
     ];
     /**
      * Define the application's command schedule.

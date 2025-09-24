@@ -20,7 +20,7 @@
             </div>
         </div>
         
-        <form action="{{ route('panen-harian.update', $panenHarian->id) }}" method="POST" class="p-6">
+        <form action="{{ route('panen-harian.update', $panenHarian->id, false) }}" method="POST" class="p-6">
             @csrf
             @method('PUT')
             
