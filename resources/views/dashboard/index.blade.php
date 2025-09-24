@@ -5,6 +5,19 @@
 
 @section('content')
 <div class="space-y-6">
+    @php
+        // Threshold-based classes
+        $acv = (float)($todayMetrics['acv_prod'] ?? 0);
+        $acvColor = $acv >= 100 ? 'text-green-600 dark:text-green-300' : ($acv >= 90 ? 'text-yellow-600 dark:text-yellow-300' : 'text-red-600 dark:text-red-300');
+        $acvBg    = $acv >= 100 ? 'bg-green-100 dark:bg-green-900' : ($acv >= 90 ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-red-100 dark:bg-red-900');
+
+        $ref = (float)($todayMetrics['refraksi_persen'] ?? 0);
+        $refColor = $ref <= 1 ? 'text-green-600 dark:text-green-300' : ($ref <= 2 ? 'text-yellow-600 dark:text-yellow-300' : 'text-red-600 dark:text-red-300');
+        $refBg    = $ref <= 1 ? 'bg-green-100 dark:bg-green-900' : ($ref <= 2 ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-red-100 dark:bg-red-900');
+
+        $acvMonthly = (float)($monthlyMetrics['acv_prod'] ?? 0);
+        $acvMonthlyColor = $acvMonthly >= 100 ? 'text-green-600 dark:text-green-300' : ($acvMonthly >= 90 ? 'text-yellow-600 dark:text-yellow-300' : 'text-red-600 dark:text-red-300');
+    @endphp
     <!-- Welcome Section -->
     <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
         <div class="flex items-center justify-between">
@@ -107,13 +120,13 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">ACV Prod Harian</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <p class="text-2xl font-bold {{ $acvColor }}">
                         {{ number_format($todayMetrics['acv_prod'], 2) }}%
                     </p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Achievement vs Budget</p>
                 </div>
-                <div class="p-3 bg-orange-100 dark:bg-orange-900 rounded-full">
-                    <i class="fas fa-percentage text-orange-600 dark:text-orange-300"></i>
+                <div class="p-3 {{ $acvBg }} rounded-full">
+                    <i class="fas fa-percentage {{ $acvColor }}"></i>
                 </div>
             </div>
         </div>
@@ -156,12 +169,12 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Refraksi</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <p class="text-2xl font-bold {{ $refColor }}">
                         {{ number_format($todayMetrics['refraksi_persen'], 2) }}%
                     </p>
                 </div>
-                <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 dark:text-yellow-300"></i>
+                <div class="p-3 {{ $refBg }} rounded-full">
+                    <i class="fas fa-exclamation-triangle {{ $refColor }}"></i>
                 </div>
             </div>
         </div>
@@ -189,7 +202,7 @@
             </div>
             <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <p class="text-sm text-gray-600 dark:text-gray-400">ACV Prod</p>
-                <p class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ number_format($monthlyMetrics['acv_prod'], 2) }}%</p>
+                <p class="text-xl font-bold {{ $acvMonthlyColor }}">{{ number_format($monthlyMetrics['acv_prod'], 2) }}%</p>
             </div>
         </div>
     </div>
