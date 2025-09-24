@@ -5,9 +5,20 @@
   <h2 class="text-xl font-semibold mb-2">Budget Variance</h2>
   @include('kpi._filters')
 
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="bg-white dark:bg-gray-800 p-3 rounded border dark:border-gray-700">
+      <div class="text-sm mb-2">Harian: Actual vs Budget</div>
+      <canvas id="chartBudgetHarian" height="140"></canvas>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-3 rounded border dark:border-gray-700">
+      <div class="text-sm mb-2">Bulanan: Actual vs Budget</div>
+      <canvas id="chartBudgetBulanan" height="140"></canvas>
+    </div>
+  </div>
+
   <h3 class="font-semibold mb-1">Harian</h3>
   <div class="overflow-x-auto mb-6">
-    <table class="min-w-full text-sm">
+    <table id="tblBudgetHarian" class="min-w-full text-sm">
       <thead>
         <tr class="text-left border-b">
           <th class="py-2 pr-4">Tanggal</th>
@@ -39,7 +50,7 @@
 
   <h3 class="font-semibold mb-1">Bulanan</h3>
   <div class="overflow-x-auto">
-    <table class="min-w-full text-sm">
+  <table id="tblBudgetBulanan" class="min-w-full text-sm">
       <thead>
         <tr class="text-left border-b">
           <th class="py-2 pr-4">Tahun</th>
@@ -72,3 +83,36 @@
   </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+  (function(){
+    const harian = @json($harian);
+    const bulanan = @json($bulanan);
+    // Charts
+    const hLabels = harian.map(r => new Date(r.tanggal_panen).toLocaleDateString('id-ID'));
+    const hActual = harian.map(r => Number(r.tonase_panen_kg||0));
+    const hBudget = harian.map(r => Number(r.budget_harian||0));
+    new Chart(document.getElementById('chartBudgetHarian'), {
+      type:'line',
+      data:{ labels: hLabels, datasets:[
+        {label:'Actual Kg', data:hActual, borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,.15)', tension:.2},
+        {label:'Budget Kg', data:hBudget, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.15)', tension:.2}
+      ]},
+      options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{ title:{display:true,text:'Kg'} } } }
+    });
+    const bLabels = bulanan.map(r => `${r.tahun}-${r.bulan}`);
+    const bActual = bulanan.map(r => Number(r.actual_kg||0));
+    const bBudget = bulanan.map(r => Number(r.budget_kg||0));
+    new Chart(document.getElementById('chartBudgetBulanan'), {
+      data:{ labels:bLabels, datasets:[
+        {type:'bar', label:'Actual Kg', data:bActual, backgroundColor:'#22c55e'},
+        {type:'bar', label:'Budget Kg', data:bBudget, backgroundColor:'#3b82f6'}
+      ]},
+      options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{ title:{display:true,text:'Kg'} } } }
+    });
+    // DataTables
+    $('#tblBudgetHarian').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
+    $('#tblBudgetBulanan').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc'],[1,'asc']] });
+  })();
+</script>
+@endpush

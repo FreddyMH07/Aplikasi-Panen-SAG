@@ -4,8 +4,11 @@
 <div class="p-4">
   <h2 class="text-xl font-semibold mb-2">Restan Tracker</h2>
   @include('kpi._filters')
+  <div class="mb-6">
+    <canvas id="chartRestan" height="100"></canvas>
+  </div>
   <div class="overflow-x-auto">
-    <table class="min-w-full text-sm">
+    <table id="tblRestan" class="min-w-full text-sm">
       <thead>
         <tr class="text-left border-b">
           <th class="py-2 pr-4">Kebun</th>
@@ -34,3 +37,24 @@
   </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+  (function(){
+    const rows = @json($ranking);
+    const labels = rows.map(r => `${r.kebun} - ${r.divisi}`);
+    const restanRate = rows.map(r => Number(r.restan_rate||0));
+    const ctx = document.getElementById('chartRestan');
+    new Chart(ctx, {
+      type: 'bar',
+      data: { labels, datasets: [{ label:'Restan %', data: restanRate, backgroundColor: restanRate.map(v => v<=1?'#16a34a':(v<=3?'#ca8a04':'#dc2626')) }] },
+      options: { responsive:true, plugins:{legend:{display:false}}, scales:{y:{title:{display:true,text:'%'}}} }
+    });
+    $('#tblRestan').DataTable({
+      dom: 'Bfrtip',
+      buttons: ['csv','excel','pdf','print','colvis'],
+      pageLength: 25,
+      order: [[4,'desc']]
+    });
+  })();
+</script>
+@endpush

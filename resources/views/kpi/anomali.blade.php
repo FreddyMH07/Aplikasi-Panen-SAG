@@ -4,6 +4,9 @@
 <div class="p-4">
   <h2 class="text-xl font-semibold mb-2">Anomali 3-Sigma</h2>
   @include('kpi._filters')
+  <div class="mb-6">
+    <canvas id="chartAnomali" height="110"></canvas>
+  </div>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
     @foreach($stats as $metric => $s)
     <div class="p-3 border rounded">
@@ -14,7 +17,7 @@
     @endforeach
   </div>
   <div class="overflow-x-auto">
-    <table class="min-w-full text-sm">
+    <table id="tblAnomali" class="min-w-full text-sm">
       <thead>
         <tr class="text-left border-b">
           <th class="py-2 pr-4">Tanggal</th>
@@ -50,3 +53,19 @@
   </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+  (function(){
+    const stats = @json($stats);
+    const rows = @json($data);
+    const metrics = Object.keys(stats);
+    const counts = metrics.map(m => rows.filter(r => (r.flags||[]).includes(m)).length);
+    new Chart(document.getElementById('chartAnomali'), {
+      type:'bar',
+      data:{ labels:metrics.map(m=>m.toUpperCase()), datasets:[{ label:'Jumlah Anomali', data:counts, backgroundColor:'#dc2626' }]},
+      options:{ responsive:true, plugins:{legend:{display:false}} }
+    });
+    $('#tblAnomali').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
+  })();
+</script>
+@endpush

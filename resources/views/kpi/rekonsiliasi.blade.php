@@ -4,9 +4,12 @@
 <div class="p-4">
   <h2 class="text-xl font-semibold mb-2">Rekonsiliasi Kebun ↔ PKS</h2>
   @include('kpi._filters')
+  <div class="mb-6">
+    <canvas id="chartRekonsiliasi" height="120"></canvas>
+  </div>
 
   <div class="overflow-x-auto">
-    <table class="min-w-full text-sm">
+    <table id="tblRekonsiliasi" class="min-w-full text-sm">
       <thead>
         <tr class="text-left border-b">
           <th class="py-2 pr-4">Tanggal</th>
@@ -39,3 +42,25 @@
   </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+  (function(){
+    const rows = @json($data);
+    const labels = rows.map(r => new Date(r.tanggal_panen).toLocaleDateString('id-ID'));
+    const loss = rows.map(r => Number(r.loss_pct||0));
+    const selisih = rows.map(r => Number(r.selisih_kg||0));
+    const ctx = document.getElementById('chartRekonsiliasi');
+    new Chart(ctx, {
+      data: {
+        labels,
+        datasets: [
+          {type:'line', label:'Loss %', data: loss, yAxisID:'y1', borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.2)', tension:.2},
+          {type:'bar', label:'Selisih (Kg)', data: selisih, yAxisID:'y', backgroundColor:'#3b82f6'}
+        ]
+      },
+      options: {responsive:true, interaction:{mode:'index', intersect:false}, scales:{y:{title:{text:'Kg',display:true}}, y1:{position:'right', grid:{drawOnChartArea:false}, title:{text:'% Loss',display:true}}}}
+    });
+  $('#tblRekonsiliasi').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
+  })();
+</script>
+@endpush
