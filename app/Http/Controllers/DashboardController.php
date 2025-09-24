@@ -36,16 +36,39 @@ class DashboardController extends Controller
         if ($request->filled('divisi')) {
             $query->where('divisi', $request->divisi);
         }
+        // If no data for today, fallback to latest available date within current month
+        $hasToday = (clone $query)->exists();
+        if (!$hasToday) {
+            $fallbackDateQuery = PanenHarian::whereYear('tanggal_panen', $currentYear)
+                ->whereMonth('tanggal_panen', $currentMonth);
+            if ($request->filled('kebun')) {
+                $fallbackDateQuery->where('kebun', $request->kebun);
+            }
+            if ($request->filled('divisi')) {
+                $fallbackDateQuery->where('divisi', $request->divisi);
+            }
+            $fallbackDate = $fallbackDateQuery->orderBy('tanggal_panen', 'desc')->value('tanggal_panen');
+            if ($fallbackDate) {
+                $query = PanenHarian::whereDate('tanggal_panen', $fallbackDate);
+                if ($request->filled('kebun')) {
+                    $query->where('kebun', $request->kebun);
+                }
+                if ($request->filled('divisi')) {
+                    $query->where('divisi', $request->divisi);
+                }
+            }
+        }
+
         $todayData = $query
             ->selectRaw('
-                SUM(luas_panen_ha) as total_luas,
-                SUM(jjg_panen_jjg) as total_jjg,
-                SUM(timbang_kebun_harian) as total_timbang_kebun,
-                SUM(timbang_pks_harian) as total_timbang_pks,
-                SUM(jumlah_tk_panen) as total_tk,
-                SUM(refraksi_kg) as total_refraksi,
-                SUM(budget_harian) as total_budget,
-                SUM(tonase_panen_kg) as total_tonase
+                COALESCE(SUM(luas_panen_ha),0) as total_luas,
+                COALESCE(SUM(jjg_panen_jjg),0) as total_jjg,
+                COALESCE(SUM(timbang_kebun_harian),0) as total_timbang_kebun,
+                COALESCE(SUM(timbang_pks_harian),0) as total_timbang_pks,
+                COALESCE(SUM(jumlah_tk_panen),0) as total_tk,
+                COALESCE(SUM(refraksi_kg),0) as total_refraksi,
+                COALESCE(SUM(budget_harian),0) as total_budget,
+                COALESCE(SUM(tonase_panen_kg),0) as total_tonase
             ')
             ->first();
 
@@ -60,14 +83,14 @@ class DashboardController extends Controller
         }
         $monthlyData = $monthlyQuery
             ->selectRaw('
-                SUM(luas_panen_ha) as total_luas,
-                SUM(jjg_panen_jjg) as total_jjg,
-                SUM(timbang_kebun_harian) as total_timbang_kebun,
-                SUM(timbang_pks_harian) as total_timbang_pks,
-                SUM(jumlah_tk_panen) as total_tk,
-                SUM(refraksi_kg) as total_refraksi,
-                SUM(budget_harian) as total_budget,
-                SUM(tonase_panen_kg) as total_tonase
+                COALESCE(SUM(luas_panen_ha),0) as total_luas,
+                COALESCE(SUM(jjg_panen_jjg),0) as total_jjg,
+                COALESCE(SUM(timbang_kebun_harian),0) as total_timbang_kebun,
+                COALESCE(SUM(timbang_pks_harian),0) as total_timbang_pks,
+                COALESCE(SUM(jumlah_tk_panen),0) as total_tk,
+                COALESCE(SUM(refraksi_kg),0) as total_refraksi,
+                COALESCE(SUM(budget_harian),0) as total_budget,
+                COALESCE(SUM(tonase_panen_kg),0) as total_tonase
             ')
             ->first();
 
@@ -145,7 +168,9 @@ class DashboardController extends Controller
 
         $productionByKebun = PanenHarian::where('tahun', $currentYear)
             ->where('bulan', $currentMonthName)
-            ->selectRaw('kebun, SUM(timbang_pks_harian) as total_produksi')
+            ->when($request->filled('kebun'), fn($q) => $q->where('kebun', $request->kebun))
+            ->when($request->filled('divisi'), fn($q) => $q->where('divisi', $request->divisi))
+            ->selectRaw('kebun, COALESCE(SUM(timbang_pks_harian),0) as total_produksi')
             ->groupBy('kebun')
             ->get();
 

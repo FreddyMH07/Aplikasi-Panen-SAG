@@ -7,16 +7,26 @@
 <div class="space-y-6">
     @php
         // Threshold-based classes
-        $acv = (float)($todayMetrics['acv_prod'] ?? 0);
-        $acvColor = $acv >= 100 ? 'text-green-600 dark:text-green-300' : ($acv >= 90 ? 'text-yellow-600 dark:text-yellow-300' : 'text-red-600 dark:text-red-300');
-        $acvBg    = $acv >= 100 ? 'bg-green-100 dark:bg-green-900' : ($acv >= 90 ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-red-100 dark:bg-red-900');
+    $acv = (float)($todayMetrics['acv_prod'] ?? 0);
+    // Thresholds: <70 red; 70–<85 yellow; 85–≤110 green; >110 blue
+    $acvColor = $acv > 110 ? 'text-blue-600 dark:text-blue-300'
+           : ($acv >= 85 ? 'text-green-600 dark:text-green-300'
+           : ($acv >= 70 ? 'text-yellow-600 dark:text-yellow-300'
+           : 'text-red-600 dark:text-red-300'));
+    $acvBg    = $acv > 110 ? 'bg-blue-100 dark:bg-blue-900'
+           : ($acv >= 85 ? 'bg-green-100 dark:bg-green-900'
+           : ($acv >= 70 ? 'bg-yellow-100 dark:bg-yellow-900'
+           : 'bg-red-100 dark:bg-red-900'));
 
         $ref = (float)($todayMetrics['refraksi_persen'] ?? 0);
         $refColor = $ref <= 1 ? 'text-green-600 dark:text-green-300' : ($ref <= 2 ? 'text-yellow-600 dark:text-yellow-300' : 'text-red-600 dark:text-red-300');
         $refBg    = $ref <= 1 ? 'bg-green-100 dark:bg-green-900' : ($ref <= 2 ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-red-100 dark:bg-red-900');
 
-        $acvMonthly = (float)($monthlyMetrics['acv_prod'] ?? 0);
-        $acvMonthlyColor = $acvMonthly >= 100 ? 'text-green-600 dark:text-green-300' : ($acvMonthly >= 90 ? 'text-yellow-600 dark:text-yellow-300' : 'text-red-600 dark:text-red-300');
+    $acvMonthly = (float)($monthlyMetrics['acv_prod'] ?? 0);
+    $acvMonthlyColor = $acvMonthly > 110 ? 'text-blue-600 dark:text-blue-300'
+               : ($acvMonthly >= 85 ? 'text-green-600 dark:text-green-300'
+               : ($acvMonthly >= 70 ? 'text-yellow-600 dark:text-yellow-300'
+               : 'text-red-600 dark:text-red-300'));
 
     // Positive vs zero coloring for HK & Produksi
     $hk = (int)($todayMetrics['total_tk'] ?? 0);
