@@ -60,11 +60,11 @@
             <div class="flex items-center justify-center h-16 px-4 bg-green-600 dark:bg-green-700">
                 <div class="flex items-center space-x-3">
                     <img src="{{ asset('images/logo-PTSAG.png') }}" 
-                         alt="PT SAG" 
+                         alt="PT Sahabat Agro Group" 
                          class="h-8 w-auto">
                     <div class="transition-opacity duration-300"
                          :class="(sidebarOpen || sidebarHover) ? 'opacity-100' : 'opacity-0'">
-                        <span class="text-white font-bold text-sm block">PT SAG</span>
+                        <span class="text-white font-bold text-sm block">PT Sahabat Agro Group</span>
                         <span class="text-green-200 text-xs block">Sistem Panen</span>
                     </div>
                 </div>
@@ -138,6 +138,7 @@
                             <i class="fas fa-table w-4 h-4"></i>
                             <span class="ml-2">Data Master</span>
                         </a>
+                        @if (config('app.show_legacy'))
                         <a href="{{ route('master.kebun.index') }}" 
                            class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('master.kebun.*') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
                             <i class="fas fa-map w-4 h-4"></i>
@@ -148,6 +149,7 @@
                             <i class="fas fa-sitemap w-4 h-4"></i>
                             <span class="ml-2">Divisi (Legacy)</span>
                         </a>
+                        @endif
                         <a href="{{ route('db.overview') }}" 
                            class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('db.overview') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
                             <i class="fas fa-list w-4 h-4"></i>

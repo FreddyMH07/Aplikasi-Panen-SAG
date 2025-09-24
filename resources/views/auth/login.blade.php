@@ -35,7 +35,7 @@
         <!-- Logo and Title -->
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4 p-2">
-                <img src="{{ asset('images/logo-PTSAG.png') }}" alt="PT SAG" class="w-full h-full object-contain">
+                <img src="{{ asset('images/logo-PTSAG.png') }}" alt="PT Sahabat Agro Group" class="w-full h-full object-contain">
             </div>
             <h1 class="text-3xl font-bold text-white mb-2">PT Sahabat Agro Group</h1>
             <p class="text-green-100">Platform Digital Report Panen Kelapa Sawit</p>

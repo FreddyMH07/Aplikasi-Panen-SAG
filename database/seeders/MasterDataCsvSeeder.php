@@ -13,7 +13,7 @@ class MasterDataCsvSeeder extends Seeder
      */
     public function run(): void
     {
-        $file = base_path('Template Import Master Data Panen PT SAG.csv');
+        $file = base_path('Template Import Master Data Panen PT Sahabat Agro Group.csv');
         if (!file_exists($file)) {
             $this->command?->warn("Master data CSV not found: $file");
             return;

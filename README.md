@@ -241,8 +241,8 @@ Railway menggunakan `railway.json` untuk menjalankan build:
 
 ### Seeder CSV Otomatis
 Dua file CSV berikut dipakai otomatis saat seeding:
-- `Template Import Master Data Panen PT SAG.csv`
-- `Template Import Panen Harian PT SAG.csv`
+- `Template Import Master Data Panen PT Sahabat Agro Group.csv`
+- `Template Import Panen Harian PT Sahabat Agro Group.csv`
 
 Pastikan file tersebut ikut dipush agar data awal ter-inject. Seeder terkait:
 - `MasterDataCsvSeeder`

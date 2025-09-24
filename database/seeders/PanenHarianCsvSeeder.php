@@ -14,7 +14,7 @@ class PanenHarianCsvSeeder extends Seeder
      */
     public function run(): void
     {
-        $file = base_path('Template Import Panen Harian PT SAG.csv');
+        $file = base_path('Template Import Panen Harian PT Sahabat Agro Group.csv');
         if (!file_exists($file)) {
             $this->command?->warn("Panen harian CSV not found: $file");
             return;

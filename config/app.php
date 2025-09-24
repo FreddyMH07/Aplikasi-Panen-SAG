@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    // Feature flags / UI toggles
+    'show_legacy' => env('SHOW_LEGACY', false),
+
 ];
