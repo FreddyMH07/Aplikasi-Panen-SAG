@@ -35,7 +35,7 @@
                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
                     <option value="">Semua Tahun</option>
                     @for($year = date('Y'); $year >= 2020; $year--)
-                        <option value="{{ $year }}" {{ $year == date('Y') ? 'selected' : '' }}>{{ $year }}</option>
+                        <option value="{{ $year }}">{{ $year }}</option>
                     @endfor
                 </select>
             </div>
@@ -94,6 +94,7 @@
     <!-- Data Table -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-6">
+            <div id="tableStatus" class="hidden mb-3 p-3 rounded bg-yellow-50 border border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100"></div>
             <div class="overflow-x-auto">
                 <table id="panenBulananTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -144,12 +145,15 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route("panen-bulanan.data") }}',
+            url: '{{ route("panen-bulanan.data", [], false) }}',
             data: function(d) {
                 d.tahun = $('#tahun_filter').val();
                 d.bulan = $('#bulan_filter').val();
                 d.kebun = $('#kebun_filter').val();
                 d.divisi = $('#divisi_filter').val();
+            },
+            error: function(xhr, error, thrown) {
+                showTableStatus(`Gagal memuat data (${xhr.status} ${thrown}). Cek koneksi dan pastikan Anda sudah login.`, 'error');
             }
         },
         columns: [
@@ -175,8 +179,12 @@ $(document).ready(function() {
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
         },
-        drawCallback: function() {
-            // Add any post-draw callbacks here
+        preDrawCallback: function() { hideTableStatus(); },
+        drawCallback: function(settings) {
+            const info = this.api().page.info();
+            if (info.recordsDisplay === 0) {
+                showTableStatus('Tidak ada data untuk filter/periode yang dipilih. Coba reset filter di atas.', 'info');
+            }
         }
     });
     
@@ -185,7 +193,7 @@ $(document).ready(function() {
 });
 
 function loadKebunList() {
-    $.get('{{ route("api.kebun-list") }}')
+    $.get('{{ route("api.kebun-list", [], false) }}')
         .done(function(data) {
             const kebunSelect = $('#kebun_filter');
             kebunSelect.html('<option value="">Semua Kebun</option>');
@@ -200,7 +208,7 @@ function loadDivisi(kebun) {
     divisiSelect.html('<option value="">Semua Divisi</option>');
     
     if (kebun) {
-        $.get(`{{ url('/api/divisi-list') }}/${kebun}`)
+        $.get(`{{ url('/api/divisi-list', [], false) }}/${kebun}`)
             .done(function(data) {
                 data.forEach(function(divisi) {
                     divisiSelect.append(`<option value="${divisi}">${divisi}</option>`);
@@ -214,7 +222,7 @@ function applyFilters() {
 }
 
 function resetFilters() {
-    $('#tahun_filter').val('{{ date("Y") }}');
+    $('#tahun_filter').val('');
     $('#bulan_filter').val('');
     $('#kebun_filter').val('');
     $('#divisi_filter').val('');
@@ -230,7 +238,24 @@ function exportData() {
         divisi: $('#divisi_filter').val()
     });
     
-    window.location.href = `{{ route('panen-bulanan.export') }}?${params.toString()}`;
+    window.location.href = `{{ route('panen-bulanan.export', [], false) }}?${params.toString()}`;
+}
+
+function showTableStatus(message, type = 'info') {
+    const el = $('#tableStatus');
+    el.removeClass('hidden');
+    el.removeClass('bg-yellow-50 border-yellow-200 text-yellow-800');
+    el.removeClass('bg-red-50 border-red-200 text-red-800');
+    if (type === 'error') {
+        el.addClass('bg-red-50 border-red-200 text-red-800 dark:bg-red-900 dark:border-red-700 dark:text-red-100');
+    } else {
+        el.addClass('bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100');
+    }
+    el.text(message);
+}
+
+function hideTableStatus() {
+    $('#tableStatus').addClass('hidden');
 }
 </script>
 @endpush
