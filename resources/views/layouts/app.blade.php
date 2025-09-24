@@ -157,16 +157,7 @@
                             <span class="ml-2">Divisi (Legacy)</span>
                         </a>
                         @endif
-                        <a href="{{ route('db.overview') }}" 
-                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('db.overview') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
-                            <i class="fas fa-list w-4 h-4"></i>
-                            <span class="ml-2">DB Overview</span>
-                        </a>
-                        <a href="{{ route('table-columns.index') }}" 
-                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('table-columns.*') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
-                            <i class="fas fa-columns w-4 h-4"></i>
-                            <span class="ml-2">Table Columns</span>
-                        </a>
+                        
                     </div>
                 </div>
             </nav>
