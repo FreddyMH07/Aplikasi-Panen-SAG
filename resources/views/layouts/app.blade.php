@@ -371,6 +371,14 @@
                     borderColor: tooltipBorder,
                     borderWidth: 1
                 });
+                // Helper to bump rgba alpha for better contrast on dark backgrounds
+                const adjustRgbaAlpha = (color, alphaDark, alphaLight) => {
+                    if (typeof color !== 'string') return color;
+                    const m = color.match(/^rgba\((\s*\d+\s*),(\s*\d+\s*),(\s*\d+\s*),(\s*0?\.?\d+\s*)\)$/i);
+                    if (!m) return color;
+                    const a = isDark ? (alphaDark ?? 0.35) : (alphaLight ?? 0.15);
+                    return `rgba(${m[1]},${m[2]},${m[3]},${a})`;
+                };
                 // Try update existing charts
                 (window.__charts||[]).forEach(ch => {
                     const scales = ch.options.scales || {};
@@ -392,6 +400,20 @@
                         borderColor: tooltipBorder,
                         borderWidth: 1
                     });
+                    // Adjust dataset background alpha for readability
+                    if (ch.data && Array.isArray(ch.data.datasets)) {
+                        ch.data.datasets.forEach(ds => {
+                            if (typeof ds.backgroundColor === 'string') {
+                                ds.backgroundColor = adjustRgbaAlpha(ds.backgroundColor, 0.35, 0.15);
+                            } else if (Array.isArray(ds.backgroundColor)) {
+                                // Leave arrays (categorical palettes) as-is
+                            }
+                            // If line without explicit borderWidth, bump it a bit on dark
+                            if ((ds.type === 'line' || ch.config.type === 'line') && (ds.borderWidth == null)) {
+                                ds.borderWidth = isDark ? 2 : 1.5;
+                            }
+                        });
+                    }
                     ch.update('none');
                 });
             }
