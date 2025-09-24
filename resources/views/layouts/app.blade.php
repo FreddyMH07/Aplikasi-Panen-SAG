@@ -23,8 +23,8 @@
     </script>
     <!-- Tailwind CSS (force light unless .dark class is set) -->
     <script>
-        tailwind = window.tailwind || {};
-        tailwind.config = Object.assign({}, tailwind.config || {}, { darkMode: 'class' });
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = Object.assign({}, window.tailwind.config || {}, { darkMode: 'class' });
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     
