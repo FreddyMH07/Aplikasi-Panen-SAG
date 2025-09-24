@@ -213,4 +213,16 @@ Route::middleware('auth')->group(function () {
             ]);
         })->name('master-data.summary');
     });
+
+    // KPI & Analytics Routes
+    Route::prefix('kpi')->name('kpi.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\KpiController::class, 'index'])->name('index');
+        Route::get('/rekonsiliasi', [\App\Http\Controllers\KpiController::class, 'rekonsiliasi'])->name('rekonsiliasi');
+        Route::get('/restan', [\App\Http\Controllers\KpiController::class, 'restan'])->name('restan');
+        Route::get('/budget', [\App\Http\Controllers\KpiController::class, 'budget'])->name('budget');
+        Route::get('/produktifitas', [\App\Http\Controllers\KpiController::class, 'produktifitas'])->name('produktifitas');
+        Route::get('/quality', [\App\Http\Controllers\KpiController::class, 'quality'])->name('quality');
+        Route::get('/anomali', [\App\Http\Controllers\KpiController::class, 'anomali'])->name('anomali');
+        Route::get('/summary', [\App\Http\Controllers\KpiController::class, 'summary'])->name('summary');
+    });
 });

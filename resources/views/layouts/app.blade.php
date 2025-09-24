@@ -133,6 +133,67 @@
                     </div>
                 </div>
                 
+                <!-- KPI & Analytics Menu -->
+                <div x-data="{ open: {{ request()->routeIs('kpi.*') ? 'true' : 'false' }} }">
+                    <button @click="open = !open" 
+                            class="flex items-center w-full px-3 py-2 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                        <i class="fas fa-chart-pie w-5 h-5"></i>
+                        <span class="ml-3 transition-opacity duration-300"
+                              :class="(sidebarOpen || sidebarHover) ? 'opacity-100' : 'opacity-0'">
+                            KPI & Analytics
+                        </span>
+                        <i class="fas fa-chevron-down ml-auto transition-transform duration-200"
+                           :class="open ? 'rotate-180' : ''"
+                           x-show="sidebarOpen || sidebarHover"></i>
+                    </button>
+                    <div x-show="open && (sidebarOpen || sidebarHover)" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         class="ml-6 mt-2 space-y-1">
+                        <a href="{{ route('kpi.index') }}" 
+                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('kpi.index') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
+                            <i class="fas fa-list w-4 h-4"></i>
+                            <span class="ml-2">Overview</span>
+                        </a>
+                        <a href="{{ route('kpi.rekonsiliasi') }}" 
+                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('kpi.rekonsiliasi') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
+                            <i class="fas fa-balance-scale w-4 h-4"></i>
+                            <span class="ml-2">Rekonsiliasi</span>
+                        </a>
+                        <a href="{{ route('kpi.restan') }}" 
+                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('kpi.restan') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
+                            <i class="fas fa-exclamation-triangle w-4 h-4"></i>
+                            <span class="ml-2">Restan</span>
+                        </a>
+                        <a href="{{ route('kpi.budget') }}" 
+                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('kpi.budget') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
+                            <i class="fas fa-wallet w-4 h-4"></i>
+                            <span class="ml-2">Budget</span>
+                        </a>
+                        <a href="{{ route('kpi.produktifitas') }}" 
+                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('kpi.produktifitas') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
+                            <i class="fas fa-user-check w-4 h-4"></i>
+                            <span class="ml-2">Produktivitas</span>
+                        </a>
+                        <a href="{{ route('kpi.quality') }}" 
+                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('kpi.quality') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
+                            <i class="fas fa-gem w-4 h-4"></i>
+                            <span class="ml-2">Quality</span>
+                        </a>
+                        <a href="{{ route('kpi.anomali') }}" 
+                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('kpi.anomali') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
+                            <i class="fas fa-bug w-4 h-4"></i>
+                            <span class="ml-2">Anomali</span>
+                        </a>
+                        <a href="{{ route('kpi.summary') }}" 
+                           class="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 {{ request()->routeIs('kpi.summary') ? 'bg-green-50 dark:bg-green-900 text-green-600 dark:text-green-200' : '' }}">
+                            <i class="fas fa-clipboard-check w-4 h-4"></i>
+                            <span class="ml-2">Ringkasan</span>
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Master Data Menu -->
                 <div x-data="{ open: {{ request()->routeIs('master.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open" 
