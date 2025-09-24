@@ -169,6 +169,7 @@
                     <p class="text-2xl font-bold {{ $todayMetrics['selisih'] >= 0 ? 'text-green-600' : 'text-red-600' }}">
                         {{ $todayMetrics['selisih'] >= 0 ? '+' : '' }}{{ number_format($todayMetrics['selisih'], 2) }} kg
                     </p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ number_format($todayMetrics['selisih_persen'] ?? 0, 2) }}%</p>
                 </div>
                 <div class="p-3 {{ $todayMetrics['selisih'] >= 0 ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900' }} rounded-full">
                     <i class="fas fa-balance-scale {{ $todayMetrics['selisih'] >= 0 ? 'text-green-600 dark:text-green-300' : 'text-red-600 dark:text-red-300' }}"></i>

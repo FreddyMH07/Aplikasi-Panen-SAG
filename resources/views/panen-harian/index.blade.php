@@ -115,6 +115,7 @@
                             <th class="px-6 py-3">AKP Calc</th>
                             <th class="px-6 py-3">ACV Prod</th>
                             <th class="px-6 py-3">Selisih</th>
+                            <th class="px-6 py-3">Selisih (%)</th>
                             <th class="px-6 py-3">Aksi</th>
                         </tr>
                     </thead>
@@ -248,6 +249,10 @@
                     <input type="checkbox" data-column="24" checked class="mr-2 column-toggle">
                     <span class="text-sm dark:text-gray-300">Selisih</span>
                 </label>
+                <label class="flex items-center">
+                    <input type="checkbox" data-column="25" checked class="mr-2 column-toggle">
+                    <span class="text-sm dark:text-gray-300">Selisih (%)</span>
+                </label>
             </div>
         </div>
         
@@ -377,6 +382,7 @@ $(document).ready(function() {
             { data: 'akp_calculated', name: 'akp_calculated', className: 'text-right', title: 'AKP Calc' },
             { data: 'acv_prod', name: 'acv_prod', className: 'text-right', title: 'ACV Prod' },
             { data: 'selisih', name: 'selisih', className: 'text-right', title: 'Selisih' },
+            { data: 'selisih_persen', name: 'selisih_persen', className: 'text-right', title: 'Selisih (%)' },
             { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-center', title: 'Aksi' }
         ],
         order: [[0, 'desc']],
@@ -511,6 +517,19 @@ $(document).ready(function() {
                 $(row).find('td:eq(24)').addClass('bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 font-semibold');
             } else if (selisih > 500) {
                 $(row).find('td:eq(24)').addClass('bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200');
+            }
+
+            // Selisih (%) coloring
+            const selisihPctText = data.selisih_persen || '0%';
+            const selisihPct = parseFloat(selisihPctText.replace('%', ''));
+            if (!isNaN(selisihPct)) {
+                if (selisihPct < -2) {
+                    $(row).find('td:eq(25)').addClass('bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 font-semibold');
+                } else if (selisihPct > 2) {
+                    $(row).find('td:eq(25)').addClass('bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200');
+                } else {
+                    $(row).find('td:eq(25)').addClass('bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200');
+                }
             }
         },
         initComplete: function() {

@@ -113,6 +113,7 @@
                             <th class="px-6 py-3">AKP Bulanan</th>
                             <th class="px-6 py-3">ACV Prod</th>
                             <th class="px-6 py-3">Selisih</th>
+                            <th class="px-6 py-3">Selisih (%)</th>
                             <th class="px-6 py-3">Refraksi (%)</th>
                         </tr>
                     </thead>
@@ -173,6 +174,7 @@ $(document).ready(function() {
             { data: 'akp_bulanan', name: 'akp_bulanan', className: 'text-right' },
             { data: 'acv_prod_bulanan', name: 'acv_prod_bulanan', className: 'text-right' },
             { data: 'selisih', name: 'selisih', className: 'text-right' },
+            { data: 'selisih_persen', name: 'selisih_persen', className: 'text-right' },
             { data: 'refraksi_persen', name: 'refraksi_persen', className: 'text-right' }
         ],
         order: [[0, 'desc'], [1, 'asc'], [2, 'asc']],

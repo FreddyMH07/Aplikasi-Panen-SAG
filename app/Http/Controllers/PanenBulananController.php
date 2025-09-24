@@ -86,6 +86,12 @@ class PanenBulananController extends Controller
                 $sign = $selisih >= 0 ? '+' : '';
                 return '<span class="' . $class . '">' . $sign . number_format($selisih, 2) . '</span>';
             })
+            ->addColumn('selisih_persen', function ($row) {
+                $pks = (float) ($row->total_timbang_pks ?? 0);
+                $kebun = (float) ($row->total_timbang_kebun ?? 0);
+                $pct = $pks > 0 ? (($pks - $kebun) / $pks * 100) : 0;
+                return number_format($pct, 2) . '%';
+            })
             ->addColumn('refraksi_persen', function ($row) {
                 $refraksi = $row->total_tonase > 0 ? 
                     (($row->total_refraksi_kg / $row->total_tonase) * 100) : 0;

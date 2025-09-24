@@ -95,6 +95,7 @@ class DashboardController extends Controller
                 'akp' => 0,
                 'acv_prod' => 0,
                 'selisih' => 0,
+                'selisih_persen' => 0,
                 'refraksi_persen' => 0,
                 'total_produksi' => 0,
                 'total_tk' => 0
@@ -105,13 +106,15 @@ class DashboardController extends Controller
         $akp = ($data->total_luas * 136) > 0 ? round($data->total_jjg / ($data->total_luas * 136), 4) : 0;
         $acv_prod = $data->total_budget > 0 ? round(100 * $data->total_timbang_pks / $data->total_budget, 2) : 0;
         $selisih = round($data->total_timbang_pks - $data->total_timbang_kebun, 2);
-        $refraksi_persen = $data->total_tonase > 0 ? round(100 * $data->total_refraksi / $data->total_tonase, 2) : 0;
+    $refraksi_persen = $data->total_tonase > 0 ? round(100 * $data->total_refraksi / $data->total_tonase, 2) : 0;
+    $selisih_persen = $data->total_timbang_pks > 0 ? round(100 * ($data->total_timbang_pks - $data->total_timbang_kebun) / $data->total_timbang_pks, 2) : 0;
 
         return [
             'bjr' => $bjr,
             'akp' => $akp,
             'acv_prod' => $acv_prod,
             'selisih' => $selisih,
+            'selisih_persen' => $selisih_persen,
             'refraksi_persen' => $refraksi_persen,
             'total_produksi' => round($data->total_timbang_pks, 2),
             'total_tk' => $data->total_tk ?? 0

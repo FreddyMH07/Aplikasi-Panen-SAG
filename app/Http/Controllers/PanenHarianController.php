@@ -60,6 +60,12 @@ class PanenHarianController extends Controller
             ->addColumn('acv_prod', function ($row) {
                 return number_format($row->acv_prod, 2) . '%';
             })
+            ->addColumn('selisih_persen', function ($row) {
+                $pks = (float) ($row->timbang_pks_harian ?? 0);
+                $kebun = (float) ($row->timbang_kebun_harian ?? 0);
+                $pct = $pks > 0 ? (($pks - $kebun) / $pks * 100) : 0;
+                return number_format($pct, 2) . '%';
+            })
             ->addColumn('selisih', function ($row) {
                 $selisih = $row->selisih;
                 $class = $selisih >= 0 ? 'text-green-600' : 'text-red-600';
