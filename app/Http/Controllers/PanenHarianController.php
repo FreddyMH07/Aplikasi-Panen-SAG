@@ -296,7 +296,8 @@ class PanenHarianController extends Controller
     // API untuk mendapatkan divisi berdasarkan kebun
     public function getDivisiByKebun(Request $request)
     {
-        $kebun = $request->get('kebun');
+    // Support kebun from route parameter or query
+    $kebun = $request->route('kebun') ?? $request->get('kebun');
         $divisis = PanenHarian::where('kebun', $kebun)
                               ->select('divisi')->distinct()->orderBy('divisi')->pluck('divisi');
         

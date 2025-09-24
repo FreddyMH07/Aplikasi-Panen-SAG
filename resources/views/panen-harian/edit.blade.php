@@ -20,7 +20,7 @@
             </div>
         </div>
         
-        <form action="{{ route('panen-harian.update', $panenHarian->id, false) }}" method="POST" class="p-6">
+    <form action="{{ route('panen-harian.update', $panenHarian->id, false) }}" method="POST" class="p-6">
             @csrf
             @method('PUT')
             
@@ -42,139 +42,139 @@
                     @enderror
                 </div>
                 
-                <!-- Kebun -->
+                <!-- Kebun (by name) -->
                 <div>
-                    <label for="kebun_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="kebun" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <i class="fas fa-map mr-1"></i>
                         Kebun <span class="text-red-500">*</span>
                     </label>
-                    <select id="kebun_id" 
-                            name="kebun_id" 
-                            required
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('kebun_id') border-red-500 @enderror">
+            <select id="kebun" 
+                name="kebun" 
+                required
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('kebun') border-red-500 @enderror">
                         <option value="">Pilih Kebun</option>
-                        @foreach($kebuns as $kebun)
-                            <option value="{{ $kebun->id }}" {{ old('kebun_id', $panenHarian->kebun_id) == $kebun->id ? 'selected' : '' }}>
-                                {{ $kebun->nama_kebun }}
+                        @foreach($kebuns as $k)
+                            <option value="{{ $k }}" {{ old('kebun', $panenHarian->kebun) == $k ? 'selected' : '' }}>
+                                {{ $k }}
                             </option>
                         @endforeach
                     </select>
-                    @error('kebun_id')
+                    @error('kebun')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
-                <!-- Divisi -->
+                <!-- Divisi (by name) -->
                 <div>
-                    <label for="divisi_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="divisi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <i class="fas fa-sitemap mr-1"></i>
                         Divisi <span class="text-red-500">*</span>
                     </label>
-                    <select id="divisi_id" 
-                            name="divisi_id" 
-                            required
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('divisi_id') border-red-500 @enderror">
+            <select id="divisi" 
+                name="divisi" 
+                required
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('divisi') border-red-500 @enderror">
                         <option value="">Pilih Divisi</option>
-                        @foreach($divisis as $divisi)
-                            <option value="{{ $divisi->id }}" {{ old('divisi_id', $panenHarian->divisi_id) == $divisi->id ? 'selected' : '' }}>
-                                {{ $divisi->nama_divisi }}
+                        @foreach($divisis as $d)
+                            <option value="{{ $d }}" {{ old('divisi', $panenHarian->divisi) == $d ? 'selected' : '' }}>
+                                {{ $d }}
                             </option>
                         @endforeach
                     </select>
-                    @error('divisi_id')
+                    @error('divisi')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
-                <!-- Luas Panen -->
+                <!-- Luas Panen (Ha) -->
                 <div>
-                    <label for="luas_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="luas_panen_ha" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <i class="fas fa-ruler mr-1"></i>
                         Luas Panen (Ha) <span class="text-red-500">*</span>
                     </label>
                     <input type="number" 
-                           id="luas_panen" 
-                           name="luas_panen" 
-                           value="{{ old('luas_panen', $panenHarian->luas_panen) }}"
+                           id="luas_panen_ha" 
+                           name="luas_panen_ha" 
+                           value="{{ old('luas_panen_ha', $panenHarian->luas_panen_ha) }}"
                            step="0.01"
                            min="0"
                            required
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('luas_panen') border-red-500 @enderror">
-                    @error('luas_panen')
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('luas_panen_ha') border-red-500 @enderror">
+                    @error('luas_panen_ha')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
-                <!-- JJG Panen -->
+                <!-- JJG Panen (jjg) -->
                 <div>
-                    <label for="jjg_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="jjg_panen_jjg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <i class="fas fa-seedling mr-1"></i>
                         JJG Panen <span class="text-red-500">*</span>
                     </label>
                     <input type="number" 
-                           id="jjg_panen" 
-                           name="jjg_panen" 
-                           value="{{ old('jjg_panen', $panenHarian->jjg_panen) }}"
+                           id="jjg_panen_jjg" 
+                           name="jjg_panen_jjg" 
+                           value="{{ old('jjg_panen_jjg', $panenHarian->jjg_panen_jjg) }}"
                            min="0"
                            required
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('jjg_panen') border-red-500 @enderror">
-                    @error('jjg_panen')
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('jjg_panen_jjg') border-red-500 @enderror">
+                    @error('jjg_panen_jjg')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
-                <!-- Timbang Kebun -->
+                <!-- Timbang Kebun (Kg) -->
                 <div>
-                    <label for="timbang_kebun" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="timbang_kebun_harian" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <i class="fas fa-weight mr-1"></i>
                         Timbang Kebun (Kg) <span class="text-red-500">*</span>
                     </label>
                     <input type="number" 
-                           id="timbang_kebun" 
-                           name="timbang_kebun" 
-                           value="{{ old('timbang_kebun', $panenHarian->timbang_kebun) }}"
+                           id="timbang_kebun_harian" 
+                           name="timbang_kebun_harian" 
+                           value="{{ old('timbang_kebun_harian', $panenHarian->timbang_kebun_harian) }}"
                            step="0.01"
                            min="0"
                            required
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('timbang_kebun') border-red-500 @enderror">
-                    @error('timbang_kebun')
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('timbang_kebun_harian') border-red-500 @enderror">
+                    @error('timbang_kebun_harian')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
-                <!-- Timbang PKS -->
+                <!-- Timbang PKS (Kg) -->
                 <div>
-                    <label for="timbang_pks" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="timbang_pks_harian" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <i class="fas fa-weight mr-1"></i>
                         Timbang PKS (Kg) <span class="text-red-500">*</span>
                     </label>
                     <input type="number" 
-                           id="timbang_pks" 
-                           name="timbang_pks" 
-                           value="{{ old('timbang_pks', $panenHarian->timbang_pks) }}"
+                           id="timbang_pks_harian" 
+                           name="timbang_pks_harian" 
+                           value="{{ old('timbang_pks_harian', $panenHarian->timbang_pks_harian) }}"
                            step="0.01"
                            min="0"
                            required
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('timbang_pks') border-red-500 @enderror">
-                    @error('timbang_pks')
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('timbang_pks_harian') border-red-500 @enderror">
+                    @error('timbang_pks_harian')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 
-                <!-- Jumlah TK -->
+                <!-- Jumlah TK (HK) -->
                 <div>
-                    <label for="jumlah_tk" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="jumlah_tk_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <i class="fas fa-users mr-1"></i>
                         HK (Tenaga Kerja) <span class="text-red-500">*</span>
                     </label>
                     <input type="number" 
-                           id="jumlah_tk" 
-                           name="jumlah_tk" 
-                           value="{{ old('jumlah_tk', $panenHarian->jumlah_tk) }}"
+                           id="jumlah_tk_panen" 
+                           name="jumlah_tk_panen" 
+                           value="{{ old('jumlah_tk_panen', $panenHarian->jumlah_tk_panen) }}"
                            min="0"
                            required
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('jumlah_tk') border-red-500 @enderror">
-                    @error('jumlah_tk')
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('jumlah_tk_panen') border-red-500 @enderror">
+                    @error('jumlah_tk_panen')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -197,20 +197,39 @@
                     @enderror
                 </div>
                 
-                <!-- Alokasi Budget -->
+                <!-- Tonase Panen (Kg) -->
                 <div>
-                    <label for="alokasi_budget" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        <i class="fas fa-dollar-sign mr-1"></i>
-                        Alokasi Budget
+                    <label for="tonase_panen_kg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-weight-hanging mr-1"></i>
+                        Tonase Panen (Kg) <span class="text-red-500">*</span>
                     </label>
                     <input type="number" 
-                           id="alokasi_budget" 
-                           name="alokasi_budget" 
-                           value="{{ old('alokasi_budget', $panenHarian->alokasi_budget) }}"
+                           id="tonase_panen_kg" 
+                           name="tonase_panen_kg" 
+                           value="{{ old('tonase_panen_kg', $panenHarian->tonase_panen_kg) }}"
                            step="0.01"
                            min="0"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('alokasi_budget') border-red-500 @enderror">
-                    @error('alokasi_budget')
+                           required
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('tonase_panen_kg') border-red-500 @enderror">
+                    @error('tonase_panen_kg')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Budget Harian -->
+                <div>
+                    <label for="budget_harian" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-dollar-sign mr-1"></i>
+                        Budget Harian
+                    </label>
+                    <input type="number" 
+                           id="budget_harian" 
+                           name="budget_harian" 
+                           value="{{ old('budget_harian', $panenHarian->budget_harian) }}"
+                           step="0.01"
+                           min="0"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('budget_harian') border-red-500 @enderror">
+                    @error('budget_harian')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -226,7 +245,7 @@
                     </div>
                     <div class="text-center">
                         <p class="text-sm text-blue-700 dark:text-blue-300">AKP</p>
-                        <p class="text-xl font-bold text-blue-900 dark:text-blue-100">{{ number_format($panenHarian->akp, 4) }}</p>
+                        <p class="text-xl font-bold text-blue-900 dark:text-blue-100">{{ number_format($panenHarian->akp_calculated, 4) }}</p>
                     </div>
                     <div class="text-center">
                         <p class="text-sm text-blue-700 dark:text-blue-300">ACV Prod (%)</p>
@@ -251,7 +270,7 @@
                     </div>
                     <div class="text-center">
                         <p class="text-sm text-gray-600 dark:text-gray-400">AKP</p>
-                        <p id="preview_akp" class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ number_format($panenHarian->akp, 4) }}</p>
+                        <p id="preview_akp" class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ number_format($panenHarian->akp_calculated, 4) }}</p>
                     </div>
                     <div class="text-center">
                         <p class="text-sm text-gray-600 dark:text-gray-400">ACV Prod (%)</p>
@@ -284,34 +303,34 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    // Load divisi when kebun changes
-    $('#kebun_id').change(function() {
-        const kebunId = $(this).val();
-        loadDivisi(kebunId);
+    // Load divisi when kebun changes (by kebun name)
+    $('#kebun').change(function() {
+        const kebun = $(this).val();
+        loadDivisiByName(kebun);
         calculatePreview();
     });
-    
+
     // Calculate preview when inputs change
-    $('#jjg_panen, #timbang_kebun, #timbang_pks, #luas_panen, #alokasi_budget').on('input', function() {
+    $('#jjg_panen_jjg, #timbang_kebun_harian, #timbang_pks_harian, #luas_panen_ha, #budget_harian, #tonase_panen_kg').on('input', function() {
         calculatePreview();
     });
-    
+
     // Initial calculation
     calculatePreview();
 });
 
-function loadDivisi(kebunId) {
-    const divisiSelect = $('#divisi_id');
+function loadDivisiByName(kebun) {
+    const divisiSelect = $('#divisi');
     const selectedDivisi = divisiSelect.val();
-    
+
     divisiSelect.html('<option value="">Pilih Divisi</option>');
-    
-    if (kebunId) {
-        $.get(`{{ url('/api/divisi-by-kebun') }}/${kebunId}`)
+
+    if (kebun) {
+        $.get(`{{ route('api.divisi-by-kebun-name', ['kebun' => '___']) }}`.replace('___', encodeURIComponent(kebun)))
             .done(function(data) {
                 data.forEach(function(divisi) {
-                    const selected = selectedDivisi == divisi.id ? 'selected' : '';
-                    divisiSelect.append(`<option value="${divisi.id}" ${selected}>${divisi.nama_divisi}</option>`);
+                    const selected = selectedDivisi === divisi ? 'selected' : '';
+                    divisiSelect.append(`<option value="${divisi}" ${selected}>${divisi}</option>`);
                 });
             })
             .fail(function() {
@@ -321,25 +340,25 @@ function loadDivisi(kebunId) {
 }
 
 function calculatePreview() {
-    const jjgPanen = parseFloat($('#jjg_panen').val()) || 0;
-    const timbangKebun = parseFloat($('#timbang_kebun').val()) || 0;
-    const timbangPks = parseFloat($('#timbang_pks').val()) || 0;
-    const luasPanen = parseFloat($('#luas_panen').val()) || 0;
-    const alokasiBudget = parseFloat($('#alokasi_budget').val()) || 0;
-    
+    const jjgPanen = parseFloat($('#jjg_panen_jjg').val()) || 0;
+    const timbangKebun = parseFloat($('#timbang_kebun_harian').val()) || 0;
+    const timbangPks = parseFloat($('#timbang_pks_harian').val()) || 0;
+    const luasPanen = parseFloat($('#luas_panen_ha').val()) || 0;
+    const budgetHarian = parseFloat($('#budget_harian').val()) || 0;
+
     // BJR = Timbang Kebun / JJG Panen
     const bjr = jjgPanen > 0 ? (timbangKebun / jjgPanen) : 0;
-    
+
     // AKP = JJG Panen / (Luas Panen * SPH)
     const sph = 136; // Default SPH
     const akp = (luasPanen * sph) > 0 ? (jjgPanen / (luasPanen * sph)) : 0;
-    
-    // ACV Prod = (Timbang PKS / Alokasi Budget) * 100
-    const acvProd = alokasiBudget > 0 ? ((timbangPks / alokasiBudget) * 100) : 0;
-    
+
+    // ACV Prod = (Timbang PKS / Budget Harian) * 100
+    const acvProd = budgetHarian > 0 ? ((timbangPks / budgetHarian) * 100) : 0;
+
     // Selisih = Timbang PKS - Timbang Kebun
     const selisih = timbangPks - timbangKebun;
-    
+
     // Update preview
     $('#preview_bjr').text(bjr.toFixed(2));
     $('#preview_akp').text(akp.toFixed(4));
