@@ -97,18 +97,20 @@
              @mouseleave="sidebarHover = false">
             
             <!-- Logo -->
-            <div class="flex items-center justify-center h-16 px-4 bg-green-600 dark:bg-green-700">
-                <div class="flex items-center space-x-3">
-                    <img src="{{ asset('images/logo-PTSAG.png') }}" 
-                         alt="PT Sahabat Agro Group" 
-                         class="h-8 w-auto">
-                    <div class="transition-opacity duration-300"
-                         :class="(sidebarOpen || sidebarHover) ? 'opacity-100' : 'opacity-0'">
-                        <span class="text-white font-bold text-sm block">PT Sahabat Agro Group</span>
-                        <span class="text-green-200 text-xs block">Sistem Panen</span>
-                    </div>
+          <div class="flex items-center h-16 bg-green-600 dark:bg-green-700"
+              :class="(sidebarOpen || sidebarHover) ? 'justify-start px-4' : 'justify-center px-0'">
+             <div class="flex items-center w-full"
+                 :class="(sidebarOpen || sidebarHover) ? 'space-x-3' : 'space-x-0 justify-center'">
+                <img src="{{ asset('images/logo-PTSAG.png') }}" 
+                    alt="PT Sahabat Agro Group" 
+                    class="h-8 w-auto object-contain shrink-0 mx-auto">
+                <div x-show="sidebarOpen || sidebarHover" x-transition.opacity.duration.200ms
+                    class="whitespace-nowrap">
+                    <span class="text-white font-bold text-sm block leading-tight">PT Sahabat Agro Group</span>
+                    <span class="text-green-200 text-xs block leading-tight">Sistem Panen</span>
                 </div>
-            </div>
+             </div>
+          </div>
             
             <!-- Navigation -->
             <nav class="flex-1 px-2 py-4 space-y-2 overflow-y-auto">
