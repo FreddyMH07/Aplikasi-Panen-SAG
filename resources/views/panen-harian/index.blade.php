@@ -332,6 +332,8 @@ $(document).ready(function() {
         const kebun = $(this).val();
         loadDivisi(kebun);
     });
+    // Also load divisi list initially (no kebun filter)
+    loadDivisi('');
     
     // Initialize DataTable with full toolbar
     dataTable = $('#panenHarianTable').DataTable({
@@ -539,6 +541,13 @@ function loadDivisi(kebun) {
     
     if (kebun) {
     $.get(`{{ url('/api/divisi-list', [], false) }}/${kebun}`)
+            .done(function(data) {
+                data.forEach(function(divisi) {
+                    divisiSelect.append(`<option value="${divisi}">${divisi}</option>`);
+                });
+            });
+    } else {
+        $.get(`{{ route('api.divisi-list', [], false) }}`)
             .done(function(data) {
                 data.forEach(function(divisi) {
                     divisiSelect.append(`<option value="${divisi}">${divisi}</option>`);

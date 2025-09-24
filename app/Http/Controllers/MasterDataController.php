@@ -37,6 +37,9 @@ class MasterDataController extends Controller
         if ($request->filled('kebun')) {
             $baseQuery->where('kebun', 'like', '%' . $request->kebun . '%');
         }
+        if ($request->filled('divisi')) {
+            $baseQuery->where('divisi', $request->divisi);
+        }
 
         // DataTables server-side params
         $draw   = (int)$request->get('draw', 1);

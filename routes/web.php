@@ -189,5 +189,14 @@ Route::middleware('auth')->group(function () {
             }
             return $query->pluck('divisi');
         })->name('divisi-list');
+
+        // MasterData: distinct divisi (optional by kebun)
+        Route::get('/master-data/divisi-list/{kebun?}', function($kebun = null) {
+            $query = \App\Models\MasterData::select('divisi')->distinct()->orderBy('divisi');
+            if ($kebun) {
+                $query->where('kebun', $kebun);
+            }
+            return $query->pluck('divisi');
+        })->name('master-data.divisi-list');
     });
 });

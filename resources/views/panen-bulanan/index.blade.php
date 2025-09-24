@@ -139,6 +139,8 @@ $(document).ready(function() {
         const kebun = $(this).val();
         loadDivisi(kebun);
     });
+    // Load divisi initially for all kebun
+    loadDivisi('');
     
     // Initialize DataTable
     dataTable = $('#panenBulananTable').DataTable({
@@ -209,6 +211,13 @@ function loadDivisi(kebun) {
     
     if (kebun) {
         $.get(`{{ url('/api/divisi-list', [], false) }}/${kebun}`)
+            .done(function(data) {
+                data.forEach(function(divisi) {
+                    divisiSelect.append(`<option value="${divisi}">${divisi}</option>`);
+                });
+            });
+    } else {
+        $.get(`{{ route('api.divisi-list', [], false) }}`)
             .done(function(data) {
                 data.forEach(function(divisi) {
                     divisiSelect.append(`<option value="${divisi}">${divisi}</option>`);

@@ -130,6 +130,13 @@
                        placeholder="Cari kebun..."
                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
             </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Divisi</label>
+                <select id="divisi_filter" 
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+                    <option value="">Semua Divisi</option>
+                </select>
+            </div>
             
             <div class="flex items-end">
                 <div class="flex space-x-2 w-full">
@@ -224,6 +231,8 @@
 let dataTable;
 
 $(document).ready(function() {
+    // Load divisi list for dropdown
+    loadDivisiList();
     // Initialize DataTable
     dataTable = $('#masterDataTable').DataTable({
         processing: true,
@@ -234,6 +243,7 @@ $(document).ready(function() {
                 d.tahun = $('#tahun_filter').val();
                 d.bulan = $('#bulan_filter').val();
                 d.kebun = $('#kebun_filter').val();
+                d.divisi = $('#divisi_filter').val();
             },
             error: function(xhr, error, thrown) {
                 showTableStatus(`Gagal memuat data (${xhr.status} ${thrown}). Cek koneksi dan pastikan Anda sudah login.`, 'error');
@@ -282,6 +292,7 @@ function resetFilters() {
     $('#tahun_filter').val('');
     $('#bulan_filter').val('');
     $('#kebun_filter').val('');
+    $('#divisi_filter').val('');
     applyFilters();
 }
 
@@ -298,7 +309,8 @@ function exportData() {
     const params = new URLSearchParams({
         tahun: $('#tahun_filter').val(),
         bulan: $('#bulan_filter').val(),
-        kebun: $('#kebun_filter').val()
+    kebun: $('#kebun_filter').val(),
+    divisi: $('#divisi_filter').val()
     });
     
     window.location.href = `{{ route('master.master-data.export', [], false) }}?${params.toString()}`;
@@ -310,6 +322,17 @@ function showImportModal() {
 
 function hideImportModal() {
     $('#importModal').removeClass('flex').addClass('hidden');
+}
+
+function loadDivisiList() {
+    $.get('{{ route("api.master-data.divisi-list", [], false) }}')
+        .done(function(data) {
+            const select = $('#divisi_filter');
+            select.html('<option value="">Semua Divisi</option>');
+            data.forEach(function(div) {
+                select.append(`<option value="${div}">${div}</option>`);
+            });
+        });
 }
 
 function editRecord(id) {
