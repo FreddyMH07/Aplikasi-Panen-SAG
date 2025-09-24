@@ -17,6 +17,18 @@
 
         $acvMonthly = (float)($monthlyMetrics['acv_prod'] ?? 0);
         $acvMonthlyColor = $acvMonthly >= 100 ? 'text-green-600 dark:text-green-300' : ($acvMonthly >= 90 ? 'text-yellow-600 dark:text-yellow-300' : 'text-red-600 dark:text-red-300');
+
+    // Positive vs zero coloring for HK & Produksi
+    $hk = (int)($todayMetrics['total_tk'] ?? 0);
+    $hkColor = $hk > 0 ? 'text-blue-600 dark:text-blue-300' : 'text-yellow-600 dark:text-yellow-300';
+    $hkBg    = $hk > 0 ? 'bg-blue-100 dark:bg-blue-900' : 'bg-yellow-100 dark:bg-yellow-900';
+
+    $prod = (float)($todayMetrics['total_produksi'] ?? 0);
+    $prodColor = $prod > 0 ? 'text-green-600 dark:text-green-300' : 'text-yellow-600 dark:text-yellow-300';
+    $prodBg    = $prod > 0 ? 'bg-green-100 dark:bg-green-900' : 'bg-yellow-100 dark:bg-yellow-900';
+
+    $prodMonthly = (float)($monthlyMetrics['total_produksi'] ?? 0);
+    $prodMonthlyColor = $prodMonthly > 0 ? 'text-green-600 dark:text-green-300' : 'text-yellow-600 dark:text-yellow-300';
     @endphp
     <!-- Welcome Section -->
     <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
@@ -104,13 +116,13 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">HK Hari Ini</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <p class="text-2xl font-bold {{ $hkColor }}">
                         {{ number_format($todayMetrics['total_tk']) }}
                     </p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tenaga Kerja Panen</p>
                 </div>
-                <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-full">
-                    <i class="fas fa-users text-purple-600 dark:text-purple-300"></i>
+                <div class="p-3 {{ $hkBg }} rounded-full">
+                    <i class="fas fa-users {{ $hkColor }}"></i>
                 </div>
             </div>
         </div>
@@ -139,12 +151,12 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Produksi Hari Ini</p>
-                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <p class="text-2xl font-bold {{ $prodColor }}">
                         {{ number_format($todayMetrics['total_produksi'], 2) }} kg
                     </p>
                 </div>
-                <div class="p-3 bg-green-100 dark:bg-green-900 rounded-full">
-                    <i class="fas fa-seedling text-green-600 dark:text-green-300"></i>
+                <div class="p-3 {{ $prodBg }} rounded-full">
+                    <i class="fas fa-seedling {{ $prodColor }}"></i>
                 </div>
             </div>
         </div>
@@ -198,7 +210,7 @@
             </div>
             <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <p class="text-sm text-gray-600 dark:text-gray-400">Total Produksi</p>
-                <p class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ number_format($monthlyMetrics['total_produksi'], 2) }} kg</p>
+                <p class="text-xl font-bold {{ $prodMonthlyColor }}">{{ number_format($monthlyMetrics['total_produksi'], 2) }} kg</p>
             </div>
             <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <p class="text-sm text-gray-600 dark:text-gray-400">ACV Prod</p>
