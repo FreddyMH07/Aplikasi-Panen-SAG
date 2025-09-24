@@ -49,7 +49,6 @@
     sidebarOpen: false,
     sidebarHover: false
 }">
-">
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
         <div class="sidebar-transition fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-gray-800 shadow-lg"

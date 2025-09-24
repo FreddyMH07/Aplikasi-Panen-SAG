@@ -37,17 +37,17 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal Mulai</label>
-                <input type="date" 
-                       id="start_date" 
-                       value="{{ date('Y-m-01') }}"
+          <input type="date" 
+              id="start_date" 
+              value=""
                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
             </div>
             
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal Akhir</label>
-                <input type="date" 
-                       id="end_date" 
-                       value="{{ date('Y-m-d') }}"
+          <input type="date" 
+              id="end_date" 
+              value=""
                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
             </div>
             
@@ -85,6 +85,7 @@
     <!-- Data Table -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-6">
+            <div id="tableStatus" class="hidden mb-3 p-3 rounded bg-yellow-50 border border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100"></div>
             <div class="overflow-x-auto">
                 <table id="panenHarianTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -343,6 +344,9 @@ $(document).ready(function() {
                 d.end_date = $('#end_date').val();
                 d.kebun = $('#kebun_filter').val();
                 d.divisi = $('#divisi_filter').val();
+            },
+            error: function(xhr, error, thrown) {
+                showTableStatus(`Gagal memuat data (${xhr.status} ${thrown}). Cek koneksi dan pastikan Anda sudah login.`, 'error');
             }
         },
         columns: [
@@ -378,7 +382,7 @@ $(document).ready(function() {
         responsive: true,
         scrollX: true,
         dom: '<"flex flex-col sm:flex-row justify-between items-center mb-4"<"flex items-center space-x-2"B><"flex items-center space-x-2"lf>>rtip',
-        buttons: [
+    buttons: [
             {
                 extend: 'copy',
                 text: '<i class="fas fa-copy mr-1"></i> Salin',
@@ -450,6 +454,15 @@ $(document).ready(function() {
                 },
                 colvis: 'Pilih Kolom',
                 colvisRestore: 'Tampilkan Semua'
+            }
+        },
+        preDrawCallback: function() {
+            hideTableStatus();
+        },
+        drawCallback: function(settings) {
+            const info = this.api().page.info();
+            if (info.recordsDisplay === 0) {
+                showTableStatus('Tidak ada data untuk filter/periode yang dipilih. Coba reset filter di atas.', 'info');
             }
         },
         rowCallback: function(row, data) {
@@ -539,8 +552,8 @@ function applyFilters() {
 }
 
 function resetFilters() {
-    $('#start_date').val('{{ date("Y-m-01") }}');
-    $('#end_date').val('{{ date("Y-m-d") }}');
+    $('#start_date').val('');
+    $('#end_date').val('');
     $('#kebun_filter').val('');
     $('#divisi_filter').val('');
     loadDivisi('');
@@ -638,6 +651,23 @@ function deleteRecord(id) {
             }
         });
     }
+}
+
+function showTableStatus(message, type = 'info') {
+    const el = $('#tableStatus');
+    el.removeClass('hidden');
+    el.removeClass('bg-yellow-50 border-yellow-200 text-yellow-800');
+    el.removeClass('bg-red-50 border-red-200 text-red-800');
+    if (type === 'error') {
+        el.addClass('bg-red-50 border-red-200 text-red-800 dark:bg-red-900 dark:border-red-700 dark:text-red-100');
+    } else {
+        el.addClass('bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100');
+    }
+    el.text(message);
+}
+
+function hideTableStatus() {
+    $('#tableStatus').addClass('hidden');
 }
 </script>
 @endpush

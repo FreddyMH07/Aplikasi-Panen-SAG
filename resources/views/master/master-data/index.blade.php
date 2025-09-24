@@ -151,6 +151,7 @@
     <!-- Data Table -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-6">
+            <div id="tableStatus" class="hidden mb-3 p-3 rounded bg-yellow-50 border border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100"></div>
             <div class="overflow-x-auto">
                 <table id="masterDataTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -233,6 +234,9 @@ $(document).ready(function() {
                 d.tahun = $('#tahun_filter').val();
                 d.bulan = $('#bulan_filter').val();
                 d.kebun = $('#kebun_filter').val();
+            },
+            error: function(xhr, error, thrown) {
+                showTableStatus(`Gagal memuat data (${xhr.status} ${thrown}). Cek koneksi dan pastikan Anda sudah login.`, 'error');
             }
         },
         columns: [
@@ -251,6 +255,15 @@ $(document).ready(function() {
         responsive: true,
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json'
+        },
+        preDrawCallback: function() {
+            hideTableStatus();
+        },
+        drawCallback: function(settings) {
+            const info = this.api().page.info();
+            if (info.recordsDisplay === 0) {
+                showTableStatus('Tidak ada data untuk filter/periode yang dipilih. Coba reset filter di atas.', 'info');
+            }
         },
         drawCallback: function() {
             updateSummaryCards();
@@ -322,6 +335,23 @@ function deleteRecord(id) {
             }
         });
     }
+}
+
+function showTableStatus(message, type = 'info') {
+    const el = $('#tableStatus');
+    el.removeClass('hidden');
+    el.removeClass('bg-yellow-50 border-yellow-200 text-yellow-800');
+    el.removeClass('bg-red-50 border-red-200 text-red-800');
+    if (type === 'error') {
+        el.addClass('bg-red-50 border-red-200 text-red-800 dark:bg-red-900 dark:border-red-700 dark:text-red-100');
+    } else {
+        el.addClass('bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100');
+    }
+    el.text(message);
+}
+
+function hideTableStatus() {
+    $('#tableStatus').addClass('hidden');
 }
 </script>
 @endpush
