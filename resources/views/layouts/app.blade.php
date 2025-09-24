@@ -332,14 +332,41 @@
         (function() {
             const btn = document.getElementById('themeToggle');
             if (!btn) return;
+            // Global chart registry
+            window.__charts = window.__charts || [];
+            function setChartTheme(isDark){
+                if (typeof Chart === 'undefined') return;
+                const axisColor = isDark ? '#e5e7eb' : '#374151';
+                const gridColor = isDark ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.1)';
+                Chart.defaults.color = axisColor;
+                Chart.defaults.borderColor = gridColor;
+                // Try update existing charts
+                (window.__charts||[]).forEach(ch => {
+                    const scales = ch.options.scales || {};
+                    Object.keys(scales).forEach(k => {
+                        if (!scales[k]) return;
+                        if (!scales[k].ticks) scales[k].ticks = {};
+                        if (!scales[k].grid) scales[k].grid = {};
+                        scales[k].ticks.color = axisColor;
+                        scales[k].grid.color = gridColor;
+                    });
+                    if (ch.options.plugins && ch.options.plugins.legend && ch.options.plugins.legend.labels){
+                        ch.options.plugins.legend.labels.color = axisColor;
+                    }
+                    ch.update('none');
+                });
+            }
             const syncIcon = () => {
                 const isDark = document.documentElement.classList.contains('dark');
                 btn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+                setChartTheme(isDark);
             };
             syncIcon();
             btn.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+                // Notify pages
+                try { document.dispatchEvent(new CustomEvent('themechange', { detail: { isDark } })); } catch(e) {}
                 syncIcon();
             });
         })();

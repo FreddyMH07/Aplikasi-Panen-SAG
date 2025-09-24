@@ -42,12 +42,14 @@
     const labels = rows.map(r => `${r.kebun} - ${r.divisi}`);
     const kg = rows.map(r => Number(r.avg_output_kg_hk||0));
     const ha = rows.map(r => Number(r.avg_output_ha_hk||0));
-    new Chart(document.getElementById('chartProduktifitas'), {
+  window.__charts = window.__charts || [];
+  const ch = new Chart(document.getElementById('chartProduktifitas'), {
       data:{ labels, datasets:[
         {type:'bar', label:'Avg Kg/HK', data:kg, backgroundColor:'#16a34a'},
         {type:'line', label:'Avg Ha/HK', data:ha, borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,.15)'}
       ]}, options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }
-    });
+  });
+  window.__charts.push(ch);
     $('#tblProduktifitas').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[2,'desc']] });
   })();
 </script>

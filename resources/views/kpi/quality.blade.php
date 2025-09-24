@@ -53,12 +53,14 @@
     const labels = rows.map(r => new Date(r.tanggal_panen).toLocaleDateString('id-ID'));
     const akpBias = rows.map(r => Number(r.akp_bias||0));
     const bjrBias = rows.map(r => Number(r.bjr_bias||0));
-    new Chart(document.getElementById('chartQuality'), {
+  window.__charts = window.__charts || [];
+  const ch = new Chart(document.getElementById('chartQuality'), {
       data:{ labels, datasets:[
         {type:'line', label:'Bias AKP (%)', data:akpBias, borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,.15)'},
         {type:'line', label:'Bias BJR', data:bjrBias, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.15)'}
       ]}, options:{ responsive:true, scales:{ y:{ beginAtZero:false } } }
-    });
+  });
+  window.__charts.push(ch);
     $('#tblQuality').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
   })();
 </script>

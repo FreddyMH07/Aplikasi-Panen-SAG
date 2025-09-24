@@ -60,11 +60,13 @@
     const rows = @json($data);
     const metrics = Object.keys(stats);
     const counts = metrics.map(m => rows.filter(r => (r.flags||[]).includes(m)).length);
-    new Chart(document.getElementById('chartAnomali'), {
+  window.__charts = window.__charts || [];
+  const ch = new Chart(document.getElementById('chartAnomali'), {
       type:'bar',
       data:{ labels:metrics.map(m=>m.toUpperCase()), datasets:[{ label:'Jumlah Anomali', data:counts, backgroundColor:'#dc2626' }]},
       options:{ responsive:true, plugins:{legend:{display:false}} }
-    });
+  });
+  window.__charts.push(ch);
     $('#tblAnomali').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
   })();
 </script>

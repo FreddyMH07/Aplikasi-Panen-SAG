@@ -50,7 +50,8 @@
     const loss = rows.map(r => Number(r.loss_pct||0));
     const selisih = rows.map(r => Number(r.selisih_kg||0));
     const ctx = document.getElementById('chartRekonsiliasi');
-    new Chart(ctx, {
+  window.__charts = window.__charts || [];
+  const ch = new Chart(ctx, {
       data: {
         labels,
         datasets: [
@@ -59,7 +60,8 @@
         ]
       },
       options: {responsive:true, interaction:{mode:'index', intersect:false}, scales:{y:{title:{text:'Kg',display:true}}, y1:{position:'right', grid:{drawOnChartArea:false}, title:{text:'% Loss',display:true}}}}
-    });
+  });
+  window.__charts.push(ch);
   $('#tblRekonsiliasi').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
   })();
 </script>

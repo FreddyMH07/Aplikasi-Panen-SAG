@@ -44,11 +44,13 @@
     const labels = rows.map(r => `${r.kebun} - ${r.divisi}`);
     const restanRate = rows.map(r => Number(r.restan_rate||0));
     const ctx = document.getElementById('chartRestan');
-    new Chart(ctx, {
+  window.__charts = window.__charts || [];
+  const ch = new Chart(ctx, {
       type: 'bar',
       data: { labels, datasets: [{ label:'Restan %', data: restanRate, backgroundColor: restanRate.map(v => v<=1?'#16a34a':(v<=3?'#ca8a04':'#dc2626')) }] },
       options: { responsive:true, plugins:{legend:{display:false}}, scales:{y:{title:{display:true,text:'%'}}} }
-    });
+  });
+  window.__charts.push(ch);
     $('#tblRestan').DataTable({
       dom: 'Bfrtip',
       buttons: ['csv','excel','pdf','print','colvis'],
