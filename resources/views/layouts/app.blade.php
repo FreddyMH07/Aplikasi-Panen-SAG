@@ -62,9 +62,30 @@
     <style>
         /* Minimal inline styles for critical rendering */
         [x-cloak] { display: none !important; }
+        /* DataTables dark-mode readability */
+        .dark .dataTables_wrapper,
+        .dark .dataTables_wrapper .dataTables_info,
+        .dark .dataTables_wrapper .dataTables_paginate a,
+        .dark .dataTables_wrapper .dataTables_paginate .paginate_button,
+        .dark table.dataTable thead th,
+        .dark table.dataTable tbody td,
+        .dark .dataTables_wrapper .dataTables_filter label,
+        .dark .dataTables_wrapper .dataTables_length label { color: #e5e7eb; }
+        .dark .dataTables_wrapper .dataTables_filter input,
+        .dark .dataTables_wrapper .dataTables_length select {
+            color: #e5e7eb;
+            background-color: #111827;
+            border-color: #374151;
+        }
+        .dark .dt-button {
+            color: #e5e7eb !important;
+            background-color: #1f2937 !important;
+            border-color: #374151 !important;
+        }
+        .dark .dt-button:hover { background-color: #374151 !important; }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200" x-data="{ 
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200" x-data="{ 
     sidebarOpen: false,
     sidebarHover: false
 }">
@@ -338,8 +359,18 @@
                 if (typeof Chart === 'undefined') return;
                 const axisColor = isDark ? '#e5e7eb' : '#374151';
                 const gridColor = isDark ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.1)';
+                const tooltipBg = isDark ? 'rgba(55,65,81,0.95)' : 'rgba(255,255,255,0.95)';
+                const tooltipBorder = isDark ? '#4b5563' : '#e5e7eb';
                 Chart.defaults.color = axisColor;
                 Chart.defaults.borderColor = gridColor;
+                Chart.defaults.plugins = Chart.defaults.plugins || {};
+                Chart.defaults.plugins.tooltip = Object.assign({}, Chart.defaults.plugins.tooltip || {}, {
+                    backgroundColor: tooltipBg,
+                    titleColor: axisColor,
+                    bodyColor: axisColor,
+                    borderColor: tooltipBorder,
+                    borderWidth: 1
+                });
                 // Try update existing charts
                 (window.__charts||[]).forEach(ch => {
                     const scales = ch.options.scales || {};
@@ -353,6 +384,14 @@
                     if (ch.options.plugins && ch.options.plugins.legend && ch.options.plugins.legend.labels){
                         ch.options.plugins.legend.labels.color = axisColor;
                     }
+                    ch.options.plugins = ch.options.plugins || {};
+                    ch.options.plugins.tooltip = Object.assign({}, ch.options.plugins.tooltip || {}, {
+                        backgroundColor: tooltipBg,
+                        titleColor: axisColor,
+                        bodyColor: axisColor,
+                        borderColor: tooltipBorder,
+                        borderWidth: 1
+                    });
                     ch.update('none');
                 });
             }
