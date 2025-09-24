@@ -6,13 +6,25 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'PT Sahabat Agro Group - Sistem Panen Sawit Digital')</title>
     
+    <!-- Initialize theme early to avoid flash (default to light) -->
+    <script>
+        (function() {
+            try {
+                const stored = localStorage.getItem('theme');
+                if (stored === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else if (stored === 'light') {
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
     <!-- Tailwind CSS (force light unless .dark class is set) -->
     <script>
-        window.tailwind = {
-            config: {
-                darkMode: 'class',
-            }
-        };
+        tailwind = window.tailwind || {};
+        tailwind.config = Object.assign({}, tailwind.config || {}, { darkMode: 'class' });
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -181,6 +193,10 @@
                     </div>
                     
                     <div class="flex items-center space-x-4">
+                        <!-- Theme Toggle -->
+                        <button id="themeToggle" type="button" class="p-2 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-700 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700" aria-label="Toggle theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
                         <!-- User Menu -->
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" 
@@ -251,5 +267,21 @@
     </div>
     
     @stack('scripts')
+    <script>
+        (function() {
+            const btn = document.getElementById('themeToggle');
+            if (!btn) return;
+            const syncIcon = () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                btn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            };
+            syncIcon();
+            btn.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+                syncIcon();
+            });
+        })();
+    </script>
 </body>
 </html>

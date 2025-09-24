@@ -19,14 +19,25 @@ class MasterDataImport implements ToModel, WithHeadingRow, WithValidation
             'oktober' => 'October', 'november' => 'November', 'desember' => 'December'
         ];
 
-        $bulan = $row['bulan'];
+    $bulan = $row['bulan'];
         if (isset($bulanMap[strtolower($bulan)])) {
             $bulan = $bulanMap[strtolower($bulan)];
         }
 
+        // Normalize kebun/divisi to reduce duplicates due to casing/spacing
+        $normalizeStr = function($v) {
+            if ($v === null) return '';
+            $s = trim((string)$v);
+            $s = preg_replace('/\s+/', ' ', $s);
+            return strtoupper($s);
+        };
+
+        $kebun = $normalizeStr($row['kebun'] ?? '');
+        $divisi = $normalizeStr($row['divisi'] ?? '');
+
         // Check if record already exists
-        $exists = MasterData::where('kebun', $row['kebun'])
-                           ->where('divisi', $row['divisi'])
+        $exists = MasterData::where('kebun', $kebun)
+                           ->where('divisi', $divisi)
                            ->where('tahun', $row['tahun'])
                            ->where('bulan', $bulan)
                            ->first();
@@ -34,6 +45,8 @@ class MasterDataImport implements ToModel, WithHeadingRow, WithValidation
         if ($exists) {
             // Update existing record
             $exists->update([
+                'kebun' => $kebun,
+                'divisi' => $divisi,
                 'sph_panen' => $row['sph_panen'] ?? $exists->sph_panen,
                 'luas_tm' => $row['luas_tm'] ?? $exists->luas_tm,
                 'budget_alokasi' => $row['budget_alokasi'] ?? $exists->budget_alokasi,
@@ -47,8 +60,8 @@ class MasterDataImport implements ToModel, WithHeadingRow, WithValidation
 
         // Create new record
         return new MasterData([
-            'kebun' => $row['kebun'],
-            'divisi' => $row['divisi'],
+            'kebun' => $kebun,
+            'divisi' => $divisi,
             'sph_panen' => $row['sph_panen'] ?? 136,
             'luas_tm' => $row['luas_tm'] ?? 0,
             'budget_alokasi' => $row['budget_alokasi'] ?? 0,

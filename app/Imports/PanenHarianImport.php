@@ -182,8 +182,17 @@ class PanenHarianImport implements ToModel, WithHeadingRow, WithValidation
         $bulan = $tanggalPanen ? $tanggalPanen->format('F') : null;
         $tahun = $tanggalPanen ? $tanggalPanen->year : null;
 
-        $kebun = $row['kebun'] ?? '';
-        $divisi = $row['divisi'] ?? '';
+        // Normalize kebun/divisi to reduce duplicates due to casing/spacing
+        $normalizeStr = function($v) {
+            if ($v === null) return '';
+            $s = trim((string)$v);
+            // Collapse multiple spaces to single
+            $s = preg_replace('/\s+/', ' ', $s);
+            return strtoupper($s);
+        };
+
+        $kebun = $normalizeStr($row['kebun'] ?? '');
+        $divisi = $normalizeStr($row['divisi'] ?? '');
 
         $attributes = [
             'tanggal_panen' => $tanggalPanen,
