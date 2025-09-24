@@ -166,7 +166,7 @@ class PanenHarianController extends Controller
             'tanggal_panen' => 'required|date',
             'kebun' => 'required|string|max:64',
             'divisi' => 'required|string|max:64',
-            'akp_panen' => 'nullable|string|max:8',
+            'akp_panen' => 'nullable|numeric|min:0|max:100',
             'jumlah_tk_panen' => 'nullable|integer|min:0',
             'luas_panen_ha' => 'nullable|numeric|min:0',
             'jjg_panen_jjg' => 'nullable|integer|min:0',

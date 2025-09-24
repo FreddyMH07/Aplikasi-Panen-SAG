@@ -41,6 +41,7 @@ class PanenHarian extends Model
     protected $casts = [
         'tanggal_panen' => 'date',
         'tahun' => 'integer',
+    'akp_panen' => 'float',
         'jumlah_tk_panen' => 'integer',
         'luas_panen_ha' => 'float',
         'jjg_panen_jjg' => 'integer',

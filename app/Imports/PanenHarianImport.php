@@ -235,6 +235,7 @@ class PanenHarianImport implements ToModel, WithHeadingRow, WithValidation
             'tanggal_panen' => 'required',
             'kebun' => 'required|string|max:64',
             'divisi' => 'required|string|max:64',
+            'akp_panen' => 'nullable|numeric|min:0|max:100',
             'jumlah_tk_panen' => 'nullable|integer|min:0',
             'luas_panen_ha' => 'nullable|numeric|min:0',
             'jjg_panen_jjg' => 'nullable|integer|min:0',
