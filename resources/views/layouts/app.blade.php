@@ -96,8 +96,8 @@
              @mouseenter="sidebarHover = true"
              @mouseleave="sidebarHover = false">
             
-            <!-- Logo -->
-          <div class="flex items-center h-16 bg-green-600 dark:bg-green-700"
+                        <!-- Logo -->
+                    <div class="flex items-center h-16 bg-transparent"
               :class="(sidebarOpen || sidebarHover) ? 'justify-start px-4' : 'justify-center px-0'">
              <div class="flex items-center w-full"
                  :class="(sidebarOpen || sidebarHover) ? 'space-x-3' : 'space-x-0 justify-center'">
@@ -106,8 +106,8 @@
                     class="h-8 w-auto object-contain shrink-0 mx-auto">
                 <div x-show="sidebarOpen || sidebarHover" x-transition.opacity.duration.200ms
                     class="whitespace-nowrap">
-                    <span class="text-white font-bold text-sm block leading-tight">PT Sahabat Agro Group</span>
-                    <span class="text-green-200 text-xs block leading-tight">Sistem Panen</span>
+                                        <span class="text-gray-800 dark:text-gray-200 font-bold text-sm block leading-tight">PT Sahabat Agro Group</span>
+                                        <span class="text-gray-500 dark:text-gray-400 text-xs block leading-tight">Sistem Panen</span>
                 </div>
              </div>
           </div>
@@ -363,6 +363,8 @@
                 const gridColor = isDark ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.1)';
                 const tooltipBg = isDark ? 'rgba(55,65,81,0.95)' : 'rgba(255,255,255,0.95)';
                 const tooltipBorder = isDark ? '#4b5563' : '#e5e7eb';
+                const fontFamily = "'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif";
+                const fontSize = 12;
                 Chart.defaults.color = axisColor;
                 Chart.defaults.borderColor = gridColor;
                 Chart.defaults.plugins = Chart.defaults.plugins || {};
@@ -372,6 +374,11 @@
                     bodyColor: axisColor,
                     borderColor: tooltipBorder,
                     borderWidth: 1
+                });
+                // Ensure consistent fonts across charts
+                Chart.defaults.font = Object.assign({}, Chart.defaults.font || {}, { family: fontFamily, size: fontSize, weight: 'normal' });
+                Chart.defaults.plugins.legend = Object.assign({}, Chart.defaults.plugins.legend || {}, {
+                    labels: Object.assign({}, (Chart.defaults.plugins.legend || {}).labels || {}, { color: axisColor, font: { family: fontFamily, size: fontSize } })
                 });
                 // Helper to bump rgba alpha for better contrast on dark backgrounds
                 const adjustRgbaAlpha = (color, alphaDark, alphaLight) => {
@@ -389,10 +396,12 @@
                         if (!scales[k].ticks) scales[k].ticks = {};
                         if (!scales[k].grid) scales[k].grid = {};
                         scales[k].ticks.color = axisColor;
+                        scales[k].ticks.font = Object.assign({}, scales[k].ticks.font || {}, { family: fontFamily, size: fontSize });
                         scales[k].grid.color = gridColor;
                     });
                     if (ch.options.plugins && ch.options.plugins.legend && ch.options.plugins.legend.labels){
                         ch.options.plugins.legend.labels.color = axisColor;
+                        ch.options.plugins.legend.labels.font = Object.assign({}, ch.options.plugins.legend.labels.font || {}, { family: fontFamily, size: fontSize });
                     }
                     ch.options.plugins = ch.options.plugins || {};
                     ch.options.plugins.tooltip = Object.assign({}, ch.options.plugins.tooltip || {}, {
@@ -400,8 +409,11 @@
                         titleColor: axisColor,
                         bodyColor: axisColor,
                         borderColor: tooltipBorder,
-                        borderWidth: 1
+                        borderWidth: 1,
+                        titleFont: Object.assign({}, (ch.options.plugins.tooltip || {}).titleFont || {}, { family: fontFamily, size: fontSize + 1 }),
+                        bodyFont: Object.assign({}, (ch.options.plugins.tooltip || {}).bodyFont || {}, { family: fontFamily, size: fontSize })
                     });
+                    ch.options.font = Object.assign({}, ch.options.font || {}, { family: fontFamily, size: fontSize });
                     // Adjust dataset background alpha for readability
                     if (ch.data && Array.isArray(ch.data.datasets)) {
                         ch.data.datasets.forEach(ds => {

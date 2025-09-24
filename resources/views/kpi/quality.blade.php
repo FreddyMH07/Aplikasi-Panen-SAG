@@ -56,8 +56,8 @@
   window.__charts = window.__charts || [];
   const ch = new Chart(document.getElementById('chartQuality'), {
       data:{ labels, datasets:[
-        {type:'line', label:'Bias AKP (%)', data:akpBias, borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,.15)'},
-        {type:'line', label:'Bias BJR', data:bjrBias, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.15)'}
+        {type:'line', label:'Bias AKP (%)', data:akpBias, borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,.20)'},
+        {type:'line', label:'Bias BJR', data:bjrBias, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.20)'}
       ]}, options:{ responsive:true, scales:{ y:{ beginAtZero:false } } }
   });
   window.__charts.push(ch);

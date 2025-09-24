@@ -45,8 +45,8 @@
   window.__charts = window.__charts || [];
   const ch = new Chart(document.getElementById('chartProduktifitas'), {
       data:{ labels, datasets:[
-        {type:'bar', label:'Avg Kg/HK', data:kg, backgroundColor:'#16a34a'},
-        {type:'line', label:'Avg Ha/HK', data:ha, borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,.15)'}
+        {type:'bar', label:'Avg Kg/HK', data:kg, backgroundColor:'rgba(22,163,74,0.35)', borderColor:'#16a34a'},
+        {type:'line', label:'Avg Ha/HK', data:ha, borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,.20)'}
       ]}, options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }
   });
   window.__charts.push(ch);

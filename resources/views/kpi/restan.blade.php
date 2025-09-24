@@ -47,7 +47,7 @@
   window.__charts = window.__charts || [];
   const ch = new Chart(ctx, {
       type: 'bar',
-      data: { labels, datasets: [{ label:'Restan %', data: restanRate, backgroundColor: restanRate.map(v => v<=1?'#16a34a':(v<=3?'#ca8a04':'#dc2626')) }] },
+      data: { labels, datasets: [{ label:'Restan %', data: restanRate, backgroundColor: restanRate.map(v => v<=1?'rgba(22,163,74,0.35)':(v<=3?'rgba(202,138,4,0.35)':'rgba(220,38,38,0.35)') ), borderColor: restanRate.map(v => v<=1?'#16a34a':(v<=3?'#ca8a04':'#dc2626')) }] },
       options: { responsive:true, plugins:{legend:{display:false}}, scales:{y:{title:{display:true,text:'%'}}} }
   });
   window.__charts.push(ch);

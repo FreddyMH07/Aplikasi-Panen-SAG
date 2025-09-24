@@ -52,11 +52,11 @@
     const ctx = document.getElementById('chartRekonsiliasi');
   window.__charts = window.__charts || [];
   const ch = new Chart(ctx, {
-      data: {
+    data: {
         labels,
         datasets: [
-          {type:'line', label:'Loss %', data: loss, yAxisID:'y1', borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.2)', tension:.2},
-          {type:'bar', label:'Selisih (Kg)', data: selisih, yAxisID:'y', backgroundColor:'#3b82f6'}
+      {type:'line', label:'Loss %', data: loss, yAxisID:'y1', borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.20)', tension:.2},
+      {type:'bar', label:'Selisih (Kg)', data: selisih, yAxisID:'y', backgroundColor:'rgba(59,130,246,0.25)', borderColor:'#3b82f6'}
         ]
       },
       options: {responsive:true, interaction:{mode:'index', intersect:false}, scales:{y:{title:{text:'Kg',display:true}}, y1:{position:'right', grid:{drawOnChartArea:false}, title:{text:'% Loss',display:true}}}}

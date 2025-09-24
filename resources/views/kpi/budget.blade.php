@@ -96,8 +96,8 @@
   const ch1 = new Chart(document.getElementById('chartBudgetHarian'), {
       type:'line',
       data:{ labels: hLabels, datasets:[
-        {label:'Actual Kg', data:hActual, borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,.15)', tension:.2},
-        {label:'Budget Kg', data:hBudget, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.15)', tension:.2}
+        {label:'Actual Kg', data:hActual, borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,.20)', tension:.2},
+        {label:'Budget Kg', data:hBudget, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.20)', tension:.2}
       ]},
       options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{ title:{display:true,text:'Kg'} } } }
   });
@@ -107,8 +107,8 @@
     const bBudget = bulanan.map(r => Number(r.budget_kg||0));
   const ch2 = new Chart(document.getElementById('chartBudgetBulanan'), {
       data:{ labels:bLabels, datasets:[
-        {type:'bar', label:'Actual Kg', data:bActual, backgroundColor:'#22c55e'},
-        {type:'bar', label:'Budget Kg', data:bBudget, backgroundColor:'#3b82f6'}
+        {type:'bar', label:'Actual Kg', data:bActual, backgroundColor:'rgba(34,197,94,0.30)', borderColor:'#22c55e'},
+        {type:'bar', label:'Budget Kg', data:bBudget, backgroundColor:'rgba(59,130,246,0.30)', borderColor:'#3b82f6'}
       ]},
       options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{ title:{display:true,text:'Kg'} } } }
   });
