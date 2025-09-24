@@ -229,7 +229,7 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route("master.master-data.data") }}',
+            url: '{{ route("master.master-data.data", [], false) }}',
             data: function(d) {
                 d.tahun = $('#tahun_filter').val();
                 d.bulan = $('#bulan_filter').val();
@@ -301,7 +301,7 @@ function exportData() {
         kebun: $('#kebun_filter').val()
     });
     
-    window.location.href = `{{ route('master.master-data.export') }}?${params.toString()}`;
+    window.location.href = `{{ route('master.master-data.export', [], false) }}?${params.toString()}`;
 }
 
 function showImportModal() {

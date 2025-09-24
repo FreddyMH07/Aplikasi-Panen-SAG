@@ -338,7 +338,7 @@ $(document).ready(function() {
         processing: true,
         serverSide: true,
         ajax: {
-            url: '{{ route("panen-harian.data") }}',
+            url: '{{ route("panen-harian.data", [], false) }}',
             data: function(d) {
                 d.start_date = $('#start_date').val();
                 d.end_date = $('#end_date').val();
@@ -523,7 +523,7 @@ $(document).ready(function() {
 });
 
 function loadKebunList() {
-    $.get('{{ route("api.kebun-list") }}')
+    $.get('{{ route("api.kebun-list", [], false) }}')
         .done(function(data) {
             const kebunSelect = $('#kebun_filter');
             kebunSelect.html('<option value="">Semua Kebun</option>');
@@ -538,7 +538,7 @@ function loadDivisi(kebun) {
     divisiSelect.html('<option value="">Semua Divisi</option>');
     
     if (kebun) {
-        $.get(`{{ url('/api/divisi-list') }}/${kebun}`)
+    $.get(`{{ url('/api/divisi-list', [], false) }}/${kebun}`)
             .done(function(data) {
                 data.forEach(function(divisi) {
                     divisiSelect.append(`<option value="${divisi}">${divisi}</option>`);
