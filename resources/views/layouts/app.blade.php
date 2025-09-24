@@ -6,7 +6,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'PT Sahabat Agro Group - Sistem Panen Sawit Digital')</title>
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS (force light unless .dark class is set) -->
+    <script>
+        window.tailwind = {
+            config: {
+                darkMode: 'class',
+            }
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Alpine.js -->
