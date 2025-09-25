@@ -43,13 +43,13 @@
     const kg = rows.map(r => Number(r.avg_output_kg_hk||0));
     const ha = rows.map(r => Number(r.avg_output_ha_hk||0));
   window.__charts = window.__charts || [];
-  const ch = new Chart(document.getElementById('chartProduktifitas'), {
+  const ch = (window.__makeChart||function(t,c){ try{const ch=new Chart(t,c); window.__charts.push(ch); return ch;}catch(e){return null;} })(document.getElementById('chartProduktifitas'), {
       data:{ labels, datasets:[
         {type:'bar', label:'Avg Kg/HK', data:kg, backgroundColor:'rgba(22,163,74,0.35)', borderColor:'#16a34a'},
         {type:'line', label:'Avg Ha/HK', data:ha, borderColor:'#f59e0b', backgroundColor:'rgba(245,158,11,.20)'}
       ]}, options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }
   });
-  window.__charts.push(ch);
+  // chart registered by helper
     $('#tblProduktifitas').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[2,'desc']] });
   })();
 </script>

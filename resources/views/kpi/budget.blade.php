@@ -93,7 +93,7 @@
     const hActual = harian.map(r => Number(r.tonase_panen_kg||0));
     const hBudget = harian.map(r => Number(r.budget_harian||0));
   window.__charts = window.__charts || [];
-  const ch1 = new Chart(document.getElementById('chartBudgetHarian'), {
+  const ch1 = (window.__makeChart||function(t,c){ try{const ch=new Chart(t,c); window.__charts.push(ch); return ch;}catch(e){return null;} })(document.getElementById('chartBudgetHarian'), {
       type:'line',
       data:{ labels: hLabels, datasets:[
         {label:'Actual Kg', data:hActual, borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,.20)', tension:.2},
@@ -101,11 +101,11 @@
       ]},
       options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{ title:{display:true,text:'Kg'} } } }
   });
-  window.__charts.push(ch1);
+  // chart registered by helper
     const bLabels = bulanan.map(r => `${r.tahun}-${r.bulan}`);
     const bActual = bulanan.map(r => Number(r.actual_kg||0));
     const bBudget = bulanan.map(r => Number(r.budget_kg||0));
-  const ch2 = new Chart(document.getElementById('chartBudgetBulanan'), {
+  const ch2 = (window.__makeChart||function(t,c){ try{const ch=new Chart(t,c); window.__charts.push(ch); return ch;}catch(e){return null;} })(document.getElementById('chartBudgetBulanan'), {
       data:{ labels:bLabels, datasets:[
         {type:'bar', label:'Actual Kg', data:bActual, backgroundColor:'rgba(34,197,94,0.30)', borderColor:'#22c55e'},
         {type:'bar', label:'Budget Kg', data:bBudget, backgroundColor:'rgba(59,130,246,0.30)', borderColor:'#3b82f6'}

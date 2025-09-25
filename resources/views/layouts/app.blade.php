@@ -418,8 +418,46 @@
                     ch.update('none');
                 });
             }
-            document.addEventListener('DOMContentLoaded', () => setTimeout(applyLightTheme, 300));
+            // Helper: create chart when canvas is present and visible. Retries few times.
+            function isVisible(el){
+                if (!el) return false;
+                const style = getComputedStyle(el);
+                if (style.display === 'none' || style.visibility === 'hidden') return false;
+                const rect = el.getBoundingClientRect();
+                return rect.width > 0 && rect.height > 0;
+            }
+            function createChartWhenReady(target, config, tries=12){
+                const el = (typeof target === 'string') ? document.getElementById(target) : target;
+                if (!el || typeof Chart === 'undefined') {
+                    if (tries <= 0) return null;
+                    return setTimeout(() => createChartWhenReady(target, config, tries-1), 150);
+                }
+                if (!isVisible(el)){
+                    if (tries <= 0) return null;
+                    return setTimeout(() => createChartWhenReady(target, config, tries-1), 150);
+                }
+                try {
+                    const ch = new Chart(el, config);
+                    window.__charts.push(ch);
+                    applyLightTheme();
+                    // Observe size changes to keep chart responsive
+                    try {
+                        const ro = new ResizeObserver(() => { try { ch.resize(); } catch(e){} });
+                        ro.observe(el.parentElement || el);
+                    } catch(e) {}
+                    return ch;
+                } catch(e) {
+                    if (tries <= 0) return null;
+                    return setTimeout(() => createChartWhenReady(target, config, tries-1), 150);
+                }
+            }
+            // Expose helpers
             window.__registerChart = function(ch){ window.__charts.push(ch); applyLightTheme(); };
+            window.__makeChart = createChartWhenReady;
+            // Initial theme apply and keep charts fresh on resize/visibility
+            document.addEventListener('DOMContentLoaded', () => setTimeout(applyLightTheme, 300));
+            window.addEventListener('resize', () => { (window.__charts||[]).forEach(ch => { try { ch.resize(); } catch(e){} }); });
+            document.addEventListener('visibilitychange', () => { if (!document.hidden) { (window.__charts||[]).forEach(ch => { try { ch.resize(); } catch(e){} }); applyLightTheme(); } });
         })();
     </script>
 </body>
