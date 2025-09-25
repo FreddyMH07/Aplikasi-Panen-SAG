@@ -378,6 +378,7 @@
                 const fontSize = 12;
                 Chart.defaults.color = axisColor;
                 Chart.defaults.borderColor = gridColor;
+                Chart.defaults.maintainAspectRatio = false;
                 Chart.defaults.font = Object.assign({}, Chart.defaults.font || {}, { family: fontFamily, size: fontSize, weight: 'normal' });
                 Chart.defaults.plugins = Chart.defaults.plugins || {};
                 Chart.defaults.plugins.tooltip = Object.assign({}, Chart.defaults.plugins.tooltip || {}, {

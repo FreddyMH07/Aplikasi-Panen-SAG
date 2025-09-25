@@ -21,11 +21,23 @@
   </div>
   <div>
     <label class="text-sm">Bulan</label>
-    <input type="text" name="bulan" value="{{ request('bulan') }}" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900" placeholder="e.g. JANUARI" />
+    <select id="filterBulan" name="bulan" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900">
+      <option value="">Semua</option>
+      @php($bulanList = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'])
+      @foreach($bulanList as $b)
+        <option value="{{ strtoupper($b) }}" {{ strtoupper(request('bulan')) === strtoupper($b) ? 'selected' : '' }}>{{ $b }}</option>
+      @endforeach
+    </select>
   </div>
   <div>
     <label class="text-sm">Tahun</label>
-    <input type="number" name="tahun" value="{{ request('tahun') }}" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900" />
+    @php($yearNow = (int)date('Y'))
+    <select id="filterTahun" name="tahun" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900">
+      <option value="">Semua</option>
+      @for($y = $yearNow+1; $y >= $yearNow-5; $y--)
+        <option value="{{ $y }}" {{ (string)request('tahun') === (string)$y ? 'selected' : '' }}>{{ $y }}</option>
+      @endfor
+    </select>
   </div>
   <div class="md:col-span-6">
     <button class="px-3 py-2 rounded bg-blue-600 text-white">Filter</button>
@@ -36,6 +48,8 @@
   (function(){
     const kebunSel = document.getElementById('filterKebun');
     const divisiSel = document.getElementById('filterDivisi');
+  const bulanSel = document.getElementById('filterBulan');
+  const tahunSel = document.getElementById('filterTahun');
     const selectedKebun = @json(request('kebun'));
     const selectedDivisi = @json(request('divisi'));
 
@@ -75,6 +89,7 @@
     (async () => {
       await loadKebun();
       await loadDivisi(selectedKebun || null);
+  // Ensure dropdowns retain selected values (already handled by blade); no extra JS needed
     })();
   })();
 </script>
