@@ -9,15 +9,10 @@
     <!-- Initialize theme early to avoid flash (default to light) -->
     <script>
         (function() {
+            // Force light theme globally (disable dark mode)
             try {
-                const stored = localStorage.getItem('theme');
-                if (stored === 'dark') {
-                    document.documentElement.classList.add('dark');
-                } else if (stored === 'light') {
-                    document.documentElement.classList.remove('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
             } catch (e) {}
         })();
     </script>
@@ -295,8 +290,8 @@
                     </div>
                     
                     <div class="flex items-center space-x-4">
-                        <!-- Theme Toggle -->
-                        <button id="themeToggle" type="button" class="p-2 rounded-lg border border-gray-200 hover:bg-gray-100 text-gray-700 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-700" aria-label="Toggle theme">
+                        <!-- Theme Toggle (disabled) -->
+                        <button id="themeToggle" type="button" class="hidden p-2 rounded-lg border border-gray-200" aria-label="Toggle theme" tabindex="-1">
                             <i class="fas fa-moon"></i>
                         </button>
                         <!-- User Menu -->
@@ -371,20 +366,19 @@
     @stack('scripts')
     <script>
         (function() {
-            const btn = document.getElementById('themeToggle');
-            if (!btn) return;
-            // Global chart registry
+            // Always apply light theme defaults to Chart.js
             window.__charts = window.__charts || [];
-            function setChartTheme(isDark){
+            function applyLightTheme(){
                 if (typeof Chart === 'undefined') return;
-                const axisColor = isDark ? '#e5e7eb' : '#374151';
-                const gridColor = isDark ? 'rgba(255,255,255,.1)' : 'rgba(0,0,0,.1)';
-                const tooltipBg = isDark ? 'rgba(55,65,81,0.95)' : 'rgba(255,255,255,0.95)';
-                const tooltipBorder = isDark ? '#4b5563' : '#e5e7eb';
+                const axisColor = '#374151';
+                const gridColor = 'rgba(0,0,0,.1)';
+                const tooltipBg = 'rgba(255,255,255,0.95)';
+                const tooltipBorder = '#e5e7eb';
                 const fontFamily = "'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif";
                 const fontSize = 12;
                 Chart.defaults.color = axisColor;
                 Chart.defaults.borderColor = gridColor;
+                Chart.defaults.font = Object.assign({}, Chart.defaults.font || {}, { family: fontFamily, size: fontSize, weight: 'normal' });
                 Chart.defaults.plugins = Chart.defaults.plugins || {};
                 Chart.defaults.plugins.tooltip = Object.assign({}, Chart.defaults.plugins.tooltip || {}, {
                     backgroundColor: tooltipBg,
@@ -393,20 +387,9 @@
                     borderColor: tooltipBorder,
                     borderWidth: 1
                 });
-                // Ensure consistent fonts across charts
-                Chart.defaults.font = Object.assign({}, Chart.defaults.font || {}, { family: fontFamily, size: fontSize, weight: 'normal' });
                 Chart.defaults.plugins.legend = Object.assign({}, Chart.defaults.plugins.legend || {}, {
                     labels: Object.assign({}, (Chart.defaults.plugins.legend || {}).labels || {}, { color: axisColor, font: { family: fontFamily, size: fontSize } })
                 });
-                // Helper to bump rgba alpha for better contrast on dark backgrounds
-                const adjustRgbaAlpha = (color, alphaDark, alphaLight) => {
-                    if (typeof color !== 'string') return color;
-                    const m = color.match(/^rgba\((\s*\d+\s*),(\s*\d+\s*),(\s*\d+\s*),(\s*0?\.?\d+\s*)\)$/i);
-                    if (!m) return color;
-                    const a = isDark ? (alphaDark ?? 0.35) : (alphaLight ?? 0.15);
-                    return `rgba(${m[1]},${m[2]},${m[3]},${a})`;
-                };
-                // Try update existing charts
                 (window.__charts||[]).forEach(ch => {
                     const scales = ch.options.scales || {};
                     Object.keys(scales).forEach(k => {
@@ -432,40 +415,11 @@
                         bodyFont: Object.assign({}, (ch.options.plugins.tooltip || {}).bodyFont || {}, { family: fontFamily, size: fontSize })
                     });
                     ch.options.font = Object.assign({}, ch.options.font || {}, { family: fontFamily, size: fontSize });
-                    // Adjust dataset background alpha for readability
-                    if (ch.data && Array.isArray(ch.data.datasets)) {
-                        ch.data.datasets.forEach(ds => {
-                            if (typeof ds.backgroundColor === 'string') {
-                                ds.backgroundColor = adjustRgbaAlpha(ds.backgroundColor, 0.35, 0.15);
-                            } else if (Array.isArray(ds.backgroundColor)) {
-                                // Leave arrays (categorical palettes) as-is
-                            }
-                            // If line without explicit borderWidth, bump it a bit on dark
-                            if ((ds.type === 'line' || ch.config.type === 'line') && (ds.borderWidth == null)) {
-                                ds.borderWidth = isDark ? 2 : 1.5;
-                            }
-                        });
-                    }
                     ch.update('none');
                 });
             }
-            const syncIcon = () => {
-                const isDark = document.documentElement.classList.contains('dark');
-                btn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-                setChartTheme(isDark);
-            };
-            syncIcon();
-            btn.addEventListener('click', () => {
-                const isDark = document.documentElement.classList.toggle('dark');
-                try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
-                // Notify pages
-                try { document.dispatchEvent(new CustomEvent('themechange', { detail: { isDark } })); } catch(e) {}
-                syncIcon();
-            });
-            // Fallback: if charts created after initial load, re-apply theme shortly
-            document.addEventListener('DOMContentLoaded', () => setTimeout(syncIcon, 300));
-            // Re-apply when a new chart is pushed manually
-            window.__registerChart = function(ch){ window.__charts.push(ch); setChartTheme(document.documentElement.classList.contains('dark')); };
+            document.addEventListener('DOMContentLoaded', () => setTimeout(applyLightTheme, 300));
+            window.__registerChart = function(ch){ window.__charts.push(ch); applyLightTheme(); };
         })();
     </script>
 </body>

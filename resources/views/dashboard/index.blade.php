@@ -318,7 +318,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const dailyCtx = document.getElementById('dailyProductionChart').getContext('2d');
     const dailyData = @json($chartData['daily_production']);
     
-    new Chart(dailyCtx, {
+    window.__charts = window.__charts || [];
+    const dailyChart = new Chart(dailyCtx, {
         type: 'line',
         data: {
             labels: dailyData.map(item => {
@@ -354,12 +355,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    window.__charts.push(dailyChart);
     
     // Production by Kebun Chart
     const kebunCtx = document.getElementById('productionByKebunChart').getContext('2d');
     const kebunData = @json($chartData['production_by_kebun']);
     
-    new Chart(kebunCtx, {
+    const kebunChart = new Chart(kebunCtx, {
         type: 'doughnut',
         data: {
             labels: kebunData.map(item => item.kebun),
@@ -384,6 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
+    window.__charts.push(kebunChart);
 });
 </script>
 @endpush
