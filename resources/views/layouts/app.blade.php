@@ -83,6 +83,24 @@
             border-color: #374151 !important;
         }
         .dark .dt-button:hover { background-color: #374151 !important; }
+        /* KPI filter form inputs */
+        .dark form select, .dark form input[type=date], .dark form input[type=text], .dark form input[type=number] {
+            background-color: #1f2937 !important;
+            color: #f3f4f6 !important;
+            border-color: #374151 !important;
+        }
+        .dark form label { color: #d1d5db !important; }
+        /* Chart container headings */
+        .dark h2, .dark h3, .dark h4 { color: #f3f4f6; }
+        /* Tables */
+        .dark table thead th { background-color: #1f2937; }
+        .dark table tbody tr { background-color: #111827; }
+        .dark table tbody tr:nth-child(even) { background-color: #1a2433; }
+        .dark table tbody tr:hover { background-color: #243044; }
+        /* Borders subtle */
+        .dark table thead th, .dark table tbody td { border-color: #374151 !important; }
+        /* Force canvas parent bg to match to avoid transparency dim look */
+        .dark canvas { background-color: #111827; }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200" x-data="{ 
@@ -444,6 +462,10 @@
                 try { document.dispatchEvent(new CustomEvent('themechange', { detail: { isDark } })); } catch(e) {}
                 syncIcon();
             });
+            // Fallback: if charts created after initial load, re-apply theme shortly
+            document.addEventListener('DOMContentLoaded', () => setTimeout(syncIcon, 300));
+            // Re-apply when a new chart is pushed manually
+            window.__registerChart = function(ch){ window.__charts.push(ch); setChartTheme(document.documentElement.classList.contains('dark')); };
         })();
     </script>
 </body>
