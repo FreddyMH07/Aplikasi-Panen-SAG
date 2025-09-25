@@ -18,15 +18,27 @@ Route::get('/', [AuthController::class, 'showLogin'])->name('home');
 // Simple health check (no auth) for Railway
 Route::get('/health', function() { return response()->json(['status' => 'ok']); });
 // Lightweight diagnostics (no auth): DB connectivity and schema snapshot
-Route::get('/diag', function() {
+Route::get('/diag', function(\Illuminate\Http\Request $request) {
     $out = [
         'app_env' => config('app.env'),
         'php_version' => PHP_VERSION,
+        'app_url' => config('app.url'),
         'driver' => null,
         'database' => null,
         'db_ok' => false,
         'pgsql_resolved' => null,
         'tables' => [],
+        'request' => [
+            'full_url' => $request->fullUrl(),
+            'scheme' => $request->getScheme(),
+            'is_secure' => $request->isSecure(),
+            'host' => $request->getHost(),
+            'forwarded_proto' => $request->headers->get('X-Forwarded-Proto'),
+            'forwarded_host' => $request->headers->get('X-Forwarded-Host'),
+            'forwarded_port' => $request->headers->get('X-Forwarded-Port'),
+            'forwarded_for' => $request->headers->get('X-Forwarded-For'),
+            'trusted_proxies_env' => env('TRUSTED_PROXIES'),
+        ],
         'panen_harians' => [
             'exists' => false,
             'ketrek' => [
