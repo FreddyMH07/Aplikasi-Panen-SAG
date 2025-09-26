@@ -5,7 +5,7 @@
   <h2 class="text-xl font-semibold mb-2">Quality Bias (AKP & BJR)</h2>
   @include('kpi._filters')
   <div class="mb-6">
-    <canvas id="chartQuality" height="120"></canvas>
+    <div id="chartQuality" style="width:100%;height:320px" data-height="320"></div>
   </div>
   <div class="overflow-x-auto">
     <table id="tblQuality" class="min-w-full text-sm">
@@ -53,14 +53,18 @@
     const labels = rows.map(r => new Date(r.tanggal_panen).toLocaleDateString('id-ID'));
     const akpBias = rows.map(r => Number(r.akp_bias||0));
     const bjrBias = rows.map(r => Number(r.bjr_bias||0));
-  window.__charts = window.__charts || [];
-  const ch = (window.__makeChart||function(t,c){ try{const ch=new Chart(t,c); window.__charts.push(ch); return ch;}catch(e){return null;} })(document.getElementById('chartQuality'), {
-      data:{ labels, datasets:[
-        {type:'line', label:'Bias AKP (%)', data:akpBias, borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,.20)'},
-        {type:'line', label:'Bias BJR', data:bjrBias, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.20)'}
-      ]}, options:{ responsive:true, scales:{ y:{ beginAtZero:false } } }
-  });
-  // chart registered by helper
+    const option = {
+      tooltip: { trigger: 'axis' },
+      legend: { data: ['Bias AKP (%)','Bias BJR'] },
+      grid: { left: 40, right: 40, top: 30, bottom: 40 },
+      xAxis: { type: 'category', data: labels },
+      yAxis: { type: 'value' },
+      series: [
+        { name: 'Bias AKP (%)', type: 'line', smooth: true, data: akpBias, itemStyle: { color:'#ef4444' } },
+        { name: 'Bias BJR', type: 'line', smooth: true, data: bjrBias, itemStyle: { color:'#3b82f6' } }
+      ]
+    };
+    (window.__makeEChart||function(id,opt){ try{ return echarts.init(typeof id==='string'?document.getElementById(id):id).setOption(opt);}catch(e){}})('chartQuality', option);
     $('#tblQuality').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
   })();
 </script>

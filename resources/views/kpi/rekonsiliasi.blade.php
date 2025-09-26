@@ -5,7 +5,7 @@
   <h2 class="text-xl font-semibold mb-2">Rekonsiliasi Kebun ↔ PKS</h2>
   @include('kpi._filters')
   <div class="mb-6">
-    <canvas id="chartRekonsiliasi" height="120"></canvas>
+    <div id="chartRekonsiliasi" style="width:100%;height:320px" data-height="320"></div>
   </div>
 
   <div class="overflow-x-auto">
@@ -49,19 +49,21 @@
     const labels = rows.map(r => new Date(r.tanggal_panen).toLocaleDateString('id-ID'));
     const loss = rows.map(r => Number(r.loss_pct||0));
     const selisih = rows.map(r => Number(r.selisih_kg||0));
-    const ctx = document.getElementById('chartRekonsiliasi');
-  window.__charts = window.__charts || [];
-  const ch = (window.__makeChart||function(t,c){ try{const ch=new Chart(t,c); window.__charts.push(ch); return ch;}catch(e){return null;} })(ctx, {
-    data: {
-        labels,
-        datasets: [
-      {type:'line', label:'Loss %', data: loss, yAxisID:'y1', borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.20)', tension:.2},
-      {type:'bar', label:'Selisih (Kg)', data: selisih, yAxisID:'y', backgroundColor:'rgba(59,130,246,0.25)', borderColor:'#3b82f6'}
-        ]
-      },
-      options: {responsive:true, interaction:{mode:'index', intersect:false}, scales:{y:{title:{text:'Kg',display:true}}, y1:{position:'right', grid:{drawOnChartArea:false}, title:{text:'% Loss',display:true}}}}
-  });
-  // chart registered by helper
+    const option = {
+      tooltip: { trigger: 'axis' },
+      legend: { data: ['Selisih (Kg)','Loss %'] },
+      grid: { left: 40, right: 40, top: 30, bottom: 40 },
+      xAxis: { type: 'category', data: labels, axisLabel: { rotate: 0 } },
+      yAxis: [
+        { type: 'value', name: 'Kg' },
+        { type: 'value', name: '%', position: 'right' }
+      ],
+      series: [
+        { name: 'Selisih (Kg)', type: 'bar', data: selisih, itemStyle: { color: '#3b82f6' } },
+        { name: 'Loss %', type: 'line', yAxisIndex: 1, smooth: true, data: loss, itemStyle: { color: '#ef4444' } }
+      ]
+    };
+    (window.__makeEChart||function(id,opt){ try{ return echarts.init(typeof id==='string'?document.getElementById(id):id).setOption(opt);}catch(e){}})('chartRekonsiliasi', option);
   $('#tblRekonsiliasi').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
   })();
 </script>

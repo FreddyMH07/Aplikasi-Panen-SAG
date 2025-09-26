@@ -28,6 +28,8 @@
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
     
     <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.tailwindcss.min.css">
@@ -459,6 +461,46 @@
             document.addEventListener('DOMContentLoaded', () => setTimeout(applyLightTheme, 300));
             window.addEventListener('resize', () => { (window.__charts||[]).forEach(ch => { try { ch.resize(); } catch(e){} }); });
             document.addEventListener('visibilitychange', () => { if (!document.hidden) { (window.__charts||[]).forEach(ch => { try { ch.resize(); } catch(e){} }); applyLightTheme(); } });
+
+            // ---------------- ECharts helpers ----------------
+            window.__echarts = window.__echarts || [];
+            function makeEChartWhenReady(target, option, tries=20){
+                const el = (typeof target === 'string') ? document.getElementById(target) : target;
+                if (!el || typeof window.echarts === 'undefined'){
+                    if (tries <= 0) return null;
+                    return setTimeout(() => makeEChartWhenReady(target, option, tries-1), 150);
+                }
+                // Ensure container has height
+                const rect = el.getBoundingClientRect();
+                if (rect.height <= 0){ el.style.height = (el.getAttribute('data-height') || '240') + 'px'; }
+                // Wait for visible
+                const isVisible = () => {
+                    const cs = getComputedStyle(el);
+                    if (cs.display === 'none' || cs.visibility === 'hidden') return false;
+                    const r = el.getBoundingClientRect();
+                    return r.width > 0 && r.height > 0;
+                };
+                if (!isVisible()){
+                    if (tries <= 0) return null;
+                    return setTimeout(() => makeEChartWhenReady(target, option, tries-1), 150);
+                }
+                try {
+                    const inst = echarts.init(el, null, { renderer:'canvas' });
+                    inst.setOption(option, true);
+                    window.__echarts.push(inst);
+                    try {
+                        const ro = new ResizeObserver(() => { try { inst.resize(); } catch(e){} });
+                        ro.observe(el.parentElement || el);
+                    } catch(e) {}
+                    return inst;
+                } catch(e) {
+                    if (tries <= 0) return null;
+                    return setTimeout(() => makeEChartWhenReady(target, option, tries-1), 150);
+                }
+            }
+            window.__makeEChart = makeEChartWhenReady;
+            window.addEventListener('resize', () => { (window.__echarts||[]).forEach(c => { try{ c.resize(); }catch(e){} }); });
+            document.addEventListener('visibilitychange', () => { if(!document.hidden){ (window.__echarts||[]).forEach(c => { try{ c.resize(); }catch(e){} }); } });
         })();
     </script>
 </body>

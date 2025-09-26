@@ -8,11 +8,11 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
     <div class="bg-white dark:bg-gray-800 p-3 rounded border dark:border-gray-700">
       <div class="text-sm mb-2">Harian: Actual vs Budget</div>
-      <canvas id="chartBudgetHarian" height="140"></canvas>
+      <div id="chartBudgetHarian" style="width:100%;height:300px" data-height="300"></div>
     </div>
     <div class="bg-white dark:bg-gray-800 p-3 rounded border dark:border-gray-700">
       <div class="text-sm mb-2">Bulanan: Actual vs Budget</div>
-      <canvas id="chartBudgetBulanan" height="140"></canvas>
+      <div id="chartBudgetBulanan" style="width:100%;height:300px" data-height="300"></div>
     </div>
   </div>
 
@@ -92,27 +92,33 @@
     const hLabels = harian.map(r => new Date(r.tanggal_panen).toLocaleDateString('id-ID'));
     const hActual = harian.map(r => Number(r.tonase_panen_kg||0));
     const hBudget = harian.map(r => Number(r.budget_harian||0));
-  window.__charts = window.__charts || [];
-  const ch1 = (window.__makeChart||function(t,c){ try{const ch=new Chart(t,c); window.__charts.push(ch); return ch;}catch(e){return null;} })(document.getElementById('chartBudgetHarian'), {
-      type:'line',
-      data:{ labels: hLabels, datasets:[
-        {label:'Actual Kg', data:hActual, borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,.20)', tension:.2},
-        {label:'Budget Kg', data:hBudget, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.20)', tension:.2}
-      ]},
-      options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{ title:{display:true,text:'Kg'} } } }
-  });
-  // chart registered by helper
+    const optH = {
+      tooltip: { trigger: 'axis' },
+      legend: { data: ['Actual Kg','Budget Kg'] },
+      grid: { left: 40, right: 20, top: 30, bottom: 40 },
+      xAxis: { type: 'category', data: hLabels },
+      yAxis: { type: 'value', name: 'Kg' },
+      series: [
+        { name: 'Actual Kg', type: 'line', smooth: true, data: hActual, itemStyle: { color:'#22c55e' } },
+        { name: 'Budget Kg', type: 'line', smooth: true, data: hBudget, itemStyle: { color:'#3b82f6' } }
+      ]
+    };
+    (window.__makeEChart||function(id,opt){ try{ return echarts.init(typeof id==='string'?document.getElementById(id):id).setOption(opt);}catch(e){}})('chartBudgetHarian', optH);
     const bLabels = bulanan.map(r => `${r.tahun}-${r.bulan}`);
     const bActual = bulanan.map(r => Number(r.actual_kg||0));
     const bBudget = bulanan.map(r => Number(r.budget_kg||0));
-  const ch2 = (window.__makeChart||function(t,c){ try{const ch=new Chart(t,c); window.__charts.push(ch); return ch;}catch(e){return null;} })(document.getElementById('chartBudgetBulanan'), {
-      data:{ labels:bLabels, datasets:[
-        {type:'bar', label:'Actual Kg', data:bActual, backgroundColor:'rgba(34,197,94,0.30)', borderColor:'#22c55e'},
-        {type:'bar', label:'Budget Kg', data:bBudget, backgroundColor:'rgba(59,130,246,0.30)', borderColor:'#3b82f6'}
-      ]},
-      options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{ title:{display:true,text:'Kg'} } } }
-  });
-  window.__charts.push(ch2);
+    const optB = {
+      tooltip: { trigger: 'axis' },
+      legend: { data: ['Actual Kg','Budget Kg'] },
+      grid: { left: 40, right: 20, top: 30, bottom: 40 },
+      xAxis: { type: 'category', data: bLabels },
+      yAxis: { type: 'value', name: 'Kg' },
+      series: [
+        { name: 'Actual Kg', type: 'bar', data: bActual, itemStyle: { color:'#22c55e' } },
+        { name: 'Budget Kg', type: 'bar', data: bBudget, itemStyle: { color:'#3b82f6' } }
+      ]
+    };
+    (window.__makeEChart||function(id,opt){ try{ return echarts.init(typeof id==='string'?document.getElementById(id):id).setOption(opt);}catch(e){}})('chartBudgetBulanan', optB);
     // DataTables
     $('#tblBudgetHarian').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
     $('#tblBudgetBulanan').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc'],[1,'asc']] });

@@ -5,7 +5,7 @@
   <h2 class="text-xl font-semibold mb-2">Anomali 3-Sigma</h2>
   @include('kpi._filters')
   <div class="mb-6">
-    <canvas id="chartAnomali" height="110"></canvas>
+    <div id="chartAnomali" style="width:100%;height:300px" data-height="300"></div>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
     @foreach($stats as $metric => $s)
@@ -61,12 +61,14 @@
     const metrics = Object.keys(stats);
     const counts = metrics.map(m => rows.filter(r => (r.flags||[]).includes(m)).length);
   window.__charts = window.__charts || [];
-  const ch = (window.__makeChart||function(t,c){ try{const ch=new Chart(t,c); window.__charts.push(ch); return ch;}catch(e){return null;} })(document.getElementById('chartAnomali'), {
-      type:'bar',
-      data:{ labels:metrics.map(m=>m.toUpperCase()), datasets:[{ label:'Jumlah Anomali', data:counts, backgroundColor:'rgba(220,38,38,0.35)', borderColor:'#dc2626' }]},
-      options:{ responsive:true, plugins:{legend:{display:false}} }
-  });
-  // chart registered by helper
+  const option = {
+    tooltip: { trigger: 'axis' },
+    xAxis: { type: 'category', data: metrics.map(m => m.toUpperCase()) },
+    yAxis: { type: 'value', name: 'Jumlah' },
+    grid: { left: 40, right: 20, top: 20, bottom: 40 },
+    series: [{ type: 'bar', data: counts, itemStyle: { color:'#dc2626' } }]
+  };
+  (window.__makeEChart||function(id,opt){ try{ return echarts.init(typeof id==='string'?document.getElementById(id):id).setOption(opt);}catch(e){}})('chartAnomali', option);
     $('#tblAnomali').DataTable({ dom:'Bfrtip', buttons:['csv','excel','pdf','print','colvis'], pageLength:25, order:[[0,'asc']] });
   })();
 </script>
