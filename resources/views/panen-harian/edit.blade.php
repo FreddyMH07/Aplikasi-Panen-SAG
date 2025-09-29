@@ -105,6 +105,23 @@
                     @enderror
                 </div>
                 
+                <!-- AKP Panen (%) -->
+                <div>
+                    <label for="akp_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-percentage mr-1"></i>
+                        AKP Panen (%)
+                    </label>
+                    <input type="text" 
+                           id="akp_panen" 
+                           name="akp_panen" 
+                           value="{{ old('akp_panen', $panenHarian->akp_panen) }}"
+                           placeholder="Contoh: 2.5%"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('akp_panen') border-red-500 @enderror">
+                    @error('akp_panen')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- JJG Panen (jjg) -->
                 <div>
                     <label for="jjg_panen_jjg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -123,6 +140,41 @@
                     @enderror
                 </div>
                 
+                <!-- JJG Kirim -->
+                <div>
+                    <label for="jjg_kirim_jjg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-truck mr-1"></i>
+                        JJG Kirim
+                    </label>
+                    <input type="number" 
+                           id="jjg_kirim_jjg" 
+                           name="jjg_kirim_jjg" 
+                           value="{{ old('jjg_kirim_jjg', $panenHarian->jjg_kirim_jjg) }}"
+                           min="0"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('jjg_kirim_jjg') border-red-500 @enderror">
+                    @error('jjg_kirim_jjg')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Ketrek -->
+                <div>
+                    <label for="ketrek" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Ketrek
+                    </label>
+                    <input type="number" 
+                           id="ketrek" 
+                           name="ketrek" 
+                           value="{{ old('ketrek', $panenHarian->ketrek) }}"
+                           step="0.01"
+                           min="0"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('ketrek') border-red-500 @enderror">
+                    @error('ketrek')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Timbang Kebun (Kg) -->
                 <div>
                     <label for="timbang_kebun_harian" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -179,6 +231,23 @@
                     @enderror
                 </div>
                 
+                <!-- Total JJG Kirim -->
+                <div>
+                    <label for="total_jjg_kirim_jjg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-sum mr-1"></i>
+                        Total JJG Kirim
+                    </label>
+                    <input type="number" 
+                           id="total_jjg_kirim_jjg" 
+                           name="total_jjg_kirim_jjg" 
+                           value="{{ old('total_jjg_kirim_jjg', $panenHarian->total_jjg_kirim_jjg) }}"
+                           min="0"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('total_jjg_kirim_jjg') border-red-500 @enderror">
+                    @error('total_jjg_kirim_jjg')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Refraksi -->
                 <div>
                     <label for="refraksi_kg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -230,6 +299,41 @@
                            min="0"
                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('budget_harian') border-red-500 @enderror">
                     @error('budget_harian')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Restant JJG -->
+                <div>
+                    <label for="restant_jjg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-archive mr-1"></i>
+                        Restant JJG
+                    </label>
+                    <input type="number" 
+                           id="restant_jjg" 
+                           name="restant_jjg" 
+                           value="{{ old('restant_jjg', $panenHarian->restant_jjg) }}"
+                           min="0"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('restant_jjg') border-red-500 @enderror">
+                    @error('restant_jjg')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Rotasi Panen (Hari) -->
+                <div>
+                    <label for="rotasi_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-sync mr-1"></i>
+                        Rotasi Panen (Hari)
+                    </label>
+                    <input type="number" 
+                           id="rotasi_panen" 
+                           name="rotasi_panen" 
+                           value="{{ old('rotasi_panen', $panenHarian->rotasi_panen) }}"
+                           step="0.01"
+                           min="0"
+                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('rotasi_panen') border-red-500 @enderror">
+                    @error('rotasi_panen')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -314,8 +418,13 @@ $(document).ready(function() {
     });
 
     // Calculate preview when inputs change
-    $('#jjg_panen_jjg, #timbang_kebun_harian, #timbang_pks_harian, #luas_panen_ha, #budget_harian, #tonase_panen_kg').on('input', function() {
+    $('#jjg_panen_jjg, #jjg_kirim_jjg, #timbang_kebun_harian, #timbang_pks_harian, #luas_panen_ha, #budget_harian, #tonase_panen_kg').on('input', function() {
         calculatePreview();
+    });
+
+    // Auto-fill total_jjg_kirim_jjg when jjg_kirim_jjg changes
+    $('#jjg_kirim_jjg').on('input', function() {
+        $('#total_jjg_kirim_jjg').val($(this).val());
     });
 
     // Initial calculation
