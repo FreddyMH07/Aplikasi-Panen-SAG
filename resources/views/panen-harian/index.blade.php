@@ -474,7 +474,7 @@ $(document).ready(function() {
                 showTableStatus('Tidak ada data untuk filter/periode yang dipilih. Coba reset filter di atas.', 'info');
             }
         },
-        rowCallback: function(row, data) {
+    rowCallback: function(row, data) {
             // Add color coding based on critical values
             
             // ACV Prod coloring
@@ -514,6 +514,14 @@ $(document).ready(function() {
                 $(row).find('td:eq(22)').addClass('bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200');
             }
             
+            // Format selected numeric cells to 2 decimals (client-side safeguard)
+            const twoDecCols = [5, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22];
+            twoDecCols.forEach(idx => {
+                const td = $(row).find('td').eq(idx);
+                const val = parseFloat(String(td.text()).replace(/[^-\d.]/g, ''));
+                if (!isNaN(val)) td.text(val.toFixed(2));
+            });
+
             // Selisih coloring
             const selisihText = data.selisih || '0';
             const selisih = parseFloat(selisihText.replace(/[^-\d.]/g, ''));

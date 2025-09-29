@@ -90,10 +90,12 @@ class PanenHarianController extends Controller
                 return $row->tanggal_panen->format('d/m/Y');
             })
             ->editColumn('akp_panen', function ($row) {
-                return $row->akp_panen ?: '-';
+                if ($row->akp_panen === null) return '-';
+                return number_format((float)$row->akp_panen, 2) . '%';
             })
             ->editColumn('ketrek', function ($row) {
-                return $row->ketrek ?: '-';
+                if ($row->ketrek === null) return '-';
+                return number_format((float)$row->ketrek, 2);
             })
             ->editColumn('luas_panen_ha', function ($row) {
                 return number_format($row->luas_panen_ha, 2);
@@ -129,7 +131,7 @@ class PanenHarianController extends Controller
                 return number_format($row->output_ha_hk, 2);
             })
             ->editColumn('budget_harian', function ($row) {
-                return number_format($row->budget_harian, 0);
+                return number_format((float)$row->budget_harian, 2);
             })
             ->editColumn('timbang_kebun_harian', function ($row) {
                 return number_format($row->timbang_kebun_harian, 2);
@@ -138,7 +140,7 @@ class PanenHarianController extends Controller
                 return number_format($row->timbang_pks_harian, 2);
             })
             ->editColumn('rotasi_panen', function ($row) {
-                return number_format($row->rotasi_panen, 1);
+                return number_format((float)$row->rotasi_panen, 2);
             })
             ->editColumn('jumlah_tk_panen', function ($row) {
                 return number_format($row->jumlah_tk_panen, 0);
