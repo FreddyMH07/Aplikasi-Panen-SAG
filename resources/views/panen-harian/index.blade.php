@@ -329,16 +329,30 @@
 let dataTable;
 
 $(document).ready(function() {
-    // Load kebun list
-    loadKebunList();
-    
-    // Load divisi when kebun changes
-    $('#kebun_filter').change(function() {
+    // Load saved filters (if any) and prefill inputs
+    const savedFilters = loadFilters();
+    if (savedFilters) {
+        $('#start_date').val(savedFilters.start_date || '');
+        $('#end_date').val(savedFilters.end_date || '');
+    }
+
+    // Load kebun/divisi with saved selections, then initialize table
+    const kebunToSelect = savedFilters?.kebun || '';
+    const divisiToSelect = savedFilters?.divisi || '';
+
+    // Load kebun list, then divisi list with selected values
+    const kebunPromise = loadKebunList(kebunToSelect);
+    const divisiPromise = kebunPromise.then(() => loadDivisi(kebunToSelect, divisiToSelect));
+
+    // Persist filters on change
+    $('#start_date, #end_date').on('change', saveFilters);
+    $('#kebun_filter').on('change', function() {
         const kebun = $(this).val();
-        loadDivisi(kebun);
+        // When kebun changes, reload divisi options and clear previous selection
+        loadDivisi(kebun, '');
+        saveFilters();
     });
-    // Also load divisi list initially (no kebun filter)
-    loadDivisi('');
+    $('#divisi_filter').on('change', saveFilters);
     
     // Initialize DataTable with full toolbar
     dataTable = $('#panenHarianTable').DataTable({
@@ -478,9 +492,6 @@ $(document).ready(function() {
             // Add color coding based on critical values
             
             // ACV Prod coloring
-
-        // Apply saved column visibility after DataTable is initialized
-        applySavedColumnVisibility();
             const acvProdText = data.acv_prod || '0%';
             const acvProd = parseFloat(acvProdText.replace('%', ''));
             if (acvProd < 80) {
@@ -548,46 +559,65 @@ $(document).ready(function() {
             // Style the buttons after initialization
             $('.dt-buttons').addClass('flex flex-wrap gap-2');
             $('.dt-button').addClass('inline-flex items-center');
+            // Apply saved column visibility once table is ready
+            applySavedColumnVisibility();
         }
     });
+
+    // Save column visibility if changed programmatically
+    $('#panenHarianTable').on('column-visibility.dt', function() {
+        saveColumnVisibility();
+    });
     
-    // Load initial data
-    applyFilters();
+    // After kebun/divisi lists are loaded, apply saved filters and reload data
+    $.when(kebunPromise, divisiPromise).done(function() {
+        applyFilters();
+    });
 });
 
-function loadKebunList() {
-    $.get('{{ route("api.kebun-list", [], false) }}')
+function loadKebunList(selectedKebun = '') {
+    return $.get('{{ route("api.kebun-list", [], false) }}')
         .done(function(data) {
             const kebunSelect = $('#kebun_filter');
             kebunSelect.html('<option value="">Semua Kebun</option>');
             data.forEach(function(kebun) {
                 kebunSelect.append(`<option value="${kebun}">${kebun}</option>`);
             });
+            if (selectedKebun) {
+                kebunSelect.val(selectedKebun);
+            }
         });
 }
 
-function loadDivisi(kebun) {
+function loadDivisi(kebun, selectedDivisi = '') {
     const divisiSelect = $('#divisi_filter');
     divisiSelect.html('<option value="">Semua Divisi</option>');
     
     if (kebun) {
-    $.get(`{{ route('api.divisi-list', ['kebun' => '___'], false) }}`.replace('___', encodeURIComponent(kebun)))
+        return $.get(`{{ route('api.divisi-list', ['kebun' => '___'], false) }}`.replace('___', encodeURIComponent(kebun)))
             .done(function(data) {
                 data.forEach(function(divisi) {
                     divisiSelect.append(`<option value="${divisi}">${divisi}</option>`);
                 });
+                if (selectedDivisi) {
+                    divisiSelect.val(selectedDivisi);
+                }
             });
     } else {
-        $.get(`{{ route('api.divisi-list', [], false) }}`)
+        return $.get(`{{ route('api.divisi-list', [], false) }}`)
             .done(function(data) {
                 data.forEach(function(divisi) {
                     divisiSelect.append(`<option value="${divisi}">${divisi}</option>`);
                 });
+                if (selectedDivisi) {
+                    divisiSelect.val(selectedDivisi);
+                }
             });
     }
 }
 
 function applyFilters() {
+    saveFilters();
     dataTable.ajax.reload();
 }
 
@@ -597,6 +627,7 @@ function resetFilters() {
     $('#kebun_filter').val('');
     $('#divisi_filter').val('');
     loadDivisi('');
+    saveFilters();
     applyFilters();
 }
 
@@ -715,6 +746,7 @@ function hideTableStatus() {
 
 // ===== Persist column visibility across navigations =====
 const COLUMN_VIS_KEY = 'panenHarian.columns.visible.v1';
+const FILTERS_KEY = 'panenHarian.filters.v1';
 
 function saveColumnVisibility() {
     if (!dataTable) return;
@@ -747,6 +779,30 @@ function applySavedColumnVisibility() {
         saved.forEach((isVisible, idx) => {
             dataTable.column(idx).visible(!!isVisible);
         });
+    }
+}
+
+// ===== Persist filters (dates, kebun, divisi) across navigations =====
+function saveFilters() {
+    try {
+        const payload = {
+            start_date: $('#start_date').val() || '',
+            end_date: $('#end_date').val() || '',
+            kebun: $('#kebun_filter').val() || '',
+            divisi: $('#divisi_filter').val() || ''
+        };
+        localStorage.setItem(FILTERS_KEY, JSON.stringify(payload));
+    } catch (e) {
+        // ignore storage errors
+    }
+}
+
+function loadFilters() {
+    try {
+        const raw = localStorage.getItem(FILTERS_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+        return null;
     }
 }
 </script>
