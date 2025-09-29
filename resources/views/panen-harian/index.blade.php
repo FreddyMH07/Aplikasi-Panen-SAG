@@ -525,12 +525,30 @@ $(document).ready(function() {
                 $(row).find('td:eq(22)').addClass('bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200');
             }
             
-            // Format selected numeric cells to 2 decimals (client-side safeguard)
-            const twoDecCols = [5, 10, 11, 12, 14, 15, 16, 17, 18, 19, 21, 22];
-            twoDecCols.forEach(idx => {
+            // Helper: format with thousands + 2 decimals; supports percent
+            function formatNumber(val, decimals = 2, isPercent = false) {
+                const raw = String(val);
+                const num = parseFloat(raw.replace(/[^-\d.]/g, ''));
+                if (isNaN(num)) return raw;
+                const formatted = num.toLocaleString('en-US', {
+                    minimumFractionDigits: decimals,
+                    maximumFractionDigits: decimals
+                });
+                return isPercent ? `${formatted}%` : formatted;
+            }
+
+            // Format percent columns
+            const percentCols = [3, 12, 23, 25];
+            percentCols.forEach(idx => {
                 const td = $(row).find('td').eq(idx);
-                const val = parseFloat(String(td.text()).replace(/[^-\d.]/g, ''));
-                if (!isNaN(val)) td.text(val.toFixed(2));
+                td.text(formatNumber(td.text(), 2, true));
+            });
+
+            // Format numeric (non-percent) columns
+            const numberCols = [4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24];
+            numberCols.forEach(idx => {
+                const td = $(row).find('td').eq(idx);
+                td.text(formatNumber(td.text(), 2, false));
             });
 
             // Selisih coloring
