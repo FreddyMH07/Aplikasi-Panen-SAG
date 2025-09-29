@@ -194,21 +194,30 @@ Route::middleware('auth')->group(function () {
             // Merge unique kebun from MasterData and PanenHarian to ensure full coverage
             $fromMaster = \App\Models\MasterData::select('kebun')->distinct()->pluck('kebun')->toArray();
             $fromHarian = \App\Models\PanenHarian::select('kebun')->distinct()->pluck('kebun')->toArray();
-            $merged = array_values(array_unique(array_filter(array_merge($fromMaster, $fromHarian))));
+            // Normalize (trim + uppercase) to avoid duplicates due to casing/spaces
+            $normalize = function($v) { return strtoupper(trim((string)$v)); };
+            $merged = array_map($normalize, array_merge($fromMaster, $fromHarian));
+            $merged = array_values(array_unique(array_filter($merged)));
             sort($merged);
             return response()->json($merged);
         })->name('kebun-list');
         
         Route::get('/divisi-list/{kebun?}', function($kebun = null) {
             // Merge unique divisi from MasterData and PanenHarian, optionally filtered by kebun
+            $normalize = function($v) { return strtoupper(trim((string)$v)); };
             if ($kebun) {
-                $fromMaster = \App\Models\MasterData::where('kebun', $kebun)->select('divisi')->distinct()->pluck('divisi')->toArray();
-                $fromHarian = \App\Models\PanenHarian::where('kebun', $kebun)->select('divisi')->distinct()->pluck('divisi')->toArray();
+                $k = $normalize($kebun);
+                $fromMaster = \App\Models\MasterData::whereRaw('upper(trim(kebun)) = ?', [$k])
+                    ->select('divisi')->distinct()->pluck('divisi')->toArray();
+                $fromHarian = \App\Models\PanenHarian::whereRaw('upper(trim(kebun)) = ?', [$k])
+                    ->select('divisi')->distinct()->pluck('divisi')->toArray();
             } else {
                 $fromMaster = \App\Models\MasterData::select('divisi')->distinct()->pluck('divisi')->toArray();
                 $fromHarian = \App\Models\PanenHarian::select('divisi')->distinct()->pluck('divisi')->toArray();
             }
-            $merged = array_values(array_unique(array_filter(array_merge($fromMaster, $fromHarian))));
+            // Normalize output as well to avoid duplicates like 'DIV 1' vs 'div 1 '
+            $merged = array_map($normalize, array_merge($fromMaster, $fromHarian));
+            $merged = array_values(array_unique(array_filter($merged)));
             sort($merged);
             return response()->json($merged);
         })->name('divisi-list');
