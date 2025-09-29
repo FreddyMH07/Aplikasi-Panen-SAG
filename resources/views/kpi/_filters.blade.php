@@ -76,7 +76,9 @@
     }
 
     async function loadDivisi(kebun){
-      let url = kebun ? '{{ url('/api/divisi-list') }}/' + encodeURIComponent(kebun) : '{{ route('api.divisi-list', [], false) }}';
+      let url = kebun 
+        ? '{{ route('api.divisi-list', ['kebun' => '___'], false) }}'.replace('___', encodeURIComponent(kebun))
+        : '{{ route('api.divisi-list', [], false) }}';
       const list = await fetchJSON(url);
       fillOptions(divisiSel, list, selectedDivisi);
     }

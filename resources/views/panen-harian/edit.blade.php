@@ -329,7 +329,7 @@ function loadDivisiByKebun(kebun) {
     divisiSelect.html('<option value="">Pilih Divisi</option>');
 
     if (kebun) {
-    $.get(`{{ url('/api/divisi-list') }}/${encodeURIComponent(kebun)}`)
+    $.get(`{{ route('api.divisi-list', ['kebun' => '___'], false) }}`.replace('___', encodeURIComponent(kebun)))
             .done(function(data) {
                 data.forEach(function(divisi) {
                     const selected = selectedDivisi === divisi ? 'selected' : '';

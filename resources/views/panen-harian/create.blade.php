@@ -410,7 +410,7 @@ $(document).ready(function() {
 });
 
 function loadKebunList() {
-    $.get('{{ route("api.kebun-list") }}')
+    $.get('{{ route("api.kebun-list", [], false) }}')
         .done(function(data) {
             const kebunSelect = $('#kebun');
             kebunSelect.html('<option value="">Pilih Kebun</option>');
@@ -436,7 +436,7 @@ function loadDivisi(kebun) {
     divisiSelect.html('<option value="">Pilih Divisi</option>');
     
     if (kebun) {
-        $.get(`{{ url('/api/divisi-list') }}/${encodeURIComponent(kebun)}`)
+        $.get(`{{ route('api.divisi-list', ['kebun' => '___'], false) }}`.replace('___', encodeURIComponent(kebun)))
             .done(function(data) {
                 data.forEach(function(divisi) {
                     const selected = selectedDivisi === divisi ? 'selected' : '';
