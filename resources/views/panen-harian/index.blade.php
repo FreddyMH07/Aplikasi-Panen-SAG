@@ -344,6 +344,7 @@ $(document).ready(function() {
     dataTable = $('#panenHarianTable').DataTable({
         processing: true,
         serverSide: true,
+        stateSave: true,
         ajax: {
             url: '{{ route("panen-harian.data", [], false) }}',
             data: function(d) {
@@ -451,7 +452,7 @@ $(document).ready(function() {
                 }
             }
         ],
-        language: {
+    language: {
             url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json',
             buttons: {
                 copy: 'Salin ke Clipboard',
@@ -477,6 +478,9 @@ $(document).ready(function() {
             // Add color coding based on critical values
             
             // ACV Prod coloring
+
+        // Apply saved column visibility after DataTable is initialized
+        applySavedColumnVisibility();
             const acvProdText = data.acv_prod || '0%';
             const acvProd = parseFloat(acvProdText.replace('%', ''));
             if (acvProd < 80) {
@@ -637,6 +641,9 @@ function applyCustomColumnVisibility() {
     
     // Show success message
     showNotification('Pengaturan kolom berhasil diterapkan', 'success');
+
+    // Persist current visibility to localStorage
+    saveColumnVisibility();
 }
 
 function showNotification(message, type = 'info') {
@@ -696,6 +703,43 @@ function showTableStatus(message, type = 'info') {
 
 function hideTableStatus() {
     $('#tableStatus').addClass('hidden');
+}
+
+// ===== Persist column visibility across navigations =====
+const COLUMN_VIS_KEY = 'panenHarian.columns.visible.v1';
+
+function saveColumnVisibility() {
+    if (!dataTable) return;
+    const vis = [];
+    dataTable.columns().every(function(idx) {
+        vis.push(this.visible());
+    });
+    try {
+        localStorage.setItem(COLUMN_VIS_KEY, JSON.stringify(vis));
+    } catch (e) {
+        // ignore storage errors
+    }
+}
+
+function loadColumnVisibility() {
+    try {
+        const raw = localStorage.getItem(COLUMN_VIS_KEY);
+        const parsed = raw ? JSON.parse(raw) : null;
+        return Array.isArray(parsed) ? parsed : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function applySavedColumnVisibility() {
+    const saved = loadColumnVisibility();
+    if (!saved || !dataTable) return;
+    // Apply only if length matches to avoid misalignment after column changes
+    if (saved.length === dataTable.columns().nodes().length) {
+        saved.forEach((isVisible, idx) => {
+            dataTable.column(idx).visible(!!isVisible);
+        });
+    }
 }
 </script>
 @endpush
