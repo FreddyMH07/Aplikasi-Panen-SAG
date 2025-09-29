@@ -400,12 +400,17 @@ $(document).ready(function() {
         calculatePreview();
     });
     
-    // Auto-fill total_jjg_kirim_jjg when jjg_kirim_jjg changes
-    $('#jjg_kirim_jjg').on('input', function() {
-        $('#total_jjg_kirim_jjg').val($(this).val());
-    });
+    // Auto-calc Total JJG Kirim = JJG Kirim + Ketrek
+    function updateTotalJjgKirim() {
+        const jjgKirim = parseFloat($('#jjg_kirim_jjg').val()) || 0;
+        const ketrek = parseFloat($('#ketrek').val()) || 0;
+        const total = jjgKirim + ketrek;
+        $('#total_jjg_kirim_jjg').val(Number.isFinite(total) ? total : 0);
+    }
+    $('#jjg_kirim_jjg, #ketrek').on('input', updateTotalJjgKirim);
     
     // Initial calculation
+    updateTotalJjgKirim();
     calculatePreview();
 });
 
