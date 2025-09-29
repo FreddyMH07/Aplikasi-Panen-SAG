@@ -388,7 +388,10 @@ $(document).ready(function() {
     // Load divisi when kebun changes
     $('#kebun').change(function() {
         const kebun = $(this).val();
-        loadDivisi(kebun);
+    // clear divisi first to avoid stale options
+    const divisiSelect = $('#divisi');
+    divisiSelect.html('<option value="">Pilih Divisi</option>');
+    loadDivisi(kebun);
         calculatePreview();
     });
     
@@ -433,7 +436,7 @@ function loadDivisi(kebun) {
     divisiSelect.html('<option value="">Pilih Divisi</option>');
     
     if (kebun) {
-        $.get(`{{ url('/api/divisi-list') }}/${kebun}`)
+        $.get(`{{ url('/api/divisi-list') }}/${encodeURIComponent(kebun)}`)
             .done(function(data) {
                 data.forEach(function(divisi) {
                     const selected = selectedDivisi === divisi ? 'selected' : '';

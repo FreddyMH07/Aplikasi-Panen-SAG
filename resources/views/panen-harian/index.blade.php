@@ -559,7 +559,7 @@ function loadDivisi(kebun) {
     divisiSelect.html('<option value="">Semua Divisi</option>');
     
     if (kebun) {
-    $.get(`{{ url('/api/divisi-list', [], false) }}/${kebun}`)
+    $.get(`{{ url('/api/divisi-list', [], false) }}/${encodeURIComponent(kebun)}`)
             .done(function(data) {
                 data.forEach(function(divisi) {
                     divisiSelect.append(`<option value="${divisi}">${divisi}</option>`);

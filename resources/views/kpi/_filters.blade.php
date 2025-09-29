@@ -82,6 +82,8 @@
     }
 
     kebunSel.addEventListener('change', () => {
+      // Clear divisi when kebun changed to avoid stale selection
+      fillOptions(divisiSel, [], null);
       loadDivisi(kebunSel.value || null);
     });
 

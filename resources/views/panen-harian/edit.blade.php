@@ -306,7 +306,10 @@ $(document).ready(function() {
     // Load divisi when kebun changes (by kebun name)
     $('#kebun').change(function() {
         const kebun = $(this).val();
-        loadDivisiByName(kebun);
+        // clear divisi first to avoid stale options
+        const divisiSelect = $('#divisi');
+        divisiSelect.html('<option value="">Pilih Divisi</option>');
+        loadDivisiByKebun(kebun);
         calculatePreview();
     });
 
@@ -319,14 +322,14 @@ $(document).ready(function() {
     calculatePreview();
 });
 
-function loadDivisiByName(kebun) {
+function loadDivisiByKebun(kebun) {
     const divisiSelect = $('#divisi');
     const selectedDivisi = divisiSelect.val();
 
     divisiSelect.html('<option value="">Pilih Divisi</option>');
 
     if (kebun) {
-        $.get(`{{ route('api.divisi-by-kebun-name', ['kebun' => '___']) }}`.replace('___', encodeURIComponent(kebun)))
+    $.get(`{{ url('/api/divisi-list') }}/${encodeURIComponent(kebun)}`)
             .done(function(data) {
                 data.forEach(function(divisi) {
                     const selected = selectedDivisi === divisi ? 'selected' : '';

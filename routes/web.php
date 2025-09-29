@@ -191,15 +191,26 @@ Route::middleware('auth')->group(function () {
         
         // Get unique kebun and divisi for filters
         Route::get('/kebun-list', function() {
-            return \App\Models\PanenHarian::select('kebun')->distinct()->orderBy('kebun')->pluck('kebun');
+            // Merge unique kebun from MasterData and PanenHarian to ensure full coverage
+            $fromMaster = \App\Models\MasterData::select('kebun')->distinct()->pluck('kebun')->toArray();
+            $fromHarian = \App\Models\PanenHarian::select('kebun')->distinct()->pluck('kebun')->toArray();
+            $merged = array_values(array_unique(array_filter(array_merge($fromMaster, $fromHarian))));
+            sort($merged);
+            return response()->json($merged);
         })->name('kebun-list');
         
         Route::get('/divisi-list/{kebun?}', function($kebun = null) {
-            $query = \App\Models\PanenHarian::select('divisi')->distinct()->orderBy('divisi');
+            // Merge unique divisi from MasterData and PanenHarian, optionally filtered by kebun
             if ($kebun) {
-                $query->where('kebun', $kebun);
+                $fromMaster = \App\Models\MasterData::where('kebun', $kebun)->select('divisi')->distinct()->pluck('divisi')->toArray();
+                $fromHarian = \App\Models\PanenHarian::where('kebun', $kebun)->select('divisi')->distinct()->pluck('divisi')->toArray();
+            } else {
+                $fromMaster = \App\Models\MasterData::select('divisi')->distinct()->pluck('divisi')->toArray();
+                $fromHarian = \App\Models\PanenHarian::select('divisi')->distinct()->pluck('divisi')->toArray();
             }
-            return $query->pluck('divisi');
+            $merged = array_values(array_unique(array_filter(array_merge($fromMaster, $fromHarian))));
+            sort($merged);
+            return response()->json($merged);
         })->name('divisi-list');
 
         // MasterData: distinct divisi (optional by kebun)
