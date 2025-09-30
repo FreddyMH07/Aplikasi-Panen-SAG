@@ -66,7 +66,7 @@ class DashboardController extends Controller
             }
         }
 
-        $todayData = $query
+    $todayData = $query
             ->selectRaw('
                 COALESCE(SUM(luas_panen_ha),0) as total_luas,
                 COALESCE(SUM(jjg_panen_jjg),0) as total_jjg,
@@ -74,6 +74,7 @@ class DashboardController extends Controller
                 COALESCE(SUM(timbang_pks_harian),0) as total_timbang_pks,
                 COALESCE(SUM(jumlah_tk_panen),0) as total_tk,
                 COALESCE(SUM(refraksi_kg),0) as total_refraksi,
+        COALESCE(SUM(restant_jjg),0) as total_restan_jjg,
                 COALESCE(SUM(budget_harian),0) as total_budget,
                 COALESCE(SUM(tonase_panen_kg),0) as total_tonase
             ')
@@ -87,7 +88,7 @@ class DashboardController extends Controller
         if ($request->filled('divisi')) {
             $monthlyQuery->where('divisi', $request->divisi);
         }
-        $monthlyData = $monthlyQuery
+    $monthlyData = $monthlyQuery
             ->selectRaw('
                 COALESCE(SUM(luas_panen_ha),0) as total_luas,
                 COALESCE(SUM(jjg_panen_jjg),0) as total_jjg,
@@ -95,6 +96,7 @@ class DashboardController extends Controller
                 COALESCE(SUM(timbang_pks_harian),0) as total_timbang_pks,
                 COALESCE(SUM(jumlah_tk_panen),0) as total_tk,
                 COALESCE(SUM(refraksi_kg),0) as total_refraksi,
+        COALESCE(SUM(restant_jjg),0) as total_restan_jjg,
                 COALESCE(SUM(budget_harian),0) as total_budget,
                 COALESCE(SUM(tonase_panen_kg),0) as total_tonase
             ')
@@ -103,6 +105,19 @@ class DashboardController extends Controller
         // Hitung metrik
         $todayMetrics = $this->calculateMetrics($todayData);
         $monthlyMetrics = $this->calculateMetrics($monthlyData);
+        // Compute JJG/PKK from MasterData for selected month/year and filters
+        $monthNameIndo = $indoMonths[$currentMonth] ?? Carbon::now()->format('F');
+        $pkkQuery = MasterData::where('tahun', $currentYear)
+            ->where('bulan', $monthNameIndo);
+        if ($request->filled('kebun')) {
+            $pkkQuery->where('kebun', $request->kebun);
+        }
+        if ($request->filled('divisi')) {
+            $pkkQuery->where('divisi', $request->divisi);
+        }
+        $totalPkk = (int)$pkkQuery->sum('pkk');
+        $monthlyMetrics['jjg_per_pkk'] = ($totalPkk > 0) ? round(($monthlyData->total_jjg ?? 0) / $totalPkk, 2) : 0;
+        $monthlyMetrics['total_pkk'] = $totalPkk;
 
     // Data untuk chart (pastikan passing $request)
     $chartData = $this->getChartData($request);
@@ -135,6 +150,9 @@ class DashboardController extends Controller
                 'selisih' => 0,
                 'selisih_persen' => 0,
                 'refraksi_persen' => 0,
+                'refraksi_kg' => 0,
+                'restan_jjg' => 0,
+                'restan_persen' => 0,
                 'total_produksi' => 0,
                 'total_tk' => 0
             ];
@@ -144,8 +162,10 @@ class DashboardController extends Controller
         $akp = ($data->total_luas * 136) > 0 ? round($data->total_jjg / ($data->total_luas * 136), 4) : 0;
         $acv_prod = $data->total_budget > 0 ? round(100 * $data->total_timbang_pks / $data->total_budget, 2) : 0;
         $selisih = round($data->total_timbang_pks - $data->total_timbang_kebun, 2);
-    $refraksi_persen = $data->total_tonase > 0 ? round(100 * $data->total_refraksi / $data->total_tonase, 2) : 0;
-    $selisih_persen = $data->total_timbang_pks > 0 ? round(100 * ($data->total_timbang_pks - $data->total_timbang_kebun) / $data->total_timbang_pks, 2) : 0;
+        $refraksi_persen = $data->total_tonase > 0 ? round(100 * ($data->total_refraksi ?? 0) / $data->total_tonase, 2) : 0;
+        $selisih_persen = $data->total_timbang_pks > 0 ? round(100 * ($data->total_timbang_pks - $data->total_timbang_kebun) / $data->total_timbang_pks, 2) : 0;
+        $restan_jjg = (int)($data->total_restan_jjg ?? 0);
+        $restan_persen = ($data->total_jjg ?? 0) > 0 ? round(100 * $restan_jjg / $data->total_jjg, 2) : 0;
 
         return [
             'bjr' => $bjr,
@@ -154,6 +174,9 @@ class DashboardController extends Controller
             'selisih' => $selisih,
             'selisih_persen' => $selisih_persen,
             'refraksi_persen' => $refraksi_persen,
+            'refraksi_kg' => round(($data->total_refraksi ?? 0), 2),
+            'restan_jjg' => $restan_jjg,
+            'restan_persen' => $restan_persen,
             'total_produksi' => round($data->total_timbang_pks, 2),
             'total_tk' => $data->total_tk ?? 0
         ];
