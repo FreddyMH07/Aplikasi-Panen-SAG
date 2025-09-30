@@ -44,7 +44,7 @@
     <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-2xl font-bold">Selamat Datang, {{ auth()->user()->name }}!</h2>
+                <h2 class="text-2xl font-bold">Selamat Datang, {{ optional(auth()->user())->name ?? 'Manager Kebun' }}!</h2>
             </div>
             <div class="hidden md:block">
                 <i class="fas fa-seedling text-6xl text-green-200"></i>
@@ -418,7 +418,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Daily Production Chart
     const dailyCtx = document.getElementById('dailyProductionChart').getContext('2d');
-    const dailyData = @json($chartData['daily_pks_budget']);
+    const dailyData = @json($chartData['daily_pks_budget'] ?? []);
     
     window.__charts = window.__charts || [];
     const dailyChart = new Chart(dailyCtx, {
@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Production by Kebun Chart
     const kebunCtx = document.getElementById('productionByKebunChart').getContext('2d');
-    const akpDaily = @json($chartData['akp_daily']);
+    const akpDaily = @json($chartData['akp_daily'] ?? []);
 
     const kebunChart = new Chart(kebunCtx, {
         type: 'line',

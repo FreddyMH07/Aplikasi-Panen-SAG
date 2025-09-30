@@ -235,8 +235,8 @@ class DashboardController extends Controller
         }
 
         return [
-            'daily_pks_budget' => $dailySeries,
-            'akp_daily' => $akpSeries,
+            'daily_pks_budget' => $dailySeries ?? [],
+            'akp_daily' => $akpSeries ?? [],
         ];
     }
 
