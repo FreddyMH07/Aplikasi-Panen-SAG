@@ -173,10 +173,40 @@
     const akpDaily = @json($chartData['akp_daily'] ?? []);
 
     function toLabels(series) {
-        return series.map(d => (d.tanggal_panen || '').slice(8,10));
+        return series.map((d, i) => formatDayLabel(d?.tanggal_panen, i));
     }
     function toData(series, key) {
-        return series.map(d => Number(d[key] || 0));
+        return series.map(d => {
+            const v = d?.[key];
+            const n = Number.parseFloat(v);
+            return Number.isFinite(n) ? n : 0;
+        });
+    }
+    function formatDayLabel(val, idx) {
+        // Try to parse as date, fallback to last 2 chars, then index+1
+        if (val) {
+            const t = typeof val === 'string' ? val : String(val);
+            const dt = new Date(t);
+            if (!isNaN(dt.getTime())) {
+                const day = String(dt.getDate()).padStart(2, '0');
+                return day;
+            }
+            if (t.length >= 2) return t.slice(-2);
+        }
+        return String((idx + 1)).padStart(2, '0');
+    }
+    function drawNoDataMessage(canvas, message = 'Tidak ada data') {
+        const ctx2d = canvas.getContext('2d');
+        if (!ctx2d) return;
+        const { width, height } = canvas;
+        ctx2d.clearRect(0, 0, width, height);
+        ctx2d.save();
+        ctx2d.fillStyle = '#6B7280';
+        ctx2d.font = '14px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+        ctx2d.textAlign = 'center';
+        ctx2d.textBaseline = 'middle';
+        ctx2d.fillText(message, width / 2, height / 2);
+        ctx2d.restore();
     }
 
     // PKS vs Budget (Bar + Line) — PKS green bars (no outline), Budget blue line with small points
@@ -186,7 +216,10 @@
         const labels = toLabels(dailyPksBudget);
         const pks = toData(dailyPksBudget, 'total_pks');
         const budget = toData(dailyPksBudget, 'total_budget');
-        new Chart(ctx, {
+    // Destroy existing chart instance if present (avoids duplicate/overlay bugs)
+    const existing = Chart.getChart ? Chart.getChart(ctx) : null;
+    if (existing) existing.destroy();
+    const chart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels,
@@ -216,6 +249,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: { beginAtZero: true, grid: { color: APP_COLORS.border } },
                     x: { grid: { display: false } }
@@ -223,6 +257,9 @@
                 plugins: { legend: { labels: { color: '#111827' } } }
             }
         });
+        if (!labels.length) {
+            drawNoDataMessage(ctx);
+        }
     })();
 
     // AKP Daily (%) — green line, no fill, thin gridlines
@@ -230,8 +267,14 @@
         const ctx = document.getElementById('chartAkpDaily');
         if (!ctx) return;
         const labels = toLabels(akpDaily);
-        const akpPct = akpDaily.map(d => Number(d.akp_pct || 0).toFixed(2));
-        new Chart(ctx, {
+        const akpPct = akpDaily.map(d => {
+            const n = Number.parseFloat(d?.akp_pct ?? 0);
+            return Number.isFinite(n) ? Number(n.toFixed(2)) : 0;
+        });
+        // Destroy existing chart instance if present
+        const existing = Chart.getChart ? Chart.getChart(ctx) : null;
+        if (existing) existing.destroy();
+        const chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels,
@@ -249,6 +292,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: { beginAtZero: true, grid: { color: APP_COLORS.border } },
                     x: { grid: { display: false } }
@@ -256,6 +300,9 @@
                 plugins: { legend: { labels: { color: '#111827' } } }
             }
         });
+        if (!labels.length) {
+            drawNoDataMessage(ctx);
+        }
     })();
     </script>
     @endpush
