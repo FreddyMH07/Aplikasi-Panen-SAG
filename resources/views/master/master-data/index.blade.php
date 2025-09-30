@@ -8,8 +8,8 @@
     <!-- Header Actions -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Master Data</h2>
-            <p class="text-gray-600 dark:text-gray-400">Kelola data master kebun, divisi, SPH, luas TM, dan budget</p>
+            <h2 class="text-2xl font-bold text-gray-900">Master Data</h2>
+            <p class="text-gray-600">Kelola data master kebun, divisi, SPH, luas TM, dan budget</p>
         </div>
         
         <div class="flex flex-wrap gap-2">
@@ -35,67 +35,67 @@
     
     <!-- Info Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div class="flex items-center">
-                <div class="p-3 bg-green-100 dark:bg-green-900 rounded-full">
-                    <i class="fas fa-database text-green-600 dark:text-green-300"></i>
+        <div class="p-3 bg-green-100 rounded-full">
+            <i class="fas fa-database text-green-600"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Data</p>
-                    <p id="totalData" class="text-2xl font-bold text-gray-900 dark:text-gray-100">-</p>
+            <p class="text-sm font-medium text-gray-600">Total Data</p>
+            <p id="totalData" class="text-2xl font-bold text-gray-900">-</p>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div class="flex items-center">
-                <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
-                    <i class="fas fa-map text-blue-600 dark:text-blue-300"></i>
+        <div class="p-3 bg-blue-100 rounded-full">
+            <i class="fas fa-map text-blue-600"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Kebun Aktif</p>
-                    <p id="totalKebun" class="text-2xl font-bold text-gray-900 dark:text-gray-100">-</p>
+            <p class="text-sm font-medium text-gray-600">Kebun Aktif</p>
+            <p id="totalKebun" class="text-2xl font-bold text-gray-900">-</p>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div class="flex items-center">
-                <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-full">
-                    <i class="fas fa-sitemap text-purple-600 dark:text-purple-300"></i>
+        <div class="p-3 bg-purple-100 rounded-full">
+            <i class="fas fa-sitemap text-purple-600"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Divisi Aktif</p>
-                    <p id="totalDivisi" class="text-2xl font-bold text-gray-900 dark:text-gray-100">-</p>
+            <p class="text-sm font-medium text-gray-600">Divisi Aktif</p>
+            <p id="totalDivisi" class="text-2xl font-bold text-gray-900">-</p>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <div class="flex items-center">
-                <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full">
-                    <i class="fas fa-calendar text-yellow-600 dark:text-yellow-300"></i>
+        <div class="p-3 bg-yellow-100 rounded-full">
+            <i class="fas fa-calendar text-yellow-600"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Tahun Aktif</p>
-                    <p id="totalTahun" class="text-2xl font-bold text-gray-900 dark:text-gray-100">-</p>
+            <p class="text-sm font-medium text-gray-600">Tahun Aktif</p>
+            <p id="totalTahun" class="text-2xl font-bold text-gray-900">-</p>
                 </div>
             </div>
         </div>
     </div>
     
     <!-- Filters -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
             <i class="fas fa-filter mr-2"></i>
             Filter Data
         </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tahun</label>
+        <label class="block text-sm font-medium text-gray-900 mb-2">Tahun</label>
                 <select id="tahun_filter" 
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Tahun</option>
                     @for($year = date('Y'); $year >= 2020; $year--)
                         <option value="{{ $year }}">{{ $year }}</option>
@@ -104,9 +104,9 @@
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bulan</label>
+        <label class="block text-sm font-medium text-gray-900 mb-2">Bulan</label>
                 <select id="bulan_filter" 
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Bulan</option>
                     <option value="January">Januari</option>
                     <option value="February">Februari</option>
@@ -124,16 +124,16 @@
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kebun</label>
+        <label class="block text-sm font-medium text-gray-900 mb-2">Kebun</label>
                 <input type="text" 
                        id="kebun_filter" 
                        placeholder="Cari kebun..."
-                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Divisi</label>
+        <label class="block text-sm font-medium text-gray-900 mb-2">Divisi</label>
                 <select id="divisi_filter" 
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Divisi</option>
                 </select>
             </div>
@@ -156,12 +156,12 @@
     </div>
     
     <!-- Data Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-6">
-            <div id="tableStatus" class="hidden mb-3 p-3 rounded bg-yellow-50 border border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100"></div>
+            <div id="tableStatus" class="hidden mb-3 p-3 rounded bg-yellow-50 border border-yellow-200 text-yellow-800"></div>
             <div class="overflow-x-auto">
-                <table id="masterDataTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <table id="masterDataTable" class="w-full text-sm text-left text-gray-600">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th class="px-6 py-3">Kebun</th>
                             <th class="px-6 py-3">Divisi</th>
@@ -185,9 +185,9 @@
 
 <!-- Import Modal -->
 <div id="importModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Import Data Excel</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Import Data Excel</h3>
             <button onclick="hideImportModal()" class="text-gray-400 hover:text-gray-600">
                 <i class="fas fa-times"></i>
             </button>
@@ -196,15 +196,15 @@
         <form id="importForm" action="{{ route('master.master-data.import', [], false) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label class="block text-sm font-medium text-gray-900 mb-2">
                     Pilih File Excel
                 </label>
                 <input type="file" 
                        name="file" 
                        accept=".xlsx,.xls,.csv"
                        required
-                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                <p class="text-xs text-gray-600 mt-1">
                     Format: Kebun, Divisi, SPH Panen, Luas TM, Budget Alokasi, PKK, Bulan, Tahun
                 </p>
             </div>
@@ -371,9 +371,9 @@ function showTableStatus(message, type = 'info') {
     el.removeClass('bg-yellow-50 border-yellow-200 text-yellow-800');
     el.removeClass('bg-red-50 border-red-200 text-red-800');
     if (type === 'error') {
-        el.addClass('bg-red-50 border-red-200 text-red-800 dark:bg-red-900 dark:border-red-700 dark:text-red-100');
+    el.addClass('bg-red-50 border-red-200 text-red-800');
     } else {
-        el.addClass('bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100');
+    el.addClass('bg-yellow-50 border-yellow-200 text-yellow-800');
     }
     el.text(message);
 }

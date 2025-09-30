@@ -8,8 +8,8 @@
     <!-- Header Actions -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Report Panen Harian</h2>
-            <p class="text-gray-600 dark:text-gray-400">Kelola dan analisis data panen harian kelapa sawit</p>
+            <h2 class="text-2xl font-bold text-gray-900">Report Panen Harian</h2>
+            <p class="text-gray-600">Kelola dan analisis data panen harian kelapa sawit</p>
         </div>
         
         <div class="flex flex-wrap gap-2">
@@ -28,41 +28,41 @@
     </div>
     
     <!-- Filters -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
             <i class="fas fa-filter mr-2"></i>
             Filter Data
         </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal Mulai</label>
+                <label class="block text-sm font-medium text-gray-900 mb-2">Tanggal Mulai</label>
           <input type="date" 
               id="start_date" 
               value=""
-                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal Akhir</label>
+                <label class="block text-sm font-medium text-gray-900 mb-2">Tanggal Akhir</label>
           <input type="date" 
               id="end_date" 
               value=""
-                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kebun</label>
+                <label class="block text-sm font-medium text-gray-900 mb-2">Kebun</label>
                 <select id="kebun_filter" 
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Kebun</option>
                 </select>
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Divisi</label>
+                <label class="block text-sm font-medium text-gray-900 mb-2">Divisi</label>
                 <select id="divisi_filter" 
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Divisi</option>
                 </select>
             </div>
@@ -83,12 +83,12 @@
     </div>
     
     <!-- Data Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-6">
-            <div id="tableStatus" class="hidden mb-3 p-3 rounded bg-yellow-50 border border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100"></div>
+            <div id="tableStatus" class="hidden mb-3 p-3 rounded bg-yellow-50 border border-yellow-200 text-yellow-800"></div>
             <div class="overflow-x-auto">
-                <table id="panenHarianTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <table id="panenHarianTable" class="w-full text-sm text-left text-gray-600">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th class="px-6 py-3">Tanggal</th>
                             <th class="px-6 py-3">Kebun</th>
@@ -130,128 +130,128 @@
 
 <!-- Custom Column Visibility Modal -->
 <div id="customColumnModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[80vh] overflow-y-auto">
+    <div class="bg-white rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[80vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Pilih Kolom yang Ditampilkan</h3>
-            <button onclick="hideCustomColumnModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <h3 class="text-lg font-semibold text-gray-900">Pilih Kolom yang Ditampilkan</h3>
+            <button onclick="hideCustomColumnModal()" class="text-gray-400 hover:text-gray-600">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div class="space-y-2">
-                <h4 class="font-medium text-gray-900 dark:text-gray-100">Data Dasar</h4>
+                <h4 class="font-medium text-gray-900">Data Dasar</h4>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="0" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Tanggal</span>
+                    <span class="text-sm">Tanggal</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="1" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Kebun</span>
+                    <span class="text-sm">Kebun</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="2" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Divisi</span>
+                    <span class="text-sm">Divisi</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="3" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">AKP (%)</span>
+                    <span class="text-sm">AKP (%)</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="4" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">TK Panen</span>
+                    <span class="text-sm">TK Panen</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="5" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Luas (Ha)</span>
+                    <span class="text-sm">Luas (Ha)</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="6" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">JJG Panen</span>
+                    <span class="text-sm">JJG Panen</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="7" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">JJG Kirim</span>
+                    <span class="text-sm">JJG Kirim</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="8" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Ketrek</span>
+                    <span class="text-sm">Ketrek</span>
                 </label>
             </div>
             
             <div class="space-y-2">
-                <h4 class="font-medium text-gray-900 dark:text-gray-100">Data Produksi</h4>
+                <h4 class="font-medium text-gray-900">Data Produksi</h4>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="9" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Total JJG Kirim</span>
+                    <span class="text-sm">Total JJG Kirim</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="10" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Tonase (Kg)</span>
+                    <span class="text-sm">Tonase (Kg)</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="11" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Refraksi (Kg)</span>
+                    <span class="text-sm">Refraksi (Kg)</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="12" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Refraksi (%)</span>
+                    <span class="text-sm">Refraksi (%)</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="13" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Restant JJG</span>
+                    <span class="text-sm">Restant JJG</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="14" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">BJR Hari Ini</span>
+                    <span class="text-sm">BJR Hari Ini</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="15" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Output Kg/HK</span>
+                    <span class="text-sm">Output Kg/HK</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="16" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Output Ha/HK</span>
+                    <span class="text-sm">Output Ha/HK</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="17" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Budget Harian</span>
+                    <span class="text-sm">Budget Harian</span>
                 </label>
             </div>
             
             <div class="space-y-2">
-                <h4 class="font-medium text-gray-900 dark:text-gray-100">Data Timbang & Analisis</h4>
+                <h4 class="font-medium text-gray-900">Data Timbang & Analisis</h4>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="18" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Timbang Kebun</span>
+                    <span class="text-sm">Timbang Kebun</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="19" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Timbang PKS</span>
+                    <span class="text-sm">Timbang PKS</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="20" class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Rotasi Panen</span>
+                    <span class="text-sm">Rotasi Panen</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="21" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">BJR Calc</span>
+                    <span class="text-sm">BJR Calc</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="22" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">AKP Calc</span>
+                    <span class="text-sm">AKP Calc</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="23" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">ACV Prod</span>
+                    <span class="text-sm">ACV Prod</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="24" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Selisih</span>
+                    <span class="text-sm">Selisih</span>
                 </label>
                 <label class="flex items-center">
                     <input type="checkbox" data-column="25" checked class="mr-2 column-toggle">
-                    <span class="text-sm dark:text-gray-300">Selisih (%)</span>
+                    <span class="text-sm">Selisih (%)</span>
                 </label>
             </div>
         </div>
@@ -283,9 +283,9 @@
 
 <!-- Import Modal -->
 <div id="importModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Import Data Excel</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Import Data Excel</h3>
             <button onclick="hideImportModal()" class="text-gray-400 hover:text-gray-600">
                 <i class="fas fa-times"></i>
             </button>
@@ -294,15 +294,15 @@
         <form id="importForm" action="{{ route('panen-harian.import', [], false) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label class="block text-sm font-medium text-gray-900 mb-2">
                     Pilih File Excel
                 </label>
                 <input type="file" 
                        name="file" 
                        accept=".xlsx,.xls,.csv"
                        required
-                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+          <p class="text-xs text-gray-600 mt-1">
                     Format: Excel/CSV dengan 28 kolom sesuai template
                 </p>
             </div>
