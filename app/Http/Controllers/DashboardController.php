@@ -200,6 +200,10 @@ class DashboardController extends Controller
         ];
 
         $userName = auth()->check() ? (string)auth()->user()->name : 'Manager Kebun';
+        // Filter helper lists and flags for view (avoid inline PHP in Blade)
+        $bulanList = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+        $yearNow = (int)date('Y');
+        $enableCharts = (string)$request->query('charts', '0') === '1';
 
         return view('dashboard.index', compact(
             'todayMetrics',
@@ -209,7 +213,10 @@ class DashboardController extends Controller
             'divisiList',
             'summaryTitle',
             'selectedFilters',
-            'userName'
+            'userName',
+            'bulanList',
+            'yearNow',
+            'enableCharts'
         ));
     }
 
