@@ -216,6 +216,9 @@ class KpiController extends Controller
             ->when($filters['divisi'], fn($q)=>$q->where('divisi',$filters['divisi']))
             ->when($filters['start'], fn($q)=>$q->whereDate('tanggal_panen','>=',$filters['start']))
             ->when($filters['end'], fn($q)=>$q->whereDate('tanggal_panen','<=',$filters['end']))
+            // Apply month/year filters when provided
+            ->when($filters['year'], fn($q)=>$q->whereRaw('EXTRACT(YEAR FROM tanggal_panen)::int = ?', [$filters['year']]))
+            ->when($filters['month'], fn($q)=>$q->whereRaw('EXTRACT(MONTH FROM tanggal_panen)::int = ?', [$this->monthToNumber($filters['month'])]))
             ->select(
                 DB::raw("CASE WHEN SUM(COALESCE(timbang_kebun_harian,0))=0 THEN 0 ELSE (SUM(COALESCE(timbang_pks_harian,0))-SUM(COALESCE(timbang_kebun_harian,0)))/NULLIF(SUM(COALESCE(timbang_kebun_harian,0)),0)*100 END as avg_loss_pct"),
                 DB::raw("CASE WHEN SUM(COALESCE(jjg_panen_jjg,0))=0 THEN 0 ELSE SUM(COALESCE(restant_jjg,0))::float/NULLIF(SUM(COALESCE(jjg_panen_jjg,0)),0)*100 END as restan_rate_pct"),
