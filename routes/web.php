@@ -15,6 +15,8 @@ use App\Http\Controllers\TableColumnController;
 
 // Authentication Routes
 Route::get('/', [AuthController::class, 'showLogin'])->name('home');
+// Public debug endpoint to verify rendering without auth
+Route::get('/debug/min', function() { return view('debug.min'); });
 // Simple health check (no auth) for Railway
 Route::get('/health', function() { return response()->json(['status' => 'ok']); });
 // Lightweight diagnostics (no auth): DB connectivity and schema snapshot
@@ -111,8 +113,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected Routes
 Route::middleware('auth')->group(function () {
-    // Debug routes to isolate view compilation issues
-    Route::get('/debug/min', function() { return view('debug.min'); });
+    // Debug route extending layout to isolate view compilation issues
     Route::get('/debug/layout', function() { return view('debug.layout'); });
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
