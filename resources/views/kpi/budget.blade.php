@@ -6,11 +6,11 @@
   @include('kpi._filters')
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-    <div class="bg-white dark:bg-gray-800 p-3 rounded border dark:border-gray-700">
+    <div class="bg-white p-3 rounded border border-gray-200">
       <div class="text-sm mb-2">Harian: Actual vs Budget</div>
       <div id="chartBudgetHarian" style="width:100%;height:300px" data-height="300"></div>
     </div>
-    <div class="bg-white dark:bg-gray-800 p-3 rounded border dark:border-gray-700">
+    <div class="bg-white p-3 rounded border border-gray-200">
       <div class="text-sm mb-2">Bulanan: Actual vs Budget</div>
       <div id="chartBudgetBulanan" style="width:100%;height:300px" data-height="300"></div>
     </div>

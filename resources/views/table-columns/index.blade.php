@@ -4,27 +4,27 @@
 @section('content')
 <div class="space-y-6">
   <div class="flex justify-between items-center">
-    <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">Daftar Kolom</h2>
+    <h2 class="text-xl font-bold text-gray-900">Daftar Kolom</h2>
     <a href="{{ route('table-columns.create') }}" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium"><i class="fas fa-plus mr-2"></i>Tambah Kolom</a>
   </div>
-  <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+  <div class="bg-white p-4 rounded-xl border border-gray-200">
     <div class="flex flex-wrap gap-4 mb-4 items-end">
       <div>
         <label class="block text-xs font-semibold mb-1">Filter Tabel</label>
-        <select id="filter_table" class="px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600">
+        <select id="filter_table" class="px-3 py-2 border rounded-lg">
           <option value="">Semua</option>
           @foreach($tables as $t)
             <option value="{{ $t }}">{{ $t }}</option>
           @endforeach
         </select>
       </div>
-      <div class="ml-auto flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+      <div class="ml-auto flex items-center gap-2 text-xs text-gray-500">
         <span><span class="inline-block w-3 h-3 bg-green-500 rounded-sm align-middle"></span> Visible</span>
         <span><span class="inline-block w-3 h-3 bg-blue-500 rounded-sm align-middle"></span> Required</span>
       </div>
     </div>
     <table id="tableColumnsTable" class="w-full text-sm">
-      <thead class="text-xs uppercase bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+      <thead class="text-xs uppercase bg-gray-50 text-gray-600">
         <tr>
           <th class="px-3 py-2">Table</th>
           <th class="px-3 py-2">Column</th>

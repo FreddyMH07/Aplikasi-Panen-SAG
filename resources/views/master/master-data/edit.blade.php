@@ -5,12 +5,12 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Edit Master Data</h2>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1">Edit data master kebun, divisi, SPH, luas TM, dan budget</p>
+                    <h2 class="text-xl font-semibold text-gray-900">Edit Master Data</h2>
+                    <p class="text-gray-600 mt-1">Edit data master kebun, divisi, SPH, luas TM, dan budget</p>
                 </div>
                 <a href="{{ route('master.master-data.index') }}" 
                    class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors duration-200">
@@ -27,7 +27,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Kebun -->
                 <div>
-                    <label for="kebun" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="kebun" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="fas fa-map mr-1"></i>
                         Nama Kebun <span class="text-red-500">*</span>
                     </label>
@@ -37,7 +37,7 @@
                            value="{{ old('kebun', $masterData->kebun) }}"
                            required
                            maxlength="64"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('kebun') border-red-500 @enderror">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('kebun') border-red-500 @enderror">
                     @error('kebun')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -45,7 +45,7 @@
 
                 <!-- Divisi -->
                 <div>
-                    <label for="divisi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="divisi" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="fas fa-sitemap mr-1"></i>
                         Nama Divisi <span class="text-red-500">*</span>
                     </label>
@@ -55,7 +55,7 @@
                            value="{{ old('divisi', $masterData->divisi) }}"
                            required
                            maxlength="64"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('divisi') border-red-500 @enderror">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('divisi') border-red-500 @enderror">
                     @error('divisi')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -63,7 +63,7 @@
 
                 <!-- SPH Panen -->
                 <div>
-                    <label for="sph_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="sph_panen" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="fas fa-seedling mr-1"></i>
                         SPH Panen <span class="text-red-500">*</span>
                     </label>
@@ -75,16 +75,16 @@
                            min="50"
                            max="200"
                            step="0.01"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('sph_panen') border-red-500 @enderror">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('sph_panen') border-red-500 @enderror">
                     @error('sph_panen')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Standar Pokok per Hektar (50-200)</p>
+                    <p class="text-xs text-gray-500 mt-1">Standar Pokok per Hektar (50-200)</p>
                 </div>
 
                 <!-- Luas TM -->
                 <div>
-                    <label for="luas_tm" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="luas_tm" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="fas fa-ruler mr-1"></i>
                         Luas TM (Ha) <span class="text-red-500">*</span>
                     </label>
@@ -95,16 +95,16 @@
                            required
                            min="0"
                            step="0.01"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('luas_tm') border-red-500 @enderror">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('luas_tm') border-red-500 @enderror">
                     @error('luas_tm')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Luas Tanaman Menghasilkan dalam hektar</p>
+                    <p class="text-xs text-gray-500 mt-1">Luas Tanaman Menghasilkan dalam hektar</p>
                 </div>
 
                 <!-- Budget Alokasi -->
                 <div>
-                    <label for="budget_alokasi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="budget_alokasi" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="fas fa-dollar-sign mr-1"></i>
                         Budget Alokasi <span class="text-red-500">*</span>
                     </label>
@@ -115,16 +115,16 @@
                            required
                            min="0"
                            step="0.01"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('budget_alokasi') border-red-500 @enderror">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('budget_alokasi') border-red-500 @enderror">
                     @error('budget_alokasi')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Budget yang dialokasikan untuk periode ini</p>
+                    <p class="text-xs text-gray-500 mt-1">Budget yang dialokasikan untuk periode ini</p>
                 </div>
 
                 <!-- PKK -->
                 <div>
-                    <label for="pkk" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="pkk" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="fas fa-tree mr-1"></i>
                         PKK <span class="text-red-500">*</span>
                     </label>
@@ -134,23 +134,23 @@
                            value="{{ old('pkk', $masterData->pkk) }}"
                            required
                            min="0"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('pkk') border-red-500 @enderror">
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('pkk') border-red-500 @enderror">
                     @error('pkk')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pokok Kelapa Sawit (jumlah pohon)</p>
+                    <p class="text-xs text-gray-500 mt-1">Pokok Kelapa Sawit (jumlah pohon)</p>
                 </div>
 
                 <!-- Bulan -->
                 <div>
-                    <label for="bulan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="bulan" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="fas fa-calendar mr-1"></i>
                         Bulan <span class="text-red-500">*</span>
                     </label>
                     <select id="bulan" 
                             name="bulan" 
                             required
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('bulan') border-red-500 @enderror">
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('bulan') border-red-500 @enderror">
                         <option value="">Pilih Bulan</option>
                         @foreach($bulanList as $key => $value)
                             <option value="{{ $key }}" {{ old('bulan', $masterData->bulan) == $key ? 'selected' : '' }}>{{ $value }}</option>
@@ -163,14 +163,14 @@
 
                 <!-- Tahun -->
                 <div>
-                    <label for="tahun" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label for="tahun" class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="fas fa-calendar-alt mr-1"></i>
                         Tahun <span class="text-red-500">*</span>
                     </label>
                     <select id="tahun" 
                             name="tahun" 
                             required
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('tahun') border-red-500 @enderror">
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('tahun') border-red-500 @enderror">
                         <option value="">Pilih Tahun</option>
                         @for($year = date('Y') + 1; $year >= 2020; $year--)
                             <option value="{{ $year }}" {{ old('tahun', $masterData->tahun) == $year ? 'selected' : '' }}>{{ $year }}</option>
@@ -183,13 +183,13 @@
             </div>
 
             @if($errors->has('duplicate'))
-                <div class="mt-6 p-4 bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg">
+                <div class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <i class="fas fa-exclamation-triangle text-red-400"></i>
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm text-red-800 dark:text-red-200">{{ $errors->first('duplicate') }}</p>
+                            <p class="text-sm text-red-800">{{ $errors->first('duplicate') }}</p>
                         </div>
                     </div>
                 </div>

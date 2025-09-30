@@ -1,27 +1,27 @@
 <form method="GET" class="mb-4 grid grid-cols-2 md:grid-cols-6 gap-2 items-end">
   <div>
     <label class="text-sm">Kebun</label>
-    <select id="filterKebun" name="kebun" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900">
+    <select id="filterKebun" name="kebun" class="w-full border rounded px-2 py-1 bg-white">
       <option value="">Semua</option>
     </select>
   </div>
   <div>
     <label class="text-sm">Divisi</label>
-    <select id="filterDivisi" name="divisi" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900">
+    <select id="filterDivisi" name="divisi" class="w-full border rounded px-2 py-1 bg-white">
       <option value="">Semua</option>
     </select>
   </div>
   <div>
     <label class="text-sm">Start</label>
-    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900" />
+    <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full border rounded px-2 py-1 bg-white" />
   </div>
   <div>
     <label class="text-sm">End</label>
-    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900" />
+    <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full border rounded px-2 py-1 bg-white" />
   </div>
   <div>
     <label class="text-sm">Bulan</label>
-    <select id="filterBulan" name="bulan" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900">
+    <select id="filterBulan" name="bulan" class="w-full border rounded px-2 py-1 bg-white">
       <option value="">Semua</option>
       @php($bulanList = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'])
       @foreach($bulanList as $b)
@@ -32,7 +32,7 @@
   <div>
     <label class="text-sm">Tahun</label>
     @php($yearNow = (int)date('Y'))
-    <select id="filterTahun" name="tahun" class="w-full border rounded px-2 py-1 bg-white dark:bg-gray-900">
+  <select id="filterTahun" name="tahun" class="w-full border rounded px-2 py-1 bg-white">
       <option value="">Semua</option>
       @for($y = $yearNow+1; $y >= $yearNow-5; $y--)
         <option value="{{ $y }}" {{ (string)request('tahun') === (string)$y ? 'selected' : '' }}>{{ $y }}</option>

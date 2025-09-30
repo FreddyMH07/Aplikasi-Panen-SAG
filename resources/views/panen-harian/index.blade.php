@@ -495,34 +495,34 @@ $(document).ready(function() {
             const acvProdText = data.acv_prod || '0%';
             const acvProd = parseFloat(acvProdText.replace('%', ''));
             if (acvProd < 80) {
-                $(row).find('td:eq(23)').addClass('bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 font-semibold');
+                $(row).find('td:eq(23)').addClass('bg-red-100 text-red-800 font-semibold');
             } else if (acvProd >= 80 && acvProd < 95) {
-                $(row).find('td:eq(23)').addClass('bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 font-semibold');
+                $(row).find('td:eq(23)').addClass('bg-yellow-100 text-yellow-800 font-semibold');
             } else if (acvProd >= 95) {
-                $(row).find('td:eq(23)').addClass('bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 font-semibold');
+                $(row).find('td:eq(23)').addClass('bg-green-100 text-green-800 font-semibold');
             }
             
             // BJR coloring (normal range 10-15 kg)
             const bjr = parseFloat(data.bjr_calculated || 0);
             if (bjr < 10 || bjr > 15) {
-                $(row).find('td:eq(21)').addClass('bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 font-semibold');
+                $(row).find('td:eq(21)').addClass('bg-red-100 text-red-800 font-semibold');
             } else {
-                $(row).find('td:eq(21)').addClass('bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200');
+                $(row).find('td:eq(21)').addClass('bg-green-100 text-green-800');
             }
             
             // Refraksi coloring (> 3% is critical)
             const refraksiText = data.refraksi_persen || '0%';
             const refraksi = parseFloat(refraksiText.replace('%', ''));
             if (refraksi > 3) {
-                $(row).find('td:eq(12)').addClass('bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 font-semibold');
+                $(row).find('td:eq(12)').addClass('bg-red-100 text-red-800 font-semibold');
             } else if (refraksi > 2) {
-                $(row).find('td:eq(12)').addClass('bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200');
+                $(row).find('td:eq(12)').addClass('bg-yellow-100 text-yellow-800');
             }
             
             // AKP coloring (normal range 0.5-1.0)
             const akp = parseFloat(data.akp_calculated || 0);
             if (akp < 0.5 || akp > 1.0) {
-                $(row).find('td:eq(22)').addClass('bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200');
+                $(row).find('td:eq(22)').addClass('bg-yellow-100 text-yellow-800');
             }
             
             // Helper: format with thousands + 2 decimals; supports percent
@@ -555,9 +555,9 @@ $(document).ready(function() {
             const selisihText = data.selisih || '0';
             const selisih = parseFloat(selisihText.replace(/[^-\d.]/g, ''));
             if (selisih < -500) {
-                $(row).find('td:eq(24)').addClass('bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 font-semibold');
+                $(row).find('td:eq(24)').addClass('bg-red-100 text-red-800 font-semibold');
             } else if (selisih > 500) {
-                $(row).find('td:eq(24)').addClass('bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200');
+                $(row).find('td:eq(24)').addClass('bg-blue-100 text-blue-800');
             }
 
             // Selisih (%) coloring
@@ -565,11 +565,11 @@ $(document).ready(function() {
             const selisihPct = parseFloat(selisihPctText.replace('%', ''));
             if (!isNaN(selisihPct)) {
                 if (selisihPct < -2) {
-                    $(row).find('td:eq(25)').addClass('bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 font-semibold');
+                    $(row).find('td:eq(25)').addClass('bg-red-100 text-red-800 font-semibold');
                 } else if (selisihPct > 2) {
-                    $(row).find('td:eq(25)').addClass('bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200');
+                    $(row).find('td:eq(25)').addClass('bg-blue-100 text-blue-800');
                 } else {
-                    $(row).find('td:eq(25)').addClass('bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200');
+                    $(row).find('td:eq(25)').addClass('bg-green-100 text-green-800');
                 }
             }
         },
@@ -751,9 +751,9 @@ function showTableStatus(message, type = 'info') {
     el.removeClass('bg-yellow-50 border-yellow-200 text-yellow-800');
     el.removeClass('bg-red-50 border-red-200 text-red-800');
     if (type === 'error') {
-        el.addClass('bg-red-50 border-red-200 text-red-800 dark:bg-red-900 dark:border-red-700 dark:text-red-100');
+        el.addClass('bg-red-50 border-red-200 text-red-800');
     } else {
-        el.addClass('bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100');
+        el.addClass('bg-yellow-50 border-yellow-200 text-yellow-800');
     }
     el.text(message);
 }

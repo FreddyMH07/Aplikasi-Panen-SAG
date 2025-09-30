@@ -5,12 +5,12 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto">
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Tambah Data Panen Harian</h2>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1">Masukkan data panen harian kelapa sawit lengkap</p>
+                    <h2 class="text-xl font-semibold text-gray-900">Tambah Data Panen Harian</h2>
+                    <p class="text-gray-600 mt-1">Masukkan data panen harian kelapa sawit lengkap</p>
                 </div>
                 <a href="{{ route('panen-harian.index') }}" 
                    class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors duration-200">
@@ -25,11 +25,11 @@
             
             <!-- Basic Information -->
             <div class="mb-8">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Dasar</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Informasi Dasar</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Tanggal Panen -->
                     <div>
-                        <label for="tanggal_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="tanggal_panen" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-calendar mr-1"></i>
                             Tanggal Panen <span class="text-red-500">*</span>
                         </label>
@@ -38,7 +38,7 @@
                                name="tanggal_panen" 
                                value="{{ old('tanggal_panen', date('Y-m-d')) }}"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('tanggal_panen') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('tanggal_panen') border-red-500 @enderror">
                         @error('tanggal_panen')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -46,14 +46,14 @@
                     
                     <!-- Kebun -->
                     <div>
-                        <label for="kebun" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="kebun" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-map mr-1"></i>
                             Kebun <span class="text-red-500">*</span>
                         </label>
                         <select id="kebun" 
                                 name="kebun" 
                                 required
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('kebun') border-red-500 @enderror">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('kebun') border-red-500 @enderror">
                             <option value="">Pilih Kebun</option>
                         </select>
                         @error('kebun')
@@ -63,14 +63,14 @@
                     
                     <!-- Divisi -->
                     <div>
-                        <label for="divisi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="divisi" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-sitemap mr-1"></i>
                             Divisi <span class="text-red-500">*</span>
                         </label>
                         <select id="divisi" 
                                 name="divisi" 
                                 required
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('divisi') border-red-500 @enderror">
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('divisi') border-red-500 @enderror">
                             <option value="">Pilih Divisi</option>
                         </select>
                         @error('divisi')
@@ -82,11 +82,11 @@
 
             <!-- Production Data -->
             <div class="mb-8">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Data Produksi</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Data Produksi</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- AKP Panen -->
                     <div>
-                        <label for="akp_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="akp_panen" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-percentage mr-1"></i>
                             AKP Panen (%)
                         </label>
@@ -95,7 +95,7 @@
                                name="akp_panen" 
                                value="{{ old('akp_panen') }}"
                                placeholder="Contoh: 2.5%"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('akp_panen') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('akp_panen') border-red-500 @enderror">
                         @error('akp_panen')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -103,7 +103,7 @@
 
                     <!-- Jumlah TK Panen -->
                     <div>
-                        <label for="jumlah_tk_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="jumlah_tk_panen" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-users mr-1"></i>
                             Jumlah TK Panen <span class="text-red-500">*</span>
                         </label>
@@ -113,7 +113,7 @@
                                value="{{ old('jumlah_tk_panen') }}"
                                min="0"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('jumlah_tk_panen') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('jumlah_tk_panen') border-red-500 @enderror">
                         @error('jumlah_tk_panen')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -121,7 +121,7 @@
 
                     <!-- Luas Panen Ha -->
                     <div>
-                        <label for="luas_panen_ha" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="luas_panen_ha" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-ruler mr-1"></i>
                             Luas Panen (Ha) <span class="text-red-500">*</span>
                         </label>
@@ -132,7 +132,7 @@
                                step="0.01"
                                min="0"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('luas_panen_ha') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('luas_panen_ha') border-red-500 @enderror">
                         @error('luas_panen_ha')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -140,7 +140,7 @@
 
                     <!-- JJG Panen -->
                     <div>
-                        <label for="jjg_panen_jjg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="jjg_panen_jjg" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-seedling mr-1"></i>
                             JJG Panen <span class="text-red-500">*</span>
                         </label>
@@ -150,7 +150,7 @@
                                value="{{ old('jjg_panen_jjg') }}"
                                min="0"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('jjg_panen_jjg') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('jjg_panen_jjg') border-red-500 @enderror">
                         @error('jjg_panen_jjg')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -158,7 +158,7 @@
 
                     <!-- JJG Kirim -->
                     <div>
-                        <label for="jjg_kirim_jjg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="jjg_kirim_jjg" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-truck mr-1"></i>
                             JJG Kirim
                         </label>
@@ -167,7 +167,7 @@
                                name="jjg_kirim_jjg" 
                                value="{{ old('jjg_kirim_jjg', 0) }}"
                                min="0"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('jjg_kirim_jjg') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('jjg_kirim_jjg') border-red-500 @enderror">
                         @error('jjg_kirim_jjg')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -175,7 +175,7 @@
 
                     <!-- Ketrek -->
                     <div>
-                        <label for="ketrek" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="ketrek" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-info-circle mr-1"></i>
                             Ketrek
                         </label>
@@ -185,16 +185,16 @@
                                value="{{ old('ketrek') }}"
                                step="0.01"
                                min="0"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('ketrek') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('ketrek') border-red-500 @enderror">
                         @error('ketrek')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Kosongkan jika tidak ada</p>
+                        <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ada</p>
                     </div>
 
                     <!-- Total JJG Kirim -->
                     <div>
-                        <label for="total_jjg_kirim_jjg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="total_jjg_kirim_jjg" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-sum mr-1"></i>
                             Total JJG Kirim
                         </label>
@@ -203,7 +203,7 @@
                                name="total_jjg_kirim_jjg" 
                                value="{{ old('total_jjg_kirim_jjg', 0) }}"
                                min="0"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('total_jjg_kirim_jjg') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('total_jjg_kirim_jjg') border-red-500 @enderror">
                         @error('total_jjg_kirim_jjg')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -211,7 +211,7 @@
 
                     <!-- Tonase Panen -->
                     <div>
-                        <label for="tonase_panen_kg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="tonase_panen_kg" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-weight mr-1"></i>
                             Tonase Panen (Kg) <span class="text-red-500">*</span>
                         </label>
@@ -222,7 +222,7 @@
                                step="0.01"
                                min="0"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('tonase_panen_kg') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('tonase_panen_kg') border-red-500 @enderror">
                         @error('tonase_panen_kg')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -230,7 +230,7 @@
 
                     <!-- Refraksi Kg -->
                     <div>
-                        <label for="refraksi_kg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="refraksi_kg" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-exclamation-triangle mr-1"></i>
                             Refraksi (Kg)
                         </label>
@@ -240,7 +240,7 @@
                                value="{{ old('refraksi_kg', 0) }}"
                                step="0.01"
                                min="0"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('refraksi_kg') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('refraksi_kg') border-red-500 @enderror">
                         @error('refraksi_kg')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -248,7 +248,7 @@
 
                     <!-- Restant JJG -->
                     <div>
-                        <label for="restant_jjg" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="restant_jjg" class="block text sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-archive mr-1"></i>
                             Restant JJG
                         </label>
@@ -257,7 +257,7 @@
                                name="restant_jjg" 
                                value="{{ old('restant_jjg', 0) }}"
                                min="0"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('restant_jjg') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('restant_jjg') border-red-500 @enderror">
                         @error('restant_jjg')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -265,7 +265,7 @@
 
                     <!-- Budget Harian -->
                     <div>
-                        <label for="budget_harian" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="budget_harian" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-dollar-sign mr-1"></i>
                             Budget Harian
                         </label>
@@ -275,7 +275,7 @@
                                value="{{ old('budget_harian', 0) }}"
                                step="0.01"
                                min="0"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('budget_harian') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('budget_harian') border-red-500 @enderror">
                         @error('budget_harian')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -283,7 +283,7 @@
 
                     <!-- Timbang Kebun Harian -->
                     <div>
-                        <label for="timbang_kebun_harian" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="timbang_kebun_harian" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-balance-scale mr-1"></i>
                             Timbang Kebun Harian <span class="text-red-500">*</span>
                         </label>
@@ -294,7 +294,7 @@
                                step="0.01"
                                min="0"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('timbang_kebun_harian') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('timbang_kebun_harian') border-red-500 @enderror">
                         @error('timbang_kebun_harian')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -302,7 +302,7 @@
 
                     <!-- Timbang PKS Harian -->
                     <div>
-                        <label for="timbang_pks_harian" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="timbang_pks_harian" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-balance-scale mr-1"></i>
                             Timbang PKS Harian <span class="text-red-500">*</span>
                         </label>
@@ -313,7 +313,7 @@
                                step="0.01"
                                min="0"
                                required
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('timbang_pks_harian') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('timbang_pks_harian') border-red-500 @enderror">
                         @error('timbang_pks_harian')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -321,7 +321,7 @@
 
                     <!-- Rotasi Panen -->
                     <div>
-                        <label for="rotasi_panen" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="rotasi_panen" class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-sync mr-1"></i>
                             Rotasi Panen (Hari)
                         </label>
@@ -331,7 +331,7 @@
                                value="{{ old('rotasi_panen', 0) }}"
                                step="0.01"
                                min="0"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100 @error('rotasi_panen') border-red-500 @enderror">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('rotasi_panen') border-red-500 @enderror">
                         @error('rotasi_panen')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -340,24 +340,24 @@
             </div>
             
             <!-- Calculated Metrics Preview -->
-            <div class="mt-8 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Preview Perhitungan</h3>
+            <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Preview Perhitungan</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="text-center">
-                        <p class="text-sm text-gray-600 dark:text-gray-400">BJR (Kg)</p>
-                        <p id="preview_bjr" class="text-xl font-bold text-gray-900 dark:text-gray-100">0.00</p>
+                        <p class="text-sm text-gray-600">BJR (Kg)</p>
+                        <p id="preview_bjr" class="text-xl font-bold text-gray-900">0.00</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-sm text-gray-600 dark:text-gray-400">AKP Calculated</p>
-                        <p id="preview_akp" class="text-xl font-bold text-gray-900 dark:text-gray-100">0.0000</p>
+                        <p class="text-sm text-gray-600">AKP Calculated</p>
+                        <p id="preview_akp" class="text-xl font-bold text-gray-900">0.0000</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-sm text-gray-600 dark:text-gray-400">ACV Prod (%)</p>
-                        <p id="preview_acv" class="text-xl font-bold text-gray-900 dark:text-gray-100">0.00</p>
+                        <p class="text-sm text-gray-600">ACV Prod (%)</p>
+                        <p id="preview_acv" class="text-xl font-bold text-gray-900">0.00</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Selisih (Kg)</p>
-                        <p id="preview_selisih" class="text-xl font-bold text-gray-900 dark:text-gray-100">0.00</p>
+                        <p class="text-sm text-gray-600">Selisih (Kg)</p>
+                        <p id="preview_selisih" class="text-xl font-bold text-gray-900">0.00</p>
                     </div>
                 </div>
             </div>

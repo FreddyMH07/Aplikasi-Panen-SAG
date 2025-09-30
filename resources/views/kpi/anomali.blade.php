@@ -36,7 +36,7 @@
         @php
           $flags = $row['flags'] ?? [];
         @endphp
-        <tr class="border-b {{ !empty($flags) ? 'bg-red-50 dark:bg-red-900/20' : '' }}">
+  <tr class="border-b {{ !empty($flags) ? 'bg-red-50' : '' }}">
           <td class="py-1 pr-4">{{ \Carbon\Carbon::parse($row['tanggal_panen'])->format('d M Y') }}</td>
           <td class="py-1 pr-4">{{ $row['kebun'] }}</td>
           <td class="py-1 pr-4">{{ $row['divisi'] }}</td>

@@ -8,8 +8,8 @@
     <!-- Header Actions -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Report Panen Bulanan</h2>
-            <p class="text-gray-600 dark:text-gray-400">Laporan agregasi data panen harian menjadi bulanan</p>
+            <h2 class="text-2xl font-bold text-gray-900">Report Panen Bulanan</h2>
+            <p class="text-gray-600">Laporan agregasi data panen harian menjadi bulanan</p>
         </div>
         
         <div class="flex flex-wrap gap-2">
@@ -22,17 +22,17 @@
     </div>
     
     <!-- Filters -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">
             <i class="fas fa-filter mr-2"></i>
             Filter Data
         </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tahun</label>
-                <select id="tahun_filter" 
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+        <label class="block text-sm font-medium text-gray-900 mb-2">Tahun</label>
+        <select id="tahun_filter" 
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Tahun</option>
                     @for($year = date('Y'); $year >= 2020; $year--)
                         <option value="{{ $year }}">{{ $year }}</option>
@@ -41,9 +41,9 @@
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bulan</label>
-                <select id="bulan_filter" 
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+        <label class="block text-sm font-medium text-gray-900 mb-2">Bulan</label>
+        <select id="bulan_filter" 
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Bulan</option>
                     <option value="January">Januari</option>
                     <option value="February">Februari</option>
@@ -61,17 +61,17 @@
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Kebun</label>
-                <select id="kebun_filter" 
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+        <label class="block text-sm font-medium text-gray-900 mb-2">Kebun</label>
+        <select id="kebun_filter" 
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Kebun</option>
                 </select>
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Divisi</label>
-                <select id="divisi_filter" 
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-700 dark:text-gray-100">
+        <label class="block text-sm font-medium text-gray-900 mb-2">Divisi</label>
+        <select id="divisi_filter" 
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
                     <option value="">Semua Divisi</option>
                 </select>
             </div>
@@ -92,12 +92,12 @@
     </div>
     
     <!-- Data Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-6">
-            <div id="tableStatus" class="hidden mb-3 p-3 rounded bg-yellow-50 border border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100"></div>
+        <div id="tableStatus" class="hidden mb-3 p-3 rounded bg-yellow-50 border border-yellow-200 text-yellow-800"></div>
             <div class="overflow-x-auto">
-                <table id="panenBulananTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <table id="panenBulananTable" class="w-full text-sm text-left text-gray-600">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th class="px-6 py-3">Tahun</th>
                             <th class="px-6 py-3">Bulan</th>
@@ -258,9 +258,9 @@ function showTableStatus(message, type = 'info') {
     el.removeClass('bg-yellow-50 border-yellow-200 text-yellow-800');
     el.removeClass('bg-red-50 border-red-200 text-red-800');
     if (type === 'error') {
-        el.addClass('bg-red-50 border-red-200 text-red-800 dark:bg-red-900 dark:border-red-700 dark:text-red-100');
+    el.addClass('bg-red-50 border-red-200 text-red-800');
     } else {
-        el.addClass('bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-100');
+    el.addClass('bg-yellow-50 border-yellow-200 text-yellow-800');
     }
     el.text(message);
 }

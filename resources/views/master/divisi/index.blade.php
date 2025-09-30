@@ -6,16 +6,16 @@
 @section('content')
 <div class="space-y-6">
     <!-- Info Notice -->
-    <div class="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <div class="flex">
             <div class="flex-shrink-0">
                 <i class="fas fa-info-circle text-yellow-400"></i>
             </div>
             <div class="ml-3">
-                <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                <h3 class="text-sm font-medium text-yellow-800">
                     Legacy Feature
                 </h3>
-                <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                <div class="mt-2 text-sm text-yellow-700">
                     <p>Ini adalah fitur legacy untuk kompatibilitas dengan sistem lama. Untuk fitur terbaru, gunakan <a href="{{ route('master.master-data.index') }}" class="underline font-medium">Master Data</a> yang lebih lengkap.</p>
                 </div>
             </div>
@@ -25,8 +25,8 @@
     <!-- Header Actions -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Master Divisi (Legacy)</h2>
-            <p class="text-gray-600 dark:text-gray-400">Kelola data master divisi untuk kompatibilitas sistem lama</p>
+            <h2 class="text-2xl font-bold text-gray-900">Master Divisi (Legacy)</h2>
+            <p class="text-gray-600">Kelola data master divisi untuk kompatibilitas sistem lama</p>
         </div>
         
         <div class="flex flex-wrap gap-2">
@@ -39,11 +39,11 @@
     </div>
     
     <!-- Data Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-6">
             <div class="overflow-x-auto">
-                <table id="divisiTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <table id="divisiTable" class="w-full text-sm text-left text-gray-600">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th class="px-6 py-3">Nama Divisi</th>
                             <th class="px-6 py-3">Kode Divisi</th>

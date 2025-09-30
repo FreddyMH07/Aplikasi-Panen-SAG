@@ -3,25 +3,25 @@
 @section('page-title','Edit Kolom')
 @section('content')
 <div class="max-w-xl mx-auto space-y-6">
-  <div class="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+  <div class="bg-white p-6 rounded-xl border border-gray-200">
     <form method="POST" action="{{ route('table-columns.update', $column->id, false) }}" class="space-y-4">
       @csrf
       @method('PUT')
       <div>
         <label class="block text-sm font-medium mb-1">Nama Tabel</label>
-        <input value="{{ $column->table_name }}" disabled class="w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"/>
+  <input value="{{ $column->table_name }}" disabled class="w-full px-3 py-2 border rounded-lg bg-gray-100"/>
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Nama Kolom</label>
-        <input value="{{ $column->column_name }}" disabled class="w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"/>
+  <input value="{{ $column->column_name }}" disabled class="w-full px-3 py-2 border rounded-lg bg-gray-100"/>
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Label Kolom</label>
-        <input name="column_label" value="{{ $column->column_label }}" required class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"/>
+  <input name="column_label" value="{{ $column->column_label }}" required class="w-full px-3 py-2 border rounded-lg"/>
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Tipe</label>
-        <select name="column_type" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600" required>
+  <select name="column_type" class="w-full px-3 py-2 border rounded-lg" required>
           @foreach(['text','number','date','select','json'] as $t)
             <option value="{{ $t }}" {{ $column->column_type === $t ? 'selected' : '' }}>{{ $t }}</option>
           @endforeach
@@ -37,7 +37,7 @@
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">Sort Order</label>
-        <input type="number" name="sort_order" value="{{ $column->sort_order }}" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600" min="0" />
+  <input type="number" name="sort_order" value="{{ $column->sort_order }}" class="w-full px-3 py-2 border rounded-lg" min="0" />
       </div>
       <div class="flex justify-end space-x-2 pt-4">
         <a href="{{ route('table-columns.index') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">Batal</a>
