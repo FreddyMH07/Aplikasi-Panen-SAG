@@ -104,11 +104,16 @@ class DashboardController extends Controller
 
         // Hitung metrik
         $todayMetrics = $this->calculateMetrics($todayData);
-        $monthlyMetrics = $this->calculateMetrics($monthlyData);
+    $monthlyMetrics = $this->calculateMetrics($monthlyData);
+    // Derived per-HK metrics for month
+    $totalHk = (float)($monthlyData->total_tk ?? 0);
+    $monthlyMetrics['ha_per_hk'] = $totalHk > 0 ? round(($monthlyData->total_luas ?? 0) / $totalHk, 2) : 0;
+    $monthlyMetrics['ton_per_hk'] = $totalHk > 0 ? round(($monthlyData->total_timbang_pks ?? 0) / $totalHk, 2) : 0;
         // Compute JJG/PKK from MasterData for selected month/year and filters
-        $monthNameIndo = $indoMonths[$currentMonth] ?? Carbon::now()->format('F');
+        // MasterData stores month in English (January, February, ...)
+        $monthNameEnglish = Carbon::create($currentYear, $currentMonth, 1)->format('F');
         $pkkQuery = MasterData::where('tahun', $currentYear)
-            ->where('bulan', $monthNameIndo);
+            ->where('bulan', $monthNameEnglish);
         if ($request->filled('kebun')) {
             $pkkQuery->where('kebun', $request->kebun);
         }

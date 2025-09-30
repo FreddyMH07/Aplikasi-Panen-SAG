@@ -249,6 +249,12 @@
             @endif
         </div>
         
+        @php
+            $refPct = (float)($monthlyMetrics['refraksi_persen'] ?? 0);
+            $restPct = (float)($monthlyMetrics['restan_persen'] ?? 0);
+            $refColor = $refPct <= 1 ? 'text-green-600 dark:text-green-300' : ($refPct <= 2 ? 'text-yellow-600 dark:text-yellow-300' : 'text-red-600 dark:text-red-300');
+            $restColor = $restPct <= 1 ? 'text-green-600 dark:text-green-300' : ($restPct <= 3 ? 'text-yellow-600 dark:text-yellow-300' : 'text-red-600 dark:text-red-300');
+        @endphp
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <p class="text-sm text-gray-600 dark:text-gray-400">BJR Bulanan</p>
@@ -269,12 +275,12 @@
             <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <p class="text-sm text-gray-600 dark:text-gray-400">Refraksi</p>
                 <p class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ number_format($monthlyMetrics['refraksi_kg'] ?? 0, 2) }} kg</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ number_format($monthlyMetrics['refraksi_persen'] ?? 0, 2) }}%</p>
+                <p class="text-xs font-semibold mt-1 {{ $refColor }}">{{ number_format($monthlyMetrics['refraksi_persen'] ?? 0, 2) }}%</p>
             </div>
             <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <p class="text-sm text-gray-600 dark:text-gray-400">Restan</p>
                 <p class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ number_format($monthlyMetrics['restan_jjg'] ?? 0) }} JJG</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ number_format($monthlyMetrics['restan_persen'] ?? 0, 2) }}%</p>
+                <p class="text-xs font-semibold mt-1 {{ $restColor }}">{{ number_format($monthlyMetrics['restan_persen'] ?? 0, 2) }}%</p>
             </div>
             <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg md:col-span-2 lg:col-span-2">
                 <p class="text-sm text-gray-600 dark:text-gray-400">JJG / PKK</p>
@@ -282,6 +288,14 @@
                 @if(!empty($monthlyMetrics['total_pkk']))
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Total PKK: {{ number_format($monthlyMetrics['total_pkk']) }}</p>
                 @endif
+            </div>
+            <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <p class="text-sm text-gray-600 dark:text-gray-400">Ha / HK</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ number_format($monthlyMetrics['ha_per_hk'] ?? 0, 2) }}</p>
+            </div>
+            <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <p class="text-sm text-gray-600 dark:text-gray-400">Ton / HK</p>
+                <p class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ number_format($monthlyMetrics['ton_per_hk'] ?? 0, 2) }}</p>
             </div>
         </div>
     </div>
