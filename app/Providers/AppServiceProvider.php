@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,5 +32,12 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
+
+        // Share safe user info to all views to avoid direct property access in Blade
+        View::composer('*', function ($view) {
+            $user = auth()->user();
+            $view->with('userName', $user?->name ?? 'User');
+            $view->with('userEmail', $user?->email ?? '');
+        });
     }
 }

@@ -302,10 +302,10 @@
                                     class="flex items-center space-x-2 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-gray-100 focus:outline-none">
                                 <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                                     <span class="text-white text-sm font-medium">
-                                        {{ auth()->check() ? substr(auth()->user()->name, 0, 1) : '?' }}
+                                        {{ isset($userName) && $userName !== '' ? substr($userName, 0, 1) : '?' }}
                                     </span>
                                 </div>
-                                <span class="hidden md:block">{{ auth()->check() ? auth()->user()->name : 'User' }}</span>
+                                <span class="hidden md:block">{{ $userName ?? 'User' }}</span>
                                 <i class="fas fa-chevron-down text-xs"></i>
                             </button>
                             
@@ -316,8 +316,8 @@
                                  x-transition:enter-end="opacity-100 transform scale-100"
                                  class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                                 <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                                    <p class="text-sm text-gray-700 dark:text-gray-200 font-medium">{{ auth()->check() ? auth()->user()->name : 'User' }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ auth()->check() ? auth()->user()->email : '' }}</p>
+                                    <p class="text-sm text-gray-700 dark:text-gray-200 font-medium">{{ $userName ?? 'User' }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $userEmail ?? '' }}</p>
                                 </div>
                                 <form method="POST" action="{{ route('logout', [], false) }}">
                                     @csrf
