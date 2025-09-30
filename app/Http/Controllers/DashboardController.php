@@ -98,8 +98,8 @@ class DashboardController extends Controller
         $todayMetrics = $this->calculateMetrics($todayData);
         $monthlyMetrics = $this->calculateMetrics($monthlyData);
 
-        // Data untuk chart (pastikan passing $request)
-        $chartData = $this->getChartData($request);
+    // Data untuk chart (pastikan passing $request)
+    $chartData = $this->getChartData($request);
 
         return view('dashboard.index', compact(
             'todayMetrics',
@@ -155,28 +155,43 @@ class DashboardController extends Controller
             $query7Days->where('divisi', $request->divisi);
         }
 
-        // Data 7 hari terakhir
+        // Data 7 hari terakhir: PKS vs Budget
         $last7Days = $query7Days
-            ->selectRaw('tanggal_panen, SUM(timbang_pks_harian) as total_produksi')
+            ->selectRaw('tanggal_panen, SUM(COALESCE(timbang_pks_harian,0)) as total_pks, SUM(COALESCE(budget_harian,0)) as total_budget')
             ->groupBy('tanggal_panen')
             ->orderBy('tanggal_panen')
             ->get();
 
-        // Data produksi per kebun bulan ini
-        $currentMonthName = Carbon::now()->format('F');
-        $currentYear = Carbon::now()->year;
+        // Data AKP per kebun untuk bulan/tahun terpilih (default: bulan/tahun berjalan)
+        $selectedMonth = $request->get('bulan');
+        $selectedYear = $request->get('tahun');
+        $currentMonthName = $selectedMonth ? $this->normalizeMonthName($selectedMonth) : Carbon::now()->format('F');
+        $currentYear = $selectedYear ? (int)$selectedYear : Carbon::now()->year;
 
-        $productionByKebun = PanenHarian::where('tahun', $currentYear)
+        $akpByKebun = PanenHarian::where('tahun', $currentYear)
             ->where('bulan', $currentMonthName)
             ->when($request->filled('kebun'), fn($q) => $q->where('kebun', $request->kebun))
             ->when($request->filled('divisi'), fn($q) => $q->where('divisi', $request->divisi))
-            ->selectRaw('kebun, COALESCE(SUM(timbang_pks_harian),0) as total_produksi')
+            ->selectRaw('kebun,
+                CASE WHEN SUM(COALESCE(luas_panen_ha,0))*136 = 0 THEN 0
+                     ELSE SUM(COALESCE(jjg_panen_jjg,0)) / NULLIF(SUM(COALESCE(luas_panen_ha,0))*136,0) * 100 END as akp_pct')
             ->groupBy('kebun')
+            ->orderBy('kebun')
             ->get();
 
         return [
-            'daily_production' => $last7Days,
-            'production_by_kebun' => $productionByKebun
+            'daily_pks_budget' => $last7Days,
+            'akp_by_kebun' => $akpByKebun
         ];
+    }
+
+    private function normalizeMonthName(string $bulan): string
+    {
+        $map = [
+            'JANUARI'=>'January','FEBRUARI'=>'February','MARET'=>'March','APRIL'=>'April','MEI'=>'May','JUNI'=>'June',
+            'JULI'=>'July','AGUSTUS'=>'August','SEPTEMBER'=>'September','OKTOBER'=>'October','NOVEMBER'=>'November','DESEMBER'=>'December',
+        ];
+        $key = strtoupper(trim($bulan));
+        return $map[$key] ?? Carbon::now()->format('F');
     }
 }

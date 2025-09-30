@@ -55,7 +55,7 @@
 
     <!-- Filter Section -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <form action="{{ route('dashboard') }}" method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form action="{{ route('dashboard') }}" method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
                 <label for="kebun" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kebun</label>
                 <select name="kebun" id="kebun" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-green-500 focus:ring-green-500">
@@ -76,6 +76,26 @@
                             {{ $d }}
                         </option>
                     @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bulan</label>
+                @php($bulanList = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'])
+                <select name="bulan" id="bulan" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <option value="">Bulan Ini</option>
+                    @foreach($bulanList as $b)
+                        <option value="{{ strtoupper($b) }}" {{ strtoupper(request('bulan')) === strtoupper($b) ? 'selected' : '' }}>{{ $b }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tahun</label>
+                @php($yearNow = (int)date('Y'))
+                <select name="tahun" id="tahun" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <option value="">Tahun Ini</option>
+                    @for($y = $yearNow+1; $y >= $yearNow-5; $y--)
+                        <option value="{{ $y }}" {{ (string)request('tahun') === (string)$y ? 'selected' : '' }}>{{ $y }}</option>
+                    @endfor
                 </select>
             </div>
             <div class="flex items-end">
@@ -232,22 +252,22 @@
     
     <!-- Charts Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Daily Production Chart -->
+    <!-- PKS vs Budget 7 Hari Terakhir -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 <i class="fas fa-chart-line mr-2"></i>
-                Produksi 7 Hari Terakhir
+        PKS vs Budget (7 Hari Terakhir)
             </h3>
             <div class="h-64">
                 <canvas id="dailyProductionChart"></canvas>
             </div>
         </div>
         
-        <!-- Production by Kebun Chart -->
+    <!-- Realisasi AKP (%) per Kebun (Bulan Terpilih) -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 <i class="fas fa-chart-pie mr-2"></i>
-                Produksi per Kebun (Bulan Ini)
+        Realisasi AKP (%) per Kebun (Bulan Ini/Terpilih)
             </h3>
             <div class="h-64">
                 <canvas id="productionByKebunChart"></canvas>
@@ -316,32 +336,38 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Daily Production Chart
     const dailyCtx = document.getElementById('dailyProductionChart').getContext('2d');
-    const dailyData = @json($chartData['daily_production']);
+    const dailyData = @json($chartData['daily_pks_budget']);
     
     window.__charts = window.__charts || [];
     const dailyChart = new Chart(dailyCtx, {
-        type: 'line',
         data: {
             labels: dailyData.map(item => {
                 const date = new Date(item.tanggal_panen);
                 return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
             }),
-            datasets: [{
-                label: 'Produksi (kg)',
-                data: dailyData.map(item => item.total_produksi),
-                borderColor: 'rgb(34, 197, 94)',
-                backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'PKS (kg)',
+                    data: dailyData.map(item => item.total_pks),
+                    backgroundColor: 'rgba(34, 197, 94, 0.6)'
+                },
+                {
+                    type: 'line',
+                    label: 'Budget (kg)',
+                    data: dailyData.map(item => item.total_budget),
+                    borderColor: 'rgb(59, 130, 246)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    tension: 0.3,
+                    yAxisID: 'y'
+                }
+            ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                }
+                legend: { display: true }
             },
             scales: {
                 y: {
@@ -359,29 +385,30 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Production by Kebun Chart
     const kebunCtx = document.getElementById('productionByKebunChart').getContext('2d');
-    const kebunData = @json($chartData['production_by_kebun']);
-    
+    const kebunData = @json($chartData['akp_by_kebun']);
+
     const kebunChart = new Chart(kebunCtx, {
-        type: 'doughnut',
+        type: 'bar',
         data: {
             labels: kebunData.map(item => item.kebun),
             datasets: [{
-                data: kebunData.map(item => item.total_produksi),
-                backgroundColor: [
-                    'rgb(34, 197, 94)',
-                    'rgb(59, 130, 246)',
-                    'rgb(168, 85, 247)',
-                    'rgb(245, 158, 11)',
-                    'rgb(239, 68, 68)'
-                ]
+                label: 'AKP (%)',
+                data: kebunData.map(item => item.akp_pct),
+                backgroundColor: 'rgba(245, 158, 11, 0.6)'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'bottom'
+                legend: { display: true }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) { return value + '%'; }
+                    }
                 }
             }
         }
