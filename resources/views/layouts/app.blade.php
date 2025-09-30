@@ -1,26 +1,12 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="light">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'PT Sahabat Agro Group - Sistem Panen Sawit Digital')</title>
     
-    <!-- Initialize theme early to avoid flash (default to light) -->
-    <script>
-        (function() {
-            // Force light theme globally (disable dark mode)
-            try {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } catch (e) {}
-        })();
-    </script>
-    <!-- Tailwind CSS (force light unless .dark class is set) -->
-    <script>
-        window.tailwind = window.tailwind || {};
-        window.tailwind.config = Object.assign({}, window.tailwind.config || {}, { darkMode: 'class' });
-    </script>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Alpine.js -->
@@ -28,7 +14,7 @@
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- ECharts -->
+    <!-- ECharts (optional) -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
     
     <!-- DataTables -->
@@ -53,54 +39,32 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Custom CSS -->
+    <!-- Custom CSS (light theme only) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <style>
-        /* Minimal inline styles for critical rendering */
         [x-cloak] { display: none !important; }
-        /* DataTables dark-mode readability */
-        .dark .dataTables_wrapper,
-        .dark .dataTables_wrapper .dataTables_info,
-        .dark .dataTables_wrapper .dataTables_paginate a,
-        .dark .dataTables_wrapper .dataTables_paginate .paginate_button,
-        .dark table.dataTable thead th,
-        .dark table.dataTable tbody td,
-        .dark .dataTables_wrapper .dataTables_filter label,
-        .dark .dataTables_wrapper .dataTables_length label { color: #e5e7eb; }
-        .dark .dataTables_wrapper .dataTables_filter input,
-        .dark .dataTables_wrapper .dataTables_length select {
-            color: #e5e7eb;
-            background-color: #111827;
-            border-color: #374151;
-        }
-        .dark .dt-button {
-            color: #e5e7eb !important;
-            background-color: #1f2937 !important;
-            border-color: #374151 !important;
-        }
-        .dark .dt-button:hover { background-color: #374151 !important; }
-        /* KPI filter form inputs */
-        .dark form select, .dark form input[type=date], .dark form input[type=text], .dark form input[type=number] {
-            background-color: #1f2937 !important;
-            color: #f3f4f6 !important;
-            border-color: #374151 !important;
-        }
-        .dark form label { color: #d1d5db !important; }
-        /* Chart container headings */
-        .dark h2, .dark h3, .dark h4 { color: #f3f4f6; }
-        /* Tables */
-        .dark table thead th { background-color: #1f2937; }
-        .dark table tbody tr { background-color: #111827; }
-        .dark table tbody tr:nth-child(even) { background-color: #1a2433; }
-        .dark table tbody tr:hover { background-color: #243044; }
-        /* Borders subtle */
-        .dark table thead th, .dark table tbody td { border-color: #374151 !important; }
-        /* Force canvas parent bg to match to avoid transparency dim look */
-        .dark canvas { background-color: #111827; }
     </style>
+    
+    <!-- Chart.js unified palette defaults -->
+    <script>
+        if (window.Chart) {
+            Chart.defaults.elements.line.borderColor = '#16a34a'; // green-600
+            Chart.defaults.elements.line.backgroundColor = 'rgba(22,163,74,0.1)'; // green-600/10
+            Chart.defaults.elements.point.backgroundColor = '#16a34a';
+            Chart.defaults.color = '#111827'; // gray-900 text
+            Chart.defaults.plugins.legend.labels.color = '#111827';
+        }
+        window.APP_COLORS = {
+            green: '#16a34a', // green-600
+            blue: '#3b82f6',  // blue-500
+            amber: '#f59e0b', // amber-500
+            red: '#ef4444',   // red-500
+            gray: '#6b7280'   // gray-500
+        };
+    </script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200" x-data="{ 
+<body class="bg-gray-50 text-gray-900" x-data="{ 
     sidebarOpen: false,
     sidebarHover: false
 }">
