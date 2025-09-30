@@ -44,13 +44,16 @@
     <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-2xl font-bold mb-2">Selamat Datang, {{ auth()->user()->name }}!</h2>
-                <p class="text-green-100">PT Sahabat Agro Group - Sistem Report Panen Sawit Digital - {{ date('d F Y') }}</p>
+                <h2 class="text-2xl font-bold">Selamat Datang, {{ auth()->user()->name }}!</h2>
             </div>
             <div class="hidden md:block">
                 <i class="fas fa-seedling text-6xl text-green-200"></i>
             </div>
         </div>
+    </div>
+    <!-- Tagline + Date separated with distinct color -->
+    <div class="bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 rounded-xl p-4 text-blue-700 dark:text-blue-200">
+        <p class="font-medium">PT Sahabat Agro Group - Sistem Report Panen Sawit Digital - {{ date('d F Y') }}</p>
     </div>
 
     <!-- Filter Section -->
@@ -225,10 +228,26 @@
     
     <!-- Monthly Summary -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-            <i class="fas fa-calendar-alt mr-2"></i>
-            Ringkasan Bulan {{ date('F Y') }}
-        </h3>
+        <div class="mb-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 ring-1 ring-yellow-200 dark:ring-yellow-800">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="text-sm font-semibold">{{ $summaryTitle ?? ('Ringkasan Bulan ' . date('F Y')) }}</span>
+            </div>
+            @if(!empty($selectedFilters['kebun']) || !empty($selectedFilters['divisi']))
+            <div class="mt-3 flex flex-wrap gap-2">
+                @if(!empty($selectedFilters['kebun']))
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                        <i class="fas fa-tree mr-1"></i> Kebun: {{ $selectedFilters['kebun'] }}
+                    </span>
+                @endif
+                @if(!empty($selectedFilters['divisi']))
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-200">
+                        <i class="fas fa-layer-group mr-1"></i> Divisi: {{ $selectedFilters['divisi'] }}
+                    </span>
+                @endif
+            </div>
+            @endif
+        </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">

@@ -15,9 +15,16 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $today = Carbon::today();
-        $currentMonth = Carbon::now()->month;
-        $currentYear = Carbon::now()->year;
-        $currentMonthName = Carbon::now()->format('F');
+    // Resolve selected month/year (defaults to current)
+    $selectedMonthParam = $request->get('bulan');
+    $selectedYearParam = $request->get('tahun');
+    $currentMonth = $selectedMonthParam ? $this->monthToNumber($selectedMonthParam) : Carbon::now()->month;
+    $currentYear = $selectedYearParam ? (int)$selectedYearParam : Carbon::now()->year;
+    $monthStart = Carbon::create($currentYear, $currentMonth, 1)->startOfDay();
+    $monthEnd = (clone $monthStart)->endOfMonth();
+    // Localized month name (ID)
+    $indoMonths = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
+    $summaryTitle = 'Ringkasan Bulan ' . ($indoMonths[$currentMonth] ?? date('F')) . ' ' . $currentYear;
 
         // Get list of kebun and divisi for filter from MasterData (current structure)
         $kebunList = MasterData::select('kebun')->distinct()->orderBy('kebun')->pluck('kebun');
@@ -72,9 +79,8 @@ class DashboardController extends Controller
             ')
             ->first();
 
-        // Build monthly query with filters
-        $monthlyQuery = PanenHarian::where('tahun', $currentYear)
-            ->where('bulan', $currentMonthName);
+    // Build monthly query with filters (use date range to honor selected bulan/tahun)
+    $monthlyQuery = PanenHarian::whereBetween('tanggal_panen', [$monthStart, $monthEnd]);
         if ($request->filled('kebun')) {
             $monthlyQuery->where('kebun', $request->kebun);
         }
@@ -101,12 +107,21 @@ class DashboardController extends Controller
     // Data untuk chart (pastikan passing $request)
     $chartData = $this->getChartData($request);
 
+        $selectedFilters = [
+            'kebun' => $request->get('kebun'),
+            'divisi' => $request->get('divisi'),
+            'bulan' => $selectedMonthParam,
+            'tahun' => $selectedYearParam,
+        ];
+
         return view('dashboard.index', compact(
             'todayMetrics',
             'monthlyMetrics',
             'chartData',
             'kebunList',
-            'divisiList'
+            'divisiList',
+            'summaryTitle',
+            'selectedFilters'
         ));
     }
 
