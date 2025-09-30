@@ -119,6 +119,32 @@
         </div>
     </div>
 
+    <!-- Quick Stats Chips -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+        <div class="flex flex-col gap-3">
+            <div>
+                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Hari Ini</h4>
+                <div class="flex flex-wrap gap-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs border border-green-200">ACV {{ number_format($todayMetrics['acv_prod'] ?? 0, 2) }}%</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs border border-blue-200">AKP {{ number_format(($todayMetrics['akp'] ?? 0) * 100, 2) }}%</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs border border-amber-200">BJR {{ number_format($todayMetrics['bjr'] ?? 0, 2) }}</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-rose-50 text-rose-700 text-xs border border-rose-200">Restan {{ number_format($todayMetrics['restan_persen'] ?? 0, 2) }}%</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs border border-purple-200">Refraksi {{ number_format($todayMetrics['refraksi_persen'] ?? 0, 2) }}%</span>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Bulan Ini</h4>
+                <div class="flex flex-wrap gap-2">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs border border-green-200">ACV {{ number_format($monthlyMetrics['acv_prod'] ?? 0, 2) }}%</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs border border-blue-200">AKP {{ number_format(($monthlyMetrics['akp'] ?? 0) * 100, 2) }}%</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-sky-50 text-sky-700 text-xs border border-sky-200">JJG/PKK {{ number_format($monthlyMetrics['jjg_per_pkk'] ?? 0, 2) }}</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs border border-amber-200">Ha/HK {{ number_format($monthlyMetrics['ha_per_hk'] ?? 0, 2) }}</span>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-fuchsia-50 text-fuchsia-700 text-xs border border-fuchsia-200">Ton/HK {{ number_format($monthlyMetrics['ton_per_hk'] ?? 0, 2) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Today vs Month Summary Table -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
         <h3 class="font-semibold mb-3">Ringkasan: Hari Ini vs Bulan Ini</h3>
