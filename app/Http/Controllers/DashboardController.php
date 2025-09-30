@@ -199,6 +199,8 @@ class DashboardController extends Controller
             'tahun' => $selectedYearParam,
         ];
 
+        $userName = auth()->check() ? (string)auth()->user()->name : 'Manager Kebun';
+
         return view('dashboard.index', compact(
             'todayMetrics',
             'monthlyMetrics',
@@ -206,7 +208,8 @@ class DashboardController extends Controller
             'kebunList',
             'divisiList',
             'summaryTitle',
-            'selectedFilters'
+            'selectedFilters',
+            'userName'
         ));
     }
 
