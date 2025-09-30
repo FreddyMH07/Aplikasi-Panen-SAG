@@ -67,7 +67,8 @@ class DashboardController extends Controller
             }
         }
 
-    $todayData = $query
+        try {
+            $todayData = $query
             ->selectRaw('
                 COALESCE(SUM(luas_panen_ha),0) as total_luas,
                 COALESCE(SUM(jjg_panen_jjg),0) as total_jjg,
@@ -80,6 +81,20 @@ class DashboardController extends Controller
                 COALESCE(SUM(tonase_panen_kg),0) as total_tonase
             ')
             ->first();
+        } catch (\Throwable $e) {
+            Log::error('Dashboard todayData query failed', [
+                'error' => $e->getMessage(),
+                'trace' => substr($e->getTraceAsString(), 0, 2000),
+                'date' => (string)$today,
+                'filters' => [ 'kebun' => $request->get('kebun'), 'divisi' => $request->get('divisi') ],
+            ]);
+            report($e);
+            $todayData = (object)[
+                'total_luas' => 0, 'total_jjg' => 0, 'total_timbang_kebun' => 0,
+                'total_timbang_pks' => 0, 'total_tk' => 0, 'total_refraksi' => 0,
+                'total_restan_jjg' => 0, 'total_budget' => 0, 'total_tonase' => 0,
+            ];
+        }
 
     // Build monthly query with filters (use date range to honor selected bulan/tahun)
     $monthlyQuery = PanenHarian::whereBetween('tanggal_panen', [$monthStart, $monthEnd]);
@@ -89,7 +104,8 @@ class DashboardController extends Controller
         if ($request->filled('divisi')) {
             $monthlyQuery->where('divisi', $request->divisi);
         }
-    $monthlyData = $monthlyQuery
+    try {
+        $monthlyData = $monthlyQuery
             ->selectRaw('
                 COALESCE(SUM(luas_panen_ha),0) as total_luas,
                 COALESCE(SUM(jjg_panen_jjg),0) as total_jjg,
@@ -102,6 +118,21 @@ class DashboardController extends Controller
                 COALESCE(SUM(tonase_panen_kg),0) as total_tonase
             ')
             ->first();
+    } catch (\Throwable $e) {
+        Log::error('Dashboard monthlyData query failed', [
+            'error' => $e->getMessage(),
+            'trace' => substr($e->getTraceAsString(), 0, 2000),
+            'monthStart' => (string)$monthStart,
+            'monthEnd' => (string)$monthEnd,
+            'filters' => [ 'kebun' => $request->get('kebun'), 'divisi' => $request->get('divisi') ],
+        ]);
+        report($e);
+        $monthlyData = (object)[
+            'total_luas' => 0, 'total_jjg' => 0, 'total_timbang_kebun' => 0,
+            'total_timbang_pks' => 0, 'total_tk' => 0, 'total_refraksi' => 0,
+            'total_restan_jjg' => 0, 'total_budget' => 0, 'total_tonase' => 0,
+        ];
+    }
 
         // Hitung metrik
         $todayMetrics = $this->calculateMetrics($todayData);
@@ -221,7 +252,7 @@ class DashboardController extends Controller
         ];
     }
 
-    private function getChartData(Request $request)
+    public function getChartData(Request $request)
     {
         // Determine month/year scope (default: current month/year, but honor provided params)
         $selectedMonth = $request->get('bulan');
