@@ -46,7 +46,7 @@
     <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-2xl font-bold">Selamat Datang, {{ optional(auth()->user())->name ?? 'Manager Kebun' }}!</h2>
+                <h2 class="text-2xl font-bold">Selamat Datang, {{ auth()->check() ? auth()->user()->name : 'Manager Kebun' }}!</h2>
             </div>
             <div class="hidden md:block">
                 <i class="fas fa-seedling text-6xl text-green-200"></i>
