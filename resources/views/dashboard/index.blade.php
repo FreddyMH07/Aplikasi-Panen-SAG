@@ -7,6 +7,8 @@
 <div class="space-y-6">
     @php
         // Threshold-based classes
+    $todayMetrics = $todayMetrics ?? [];
+    $monthlyMetrics = $monthlyMetrics ?? [];
     $acv = (float)($todayMetrics['acv_prod'] ?? 0);
     // Thresholds: <70 red; 70–<85 yellow; 85–≤110 green; >110 blue
     $acvColor = $acv > 110 ? 'text-blue-600 dark:text-blue-300'

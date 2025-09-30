@@ -120,12 +120,25 @@ class DashboardController extends Controller
         if ($request->filled('divisi')) {
             $pkkQuery->where('divisi', $request->divisi);
         }
-        $totalPkk = (int)$pkkQuery->sum('pkk');
+        try {
+            $totalPkk = (int)$pkkQuery->sum('pkk');
+        } catch (\Throwable $e) {
+            report($e);
+            $totalPkk = 0;
+        }
         $monthlyMetrics['jjg_per_pkk'] = ($totalPkk > 0) ? round(($monthlyData->total_jjg ?? 0) / $totalPkk, 2) : 0;
         $monthlyMetrics['total_pkk'] = $totalPkk;
 
-    // Data untuk chart (pastikan passing $request)
-    $chartData = $this->getChartData($request);
+        // Data untuk chart (pastikan passing $request)
+        try {
+            $chartData = $this->getChartData($request);
+        } catch (\Throwable $e) {
+            report($e);
+            $chartData = [
+                'daily_pks_budget' => [],
+                'akp_daily' => [],
+            ];
+        }
 
         $selectedFilters = [
             'kebun' => $request->get('kebun'),
