@@ -199,7 +199,9 @@ class DashboardController extends Controller
             'tahun' => $selectedYearParam,
         ];
 
-        $userName = auth()->check() ? (string)auth()->user()->name : 'Manager Kebun';
+    $userName = auth()->check() ? (string)auth()->user()->name : 'Manager Kebun';
+    // Today date (Indonesian month) for header
+    $todayFormatted = sprintf('%02d %s %d', $today->day, $indoMonths[$today->month] ?? $today->format('F'), $today->year);
         // Filter helper lists and flags for view (avoid inline PHP in Blade)
         $bulanList = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
         $yearNow = (int)date('Y');
@@ -214,6 +216,7 @@ class DashboardController extends Controller
             'summaryTitle',
             'selectedFilters',
             'userName',
+            'todayFormatted',
             'bulanList',
             'yearNow',
             'enableCharts'
