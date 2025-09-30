@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Models\PanenHarian;
 use App\Models\PanenBulanan;
 use App\Models\MasterData;
@@ -123,6 +124,16 @@ class DashboardController extends Controller
         try {
             $totalPkk = (int)$pkkQuery->sum('pkk');
         } catch (\Throwable $e) {
+            Log::error('Dashboard PKK sum failed', [
+                'error' => $e->getMessage(),
+                'trace' => substr($e->getTraceAsString(), 0, 2000),
+                'filters' => [
+                    'kebun' => $request->get('kebun'),
+                    'divisi' => $request->get('divisi'),
+                    'bulan' => $monthNameEnglish,
+                    'tahun' => $currentYear,
+                ],
+            ]);
             report($e);
             $totalPkk = 0;
         }
@@ -133,6 +144,16 @@ class DashboardController extends Controller
         try {
             $chartData = $this->getChartData($request);
         } catch (\Throwable $e) {
+            Log::error('Dashboard chartData failed', [
+                'error' => $e->getMessage(),
+                'trace' => substr($e->getTraceAsString(), 0, 2000),
+                'filters' => [
+                    'kebun' => $request->get('kebun'),
+                    'divisi' => $request->get('divisi'),
+                    'bulan' => $request->get('bulan'),
+                    'tahun' => $request->get('tahun'),
+                ],
+            ]);
             report($e);
             $chartData = [
                 'daily_pks_budget' => [],
@@ -216,12 +237,28 @@ class DashboardController extends Controller
             ->when($request->filled('divisi'), fn($q) => $q->where('divisi', $request->divisi));
 
         // Aggregate per day for PKS and Budget
-        $rows = (clone $baseMonth)
-            ->selectRaw('DATE(tanggal_panen) as tgl, SUM(COALESCE(timbang_pks_harian,0)) as total_pks, SUM(COALESCE(budget_harian,0)) as total_budget, SUM(COALESCE(jjg_panen_jjg,0)) as jjg_sum, SUM(COALESCE(luas_panen_ha,0)) as luas_sum')
-            ->groupByRaw('DATE(tanggal_panen)')
-            ->orderByRaw('DATE(tanggal_panen)')
-            ->get()
-            ->keyBy(function($r){ return Carbon::parse($r->tgl)->format('Y-m-d'); });
+        try {
+            $rows = (clone $baseMonth)
+                ->selectRaw('DATE(tanggal_panen) as tgl, SUM(COALESCE(timbang_pks_harian,0)) as total_pks, SUM(COALESCE(budget_harian,0)) as total_budget, SUM(COALESCE(jjg_panen_jjg,0)) as jjg_sum, SUM(COALESCE(luas_panen_ha,0)) as luas_sum')
+                ->groupByRaw('DATE(tanggal_panen)')
+                ->orderByRaw('DATE(tanggal_panen)')
+                ->get()
+                ->keyBy(function($r){ return Carbon::parse($r->tgl)->format('Y-m-d'); });
+        } catch (\Throwable $e) {
+            Log::error('Dashboard daily aggregation failed', [
+                'error' => $e->getMessage(),
+                'trace' => substr($e->getTraceAsString(), 0, 2000),
+                'sql' => 'DATE(tanggal_panen) grouping',
+                'filters' => [
+                    'kebun' => $request->get('kebun'),
+                    'divisi' => $request->get('divisi'),
+                    'bulan' => $request->get('bulan'),
+                    'tahun' => $request->get('tahun'),
+                ],
+            ]);
+            // Graceful fallback to no rows
+            $rows = collect();
+        }
 
         // Build full month day series
         $cursor = $monthStart->copy();

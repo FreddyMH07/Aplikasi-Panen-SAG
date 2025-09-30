@@ -113,6 +113,98 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Debug JSON endpoint for dashboard data (auth-protected)
+    Route::get('/dashboard.json', function(\Illuminate\Http\Request $request) {
+        // Delegate to controller to compute the same payload as view
+        /** @var \App\Http\Controllers\DashboardController $ctrl */
+        $ctrl = app(\App\Http\Controllers\DashboardController::class);
+        try {
+            // Manually run index() up to view data construction
+            // Replicate controller logic by invoking index and intercepting variables via view()->getData() is not trivial
+            // Instead, call controller methods directly
+            $refMethod = new \ReflectionMethod($ctrl, 'index');
+            // Fallback: recompute by calling private helpers via exposing minimal public proxy
+        } catch (\Throwable $e) {
+            // If reflection fails due to visibility, fallback to re-running core logic here
+        }
+
+        // Rebuild core computations inline (mirroring controller index)
+        $today = \Carbon\Carbon::today();
+        $selectedMonthParam = $request->get('bulan');
+        $selectedYearParam = $request->get('tahun');
+        $monthToNumber = function(string $bulan){
+            $map = ['JANUARI'=>1,'FEBRUARI'=>2,'MARET'=>3,'APRIL'=>4,'MEI'=>5,'JUNI'=>6,'JULI'=>7,'AGUSTUS'=>8,'SEPTEMBER'=>9,'OKTOBER'=>10,'NOVEMBER'=>11,'DESEMBER'=>12,'JANUARY'=>1,'FEBRUARY'=>2,'MARCH'=>3,'APRIL'=>4,'MAY'=>5,'JUNE'=>6,'JULY'=>7,'AUGUST'=>8,'SEPTEMBER'=>9,'OCTOBER'=>10,'NOVEMBER'=>11,'DECEMBER'=>12];
+            $key = strtoupper(trim($bulan));
+            return $map[$key] ?? \Carbon\Carbon::now()->month;
+        };
+        $currentMonth = $selectedMonthParam ? $monthToNumber($selectedMonthParam) : \Carbon\Carbon::now()->month;
+        $currentYear = $selectedYearParam ? (int)$selectedYearParam : \Carbon\Carbon::now()->year;
+        $monthStart = \Carbon\Carbon::create($currentYear, $currentMonth, 1)->startOfDay();
+        $monthEnd = (clone $monthStart)->endOfMonth();
+
+        $kebunList = \App\Models\MasterData::select('kebun')->distinct()->orderBy('kebun')->pluck('kebun');
+        $divisiList = $request->filled('kebun')
+            ? \App\Models\MasterData::where('kebun', $request->kebun)->select('divisi')->distinct()->orderBy('divisi')->pluck('divisi')
+            : \App\Models\MasterData::select('divisi')->distinct()->orderBy('divisi')->pluck('divisi');
+
+        $query = \App\Models\PanenHarian::whereDate('tanggal_panen', $today);
+        if ($request->filled('kebun')) { $query->where('kebun', $request->kebun); }
+        if ($request->filled('divisi')) { $query->where('divisi', $request->divisi); }
+        $hasToday = (clone $query)->exists();
+        if (!$hasToday) {
+            $fallbackDateQuery = \App\Models\PanenHarian::whereYear('tanggal_panen', $currentYear)->whereMonth('tanggal_panen', $currentMonth);
+            if ($request->filled('kebun')) { $fallbackDateQuery->where('kebun', $request->kebun); }
+            if ($request->filled('divisi')) { $fallbackDateQuery->where('divisi', $request->divisi); }
+            $fallbackDate = $fallbackDateQuery->orderBy('tanggal_panen', 'desc')->value('tanggal_panen');
+            if ($fallbackDate) {
+                $query = \App\Models\PanenHarian::whereDate('tanggal_panen', $fallbackDate);
+                if ($request->filled('kebun')) { $query->where('kebun', $request->kebun); }
+                if ($request->filled('divisi')) { $query->where('divisi', $request->divisi); }
+            }
+        }
+        $todayData = $query->selectRaw('COALESCE(SUM(luas_panen_ha),0) as total_luas, COALESCE(SUM(jjg_panen_jjg),0) as total_jjg, COALESCE(SUM(timbang_kebun_harian),0) as total_timbang_kebun, COALESCE(SUM(timbang_pks_harian),0) as total_timbang_pks, COALESCE(SUM(jumlah_tk_panen),0) as total_tk, COALESCE(SUM(refraksi_kg),0) as total_refraksi, COALESCE(SUM(restant_jjg),0) as total_restan_jjg, COALESCE(SUM(budget_harian),0) as total_budget, COALESCE(SUM(tonase_panen_kg),0) as total_tonase')->first();
+
+        $monthlyQuery = \App\Models\PanenHarian::whereBetween('tanggal_panen', [$monthStart, $monthEnd]);
+        if ($request->filled('kebun')) { $monthlyQuery->where('kebun', $request->kebun); }
+        if ($request->filled('divisi')) { $monthlyQuery->where('divisi', $request->divisi); }
+        $monthlyData = $monthlyQuery->selectRaw('COALESCE(SUM(luas_panen_ha),0) as total_luas, COALESCE(SUM(jjg_panen_jjg),0) as total_jjg, COALESCE(SUM(timbang_kebun_harian),0) as total_timbang_kebun, COALESCE(SUM(timbang_pks_harian),0) as total_timbang_pks, COALESCE(SUM(jumlah_tk_panen),0) as total_tk, COALESCE(SUM(refraksi_kg),0) as total_refraksi, COALESCE(SUM(restant_jjg),0) as total_restan_jjg, COALESCE(SUM(budget_harian),0) as total_budget, COALESCE(SUM(tonase_panen_kg),0) as total_tonase')->first();
+
+        $calc = function($data) {
+            if (!$data) return ['bjr'=>0,'akp'=>0,'acv_prod'=>0,'selisih'=>0,'selisih_persen'=>0,'refraksi_persen'=>0,'refraksi_kg'=>0,'restan_jjg'=>0,'restan_persen'=>0,'total_produksi'=>0,'total_tk'=>0];
+            $bjr = $data->total_jjg > 0 ? round($data->total_timbang_kebun / $data->total_jjg, 2) : 0;
+            $akp = ($data->total_luas * 136) > 0 ? round($data->total_jjg / ($data->total_luas * 136), 4) : 0;
+            $acv_prod = $data->total_budget > 0 ? round(100 * $data->total_timbang_pks / $data->total_budget, 2) : 0;
+            $selisih = round($data->total_timbang_pks - $data->total_timbang_kebun, 2);
+            $refraksi_persen = $data->total_tonase > 0 ? round(100 * ($data->total_refraksi ?? 0) / $data->total_tonase, 2) : 0;
+            $selisih_persen = $data->total_timbang_pks > 0 ? round(100 * ($data->total_timbang_pks - $data->total_timbang_kebun) / $data->total_timbang_pks, 2) : 0;
+            $restan_jjg = (int)($data->total_restan_jjg ?? 0);
+            $restan_persen = ($data->total_jjg ?? 0) > 0 ? round(100 * $restan_jjg / $data->total_jjg, 2) : 0;
+            return ['bjr'=>$bjr,'akp'=>$akp,'acv_prod'=>$acv_prod,'selisih'=>$selisih,'selisih_persen'=>$selisih_persen,'refraksi_persen'=>$refraksi_persen,'refraksi_kg'=>round(($data->total_refraksi ?? 0), 2),'restan_jjg'=>$restan_jjg,'restan_persen'=>$restan_persen,'total_produksi'=>round($data->total_timbang_pks,2),'total_tk'=>$data->total_tk ?? 0];
+        };
+        $todayMetrics = $calc($todayData);
+        $monthlyMetrics = $calc($monthlyData);
+
+        $totalHk = (float)($monthlyData->total_tk ?? 0);
+        $monthlyMetrics['ha_per_hk'] = $totalHk > 0 ? round(($monthlyData->total_luas ?? 0) / $totalHk, 2) : 0;
+        $monthlyMetrics['ton_per_hk'] = $totalHk > 0 ? round(($monthlyData->total_timbang_pks ?? 0) / $totalHk, 2) : 0;
+
+        $monthNameEnglish = \Carbon\Carbon::create($currentYear, $currentMonth, 1)->format('F');
+        $pkkQuery = \App\Models\MasterData::where('tahun', $currentYear)->where('bulan', $monthNameEnglish);
+        if ($request->filled('kebun')) { $pkkQuery->where('kebun', $request->kebun); }
+        if ($request->filled('divisi')) { $pkkQuery->where('divisi', $request->divisi); }
+        $totalPkk = (int)$pkkQuery->sum('pkk');
+        $monthlyMetrics['jjg_per_pkk'] = ($totalPkk > 0) ? round(($monthlyData->total_jjg ?? 0) / $totalPkk, 2) : 0;
+        $monthlyMetrics['total_pkk'] = $totalPkk;
+
+        // Chart data (reuse controller method)
+        $chartData = app(\App\Http\Controllers\DashboardController::class)->getChartData($request);
+
+        $indoMonths = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
+        $summaryTitle = 'Ringkasan Bulan ' . ($indoMonths[$currentMonth] ?? date('F')) . ' ' . $currentYear;
+        $selectedFilters = ['kebun'=>$request->get('kebun'),'divisi'=>$request->get('divisi'),'bulan'=>$selectedMonthParam,'tahun'=>$selectedYearParam];
+
+        return response()->json(compact('todayMetrics','monthlyMetrics','chartData','kebunList','divisiList','summaryTitle','selectedFilters'));
+    })->name('dashboard.json');
     
     // Panen Harian Routes
     Route::prefix('panen-harian')->name('panen-harian.')->group(function () {
