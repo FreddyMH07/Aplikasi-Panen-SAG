@@ -49,22 +49,24 @@
     <!-- Chart.js unified palette defaults -->
     <script>
         if (window.Chart) {
-            Chart.defaults.elements.line.borderColor = '#16a34a'; // green-600
-            Chart.defaults.elements.line.backgroundColor = 'rgba(22,163,74,0.1)'; // green-600/10
-            Chart.defaults.elements.point.backgroundColor = '#16a34a';
-            Chart.defaults.color = '#111827'; // gray-900 text
+            // Defaults favor clean, light-only visuals
+            Chart.defaults.color = '#111827'; // text primary
             Chart.defaults.plugins.legend.labels.color = '#111827';
         }
+        // App palette per spec
         window.APP_COLORS = {
-            green: '#16a34a', // green-600
-            blue: '#3b82f6',  // blue-500
-            amber: '#f59e0b', // amber-500
-            red: '#ef4444',   // red-500
-            gray: '#6b7280'   // gray-500
+            green: '#16A34A', // primary green
+            blue: '#2563EB',  // primary blue
+            amber: '#F59E0B', // primary amber
+            red: '#DC2626',   // primary red
+            text: '#111827',  // gray-900
+            muted: '#6B7280', // gray-500
+            soft: '#F8FAFC',  // background soft
+            border: '#E5E7EB' // gray-200
         };
     </script>
 </head>
-<body class="bg-gray-50 text-gray-900" x-data="{ 
+<body class="bg-white text-gray-900" x-data="{ 
     sidebarOpen: false,
     sidebarHover: false
 }">
