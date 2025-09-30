@@ -385,16 +385,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Production by Kebun Chart
     const kebunCtx = document.getElementById('productionByKebunChart').getContext('2d');
-    const kebunData = @json($chartData['akp_by_kebun']);
+    const akpDaily = @json($chartData['akp_daily']);
 
     const kebunChart = new Chart(kebunCtx, {
-        type: 'bar',
+        type: 'line',
         data: {
-            labels: kebunData.map(item => item.kebun),
+            labels: akpDaily.map(item => {
+                const date = new Date(item.tanggal_panen);
+                return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            }),
             datasets: [{
-                label: 'AKP (%)',
-                data: kebunData.map(item => item.akp_pct),
-                backgroundColor: 'rgba(245, 158, 11, 0.6)'
+                label: 'AKP (%) Harian',
+                data: akpDaily.map(item => item.akp_pct),
+                borderColor: 'rgb(245, 158, 11)',
+                backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                tension: 0.3,
+                fill: true,
+                pointRadius: 3
             }]
         },
         options: {

@@ -146,42 +146,54 @@ class DashboardController extends Controller
 
     private function getChartData(Request $request)
     {
-        // Build query for last 7 days (filter by kebun/divisi names, not legacy IDs)
-        $query7Days = PanenHarian::whereDate('tanggal_panen', '>=', Carbon::now()->subDays(7));
-        if ($request->filled('kebun')) {
-            $query7Days->where('kebun', $request->kebun);
-        }
-        if ($request->filled('divisi')) {
-            $query7Days->where('divisi', $request->divisi);
-        }
-
-        // Data 7 hari terakhir: PKS vs Budget
-        $last7Days = $query7Days
-            ->selectRaw('tanggal_panen, SUM(COALESCE(timbang_pks_harian,0)) as total_pks, SUM(COALESCE(budget_harian,0)) as total_budget')
-            ->groupBy('tanggal_panen')
-            ->orderBy('tanggal_panen')
-            ->get();
-
-        // Data AKP per kebun untuk bulan/tahun terpilih (default: bulan/tahun berjalan)
+        // Determine month/year scope (default: current month/year, but honor provided params)
         $selectedMonth = $request->get('bulan');
         $selectedYear = $request->get('tahun');
-        $currentMonthName = $selectedMonth ? $this->normalizeMonthName($selectedMonth) : Carbon::now()->format('F');
-        $currentYear = $selectedYear ? (int)$selectedYear : Carbon::now()->year;
+        $monthNum = $selectedMonth ? $this->monthToNumber($selectedMonth) : Carbon::now()->month;
+        $yearNum = $selectedYear ? (int)$selectedYear : Carbon::now()->year;
+        $monthStart = Carbon::create($yearNum, $monthNum, 1)->startOfDay();
+        $monthEnd = (clone $monthStart)->endOfMonth();
 
-        $akpByKebun = PanenHarian::where('tahun', $currentYear)
-            ->where('bulan', $currentMonthName)
+        // Base query within month for aggregation
+        $baseMonth = PanenHarian::whereBetween('tanggal_panen', [$monthStart, $monthEnd])
             ->when($request->filled('kebun'), fn($q) => $q->where('kebun', $request->kebun))
-            ->when($request->filled('divisi'), fn($q) => $q->where('divisi', $request->divisi))
-            ->selectRaw('kebun,
-                CASE WHEN SUM(COALESCE(luas_panen_ha,0))*136 = 0 THEN 0
-                     ELSE SUM(COALESCE(jjg_panen_jjg,0)) / NULLIF(SUM(COALESCE(luas_panen_ha,0))*136,0) * 100 END as akp_pct')
-            ->groupBy('kebun')
-            ->orderBy('kebun')
-            ->get();
+            ->when($request->filled('divisi'), fn($q) => $q->where('divisi', $request->divisi));
+
+        // Aggregate per day for PKS and Budget
+        $rows = (clone $baseMonth)
+            ->selectRaw('DATE(tanggal_panen) as tgl, SUM(COALESCE(timbang_pks_harian,0)) as total_pks, SUM(COALESCE(budget_harian,0)) as total_budget, SUM(COALESCE(jjg_panen_jjg,0)) as jjg_sum, SUM(COALESCE(luas_panen_ha,0)) as luas_sum')
+            ->groupBy('tgl')
+            ->orderBy('tgl')
+            ->get()
+            ->keyBy(function($r){ return Carbon::parse($r->tgl)->format('Y-m-d'); });
+
+        // Build full month day series
+        $cursor = $monthStart->copy();
+        $dailySeries = [];
+        $akpSeries = [];
+        while ($cursor->lte($monthEnd)) {
+            $key = $cursor->format('Y-m-d');
+            $row = $rows->get($key);
+            $total_pks = $row->total_pks ?? 0;
+            $total_budget = $row->total_budget ?? 0;
+            $jjg_sum = $row->jjg_sum ?? 0;
+            $luas_sum = $row->luas_sum ?? 0;
+            $akp_pct = ($luas_sum * 136) > 0 ? ($jjg_sum / ($luas_sum * 136)) * 100 : 0;
+            $dailySeries[] = [
+                'tanggal_panen' => $key,
+                'total_pks' => (float)$total_pks,
+                'total_budget' => (float)$total_budget,
+            ];
+            $akpSeries[] = [
+                'tanggal_panen' => $key,
+                'akp_pct' => (float)$akp_pct,
+            ];
+            $cursor->addDay();
+        }
 
         return [
-            'daily_pks_budget' => $last7Days,
-            'akp_by_kebun' => $akpByKebun
+            'daily_pks_budget' => $dailySeries,
+            'akp_daily' => $akpSeries,
         ];
     }
 
@@ -193,5 +205,17 @@ class DashboardController extends Controller
         ];
         $key = strtoupper(trim($bulan));
         return $map[$key] ?? Carbon::now()->format('F');
+    }
+
+    private function monthToNumber(string $bulan): int
+    {
+        $map = [
+            'JANUARI'=>1,'FEBRUARI'=>2,'MARET'=>3,'APRIL'=>4,'MEI'=>5,'JUNI'=>6,
+            'JULI'=>7,'AGUSTUS'=>8,'SEPTEMBER'=>9,'OKTOBER'=>10,'NOVEMBER'=>11,'DESEMBER'=>12,
+            'JANUARY'=>1,'FEBRUARY'=>2,'MARCH'=>3,'APRIL'=>4,'MAY'=>5,'JUNE'=>6,
+            'JULY'=>7,'AUGUST'=>8,'SEPTEMBER'=>9,'OCTOBER'=>10,'NOVEMBER'=>11,'DECEMBER'=>12,
+        ];
+        $key = strtoupper(trim($bulan));
+        return $map[$key] ?? Carbon::now()->month;
     }
 }
