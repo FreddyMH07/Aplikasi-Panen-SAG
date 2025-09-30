@@ -205,8 +205,8 @@ class DashboardController extends Controller
         // Aggregate per day for PKS and Budget
         $rows = (clone $baseMonth)
             ->selectRaw('DATE(tanggal_panen) as tgl, SUM(COALESCE(timbang_pks_harian,0)) as total_pks, SUM(COALESCE(budget_harian,0)) as total_budget, SUM(COALESCE(jjg_panen_jjg,0)) as jjg_sum, SUM(COALESCE(luas_panen_ha,0)) as luas_sum')
-            ->groupBy('tgl')
-            ->orderBy('tgl')
+            ->groupByRaw('DATE(tanggal_panen)')
+            ->orderByRaw('DATE(tanggal_panen)')
             ->get()
             ->keyBy(function($r){ return Carbon::parse($r->tgl)->format('Y-m-d'); });
 
