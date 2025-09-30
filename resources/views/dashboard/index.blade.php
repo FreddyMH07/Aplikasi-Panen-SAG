@@ -302,23 +302,55 @@
     
     <!-- Charts Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- PKS vs Budget 7 Hari Terakhir -->
+    <!-- PKS vs Budget (Bulan Terpilih) -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                <i class="fas fa-chart-line mr-2"></i>
-        PKS vs Budget (7 Hari Terakhir)
-            </h3>
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    PKS vs Budget — {{ $summaryTitle ?? ('Bulan ' . date('F Y')) }}
+                </h3>
+            </div>
+            @if(!empty($selectedFilters['kebun']) || !empty($selectedFilters['divisi']))
+            <div class="mb-3 flex flex-wrap gap-2">
+                @if(!empty($selectedFilters['kebun']))
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                        <i class="fas fa-tree mr-1"></i> Kebun: {{ $selectedFilters['kebun'] }}
+                    </span>
+                @endif
+                @if(!empty($selectedFilters['divisi']))
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-200">
+                        <i class="fas fa-layer-group mr-1"></i> Divisi: {{ $selectedFilters['divisi'] }}
+                    </span>
+                @endif
+            </div>
+            @endif
             <div class="h-64">
                 <canvas id="dailyProductionChart"></canvas>
             </div>
         </div>
         
-    <!-- Realisasi AKP (%) per Kebun (Bulan Terpilih) -->
+    <!-- Realisasi AKP (%) Harian (Bulan Terpilih) -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                <i class="fas fa-chart-pie mr-2"></i>
-        Realisasi AKP (%) per Kebun (Bulan Ini/Terpilih)
-            </h3>
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    <i class="fas fa-chart-pie mr-2"></i>
+                    Realisasi AKP (%) Harian — {{ $summaryTitle ?? ('Bulan ' . date('F Y')) }}
+                </h3>
+            </div>
+            @if(!empty($selectedFilters['kebun']) || !empty($selectedFilters['divisi']))
+            <div class="mb-3 flex flex-wrap gap-2">
+                @if(!empty($selectedFilters['kebun']))
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                        <i class="fas fa-tree mr-1"></i> Kebun: {{ $selectedFilters['kebun'] }}
+                    </span>
+                @endif
+                @if(!empty($selectedFilters['divisi']))
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-200">
+                        <i class="fas fa-layer-group mr-1"></i> Divisi: {{ $selectedFilters['divisi'] }}
+                    </span>
+                @endif
+            </div>
+            @endif
             <div class="h-64">
                 <canvas id="productionByKebunChart"></canvas>
             </div>
