@@ -60,7 +60,11 @@
         $refPct = (float)($todayMetrics['refraksi_persen'] ?? 0);
         $refColor = $refPct <= 1 ? 'text-[#16A34A]' : ($refPct <= 2 ? 'text-[#F59E0B]' : 'text-[#DC2626]');
     @endphp
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div id="kpiTodayWrap" class="relative">
+        <div id="kpiTodayLoading" class="hidden absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+            <i class="fas fa-spinner animate-spin text-gray-400 text-xl"></i>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
             <div class="text-sm font-semibold text-gray-900">BJR (Hari Ini)</div>
             <div class="mt-1 text-2xl font-bold text-[#F59E0B]">{{ number_format($todayMetrics['bjr'] ?? 0, 2) }}</div>
@@ -77,10 +81,15 @@
             <div class="text-sm font-semibold text-gray-900">ACV Prod (Hari Ini)</div>
             <div class="mt-1 text-2xl font-bold {{ $acvColor }}">{{ number_format($acv, 2) }}%</div>
         </div>
+        </div>
     </div>
 
     <!-- Secondary cards: Total Produksi, Selisih, Refraksi -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div id="kpiSecondaryWrap" class="relative">
+        <div id="kpiSecondaryLoading" class="hidden absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+            <i class="fas fa-spinner animate-spin text-gray-400 text-xl"></i>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
             <div class="text-sm font-semibold text-gray-900">Total Produksi (kg)</div>
             <div class="mt-1 text-2xl font-bold text-gray-900">{{ number_format($todayMetrics['total_produksi'] ?? 0, 2) }}</div>
@@ -94,6 +103,7 @@
             <div class="text-sm font-semibold text-gray-900">Refraksi</div>
             <div class="mt-1 text-2xl font-bold {{ $refColor }}">{{ number_format($todayMetrics['refraksi_persen'] ?? 0, 2) }}% <span class="text-gray-600 text-base">• {{ number_format($todayMetrics['refraksi_kg'] ?? 0, 2) }} kg</span></div>
         </div>
+        </div>
     </div>
 
     <!-- Monthly summary title -->
@@ -102,7 +112,11 @@
     @endif
 
     <!-- Monthly summary metrics grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div id="kpiMonthlyWrap" class="relative">
+        <div id="kpiMonthlyLoading" class="hidden absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+            <i class="fas fa-spinner animate-spin text-gray-400 text-xl"></i>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
             <div class="text-sm font-semibold text-gray-900">BJR (Bulan)</div>
             <div class="mt-1 text-2xl font-bold text-[#F59E0B]">{{ number_format($monthlyMetrics['bjr'] ?? 0, 2) }}</div>
@@ -141,15 +155,22 @@
             <div class="text-sm font-semibold text-gray-900">Ton / HK</div>
             <div class="mt-1 text-2xl font-bold text-gray-900">{{ number_format($monthlyMetrics['ton_per_hk'] ?? 0, 2) }}</div>
         </div>
+        </div>
     </div>
 
     <!-- Charts: PKS vs Budget, AKP Daily -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+        <div id="chartPksBudgetContainer" class="relative bg-white rounded-xl p-6 border border-gray-200 shadow-sm min-h-[320px]">
+            <div id="chartPksBudgetLoading" class="hidden absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+                <i class="fas fa-spinner animate-spin text-gray-400 text-xl"></i>
+            </div>
             <div class="text-sm font-semibold text-gray-900 mb-2">PKS vs Budget (per Hari)</div>
             <canvas id="chartPksBudget" height="160"></canvas>
         </div>
-        <div class="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+        <div id="chartAkpDailyContainer" class="relative bg-white rounded-xl p-6 border border-gray-200 shadow-sm min-h-[320px]">
+            <div id="chartAkpDailyLoading" class="hidden absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+                <i class="fas fa-spinner animate-spin text-gray-400 text-xl"></i>
+            </div>
             <div class="text-sm font-semibold text-gray-900 mb-2">Realisasi AKP (%)</div>
             <canvas id="chartAkpDaily" height="160"></canvas>
         </div>
@@ -157,16 +178,39 @@
 
     @push('scripts')
     <script>
-    // Auto-refresh on filter change
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form[action="{{ route('dashboard') }}"]');
-        if (form) {
-            ['kebun','divisi','bulan','tahun'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.addEventListener('change', () => form.submit());
-            });
-        }
-    });
+    // Debounced in-place filtering with JSON fetch
+    const FILTER_IDS = ['kebun','divisi','bulan','tahun'];
+    let fetchAbortController = null;
+    function debounce(fn, wait=500){
+        let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=>fn(...args), wait); };
+    }
+    function getFilters(){
+        const o = {}; FILTER_IDS.forEach(id=>{ const el = document.getElementById(id); if (el && el.value) o[id]=el.value; }); return o;
+    }
+    function setLoading(section, on){
+        const ids = {
+            kpiToday: 'kpiTodayLoading',
+            kpiSecondary: 'kpiSecondaryLoading',
+            kpiMonthly: 'kpiMonthlyLoading',
+            chartPksBudget: 'chartPksBudgetLoading',
+            chartAkpDaily: 'chartAkpDailyLoading',
+        };
+        const id = ids[section]; if (!id) return;
+        const el = document.getElementById(id); if (!el) return;
+        el.classList.toggle('hidden', !on);
+    }
+    const monthMap = { JANUARI:1,FEBRUARI:2,MARET:3,APRIL:4,MEI:5,JUNI:6,JULI:7,AGUSTUS:8,SEPTEMBER:9,OKTOBER:10,NOVEMBER:11,DESEMBER:12, JANUARY:1,FEBRUARY:2,MARCH:3,MAY:5,JUNE:6,JULY:7,AUGUST:8,OCTOBER:10,DECEMBER:12 };
+    function lastDayOfMonth(year, month1to12){ return new Date(year, month1to12, 0).getDate(); }
+    function buildDaySeries(series, key, year, month1to12){
+        const N = lastDayOfMonth(year, month1to12);
+        const byDay = new Map();
+        series.forEach(d=>{ const dt = new Date(d.tanggal_panen); if (!isNaN(dt)){ byDay.set(dt.getDate(), Number.parseFloat(d[key]) || 0); } });
+        const labels = Array.from({length:N}, (_,i)=>String(i+1).padStart(2,'0'));
+        const data = labels.map((_,i)=>{
+            const day = i+1; return byDay.has(day) ? byDay.get(day) : null;
+        });
+        return { labels, data };
+    }
 
     // Safe data for charts
     const dailyPksBudget = @json($chartData['daily_pks_budget'] ?? []);
@@ -209,25 +253,26 @@
         ctx2d.restore();
     }
 
-    // PKS vs Budget (Bar + Line) — PKS green bars (no outline), Budget blue line with small points
-    (function() {
+    // Charts setup (persist instances and update in-place)
+    const charts = { pksBudget: null, akpDaily: null };
+    (function initCharts() {
         const ctx = document.getElementById('chartPksBudget');
         if (!ctx) return;
-        const labels = toLabels(dailyPksBudget);
-        const pks = toData(dailyPksBudget, 'total_pks');
-        const budget = toData(dailyPksBudget, 'total_budget');
-    // Destroy existing chart instance if present (avoids duplicate/overlay bugs)
-    const existing = Chart.getChart ? Chart.getChart(ctx) : null;
-    if (existing) existing.destroy();
-    const chart = new Chart(ctx, {
+        // Infer year/month from filters or data
+        const filtersInit = getFilters();
+        const year = Number.parseInt(filtersInit.tahun || (new Date()).getFullYear());
+        const monthNum = filtersInit.bulan ? (monthMap[(filtersInit.bulan+'').toUpperCase()] || (new Date()).getMonth()+1) : (new Date()).getMonth()+1;
+        const builtPKS = buildDaySeries(dailyPksBudget, 'total_pks', year, monthNum);
+        const builtBudget = buildDaySeries(dailyPksBudget, 'total_budget', year, monthNum);
+        charts.pksBudget = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels,
+                labels: builtPKS.labels,
                 datasets: [
                     {
                         type: 'bar',
                         label: 'PKS',
-                        data: pks,
+                        data: builtPKS.data,
                         backgroundColor: APP_COLORS.green,
                         borderWidth: 0,
                         borderRadius: 4,
@@ -235,7 +280,7 @@
                     {
                         type: 'line',
                         label: 'Budget',
-                        data: budget,
+                        data: builtBudget.data,
                         borderColor: APP_COLORS.blue,
                         backgroundColor: 'transparent',
                         borderWidth: 2,
@@ -243,6 +288,7 @@
                         pointBackgroundColor: APP_COLORS.blue,
                         pointBorderColor: APP_COLORS.blue,
                         pointRadius: 2,
+                        spanGaps: true,
                         yAxisID: 'y',
                     }
                 ]
@@ -257,30 +303,26 @@
                 plugins: { legend: { labels: { color: '#111827' } } }
             }
         });
-        if (!labels.length) {
-            drawNoDataMessage(ctx);
-        }
     })();
 
-    // AKP Daily (%) — green line, no fill, thin gridlines
-    (function() {
+    (function initAkpChart() {
         const ctx = document.getElementById('chartAkpDaily');
         if (!ctx) return;
-        const labels = toLabels(akpDaily);
-        const akpPct = akpDaily.map(d => {
-            const n = Number.parseFloat(d?.akp_pct ?? 0);
-            return Number.isFinite(n) ? Number(n.toFixed(2)) : 0;
-        });
-        // Destroy existing chart instance if present
-        const existing = Chart.getChart ? Chart.getChart(ctx) : null;
-        if (existing) existing.destroy();
-        const chart = new Chart(ctx, {
+        const filtersInit = getFilters();
+        const year = Number.parseInt(filtersInit.tahun || (new Date()).getFullYear());
+        const monthNum = filtersInit.bulan ? (monthMap[(filtersInit.bulan+'').toUpperCase()] || (new Date()).getMonth()+1) : (new Date()).getMonth()+1;
+        const byDay = new Map();
+        akpDaily.forEach(d=>{ const dt=new Date(d.tanggal_panen); if(!isNaN(dt)){ byDay.set(dt.getDate(), Number.parseFloat(d.akp_pct)||0); }});
+        const N = lastDayOfMonth(year, monthNum);
+        const labels = Array.from({length:N}, (_,i)=>String(i+1).padStart(2,'0'));
+        const data = labels.map((_,i)=>{ const day=i+1; return byDay.has(day) ? Number(byDay.get(day).toFixed(2)) : null; });
+        charts.akpDaily = new Chart(ctx, {
             type: 'line',
             data: {
                 labels,
                 datasets: [{
                     label: 'AKP %',
-                    data: akpPct,
+                    data,
                     borderColor: APP_COLORS.green,
                     backgroundColor: 'transparent',
                     fill: false,
@@ -288,6 +330,7 @@
                     pointRadius: 2,
                     pointBackgroundColor: APP_COLORS.green,
                     pointBorderColor: APP_COLORS.green,
+                    spanGaps: true,
                 }]
             },
             options: {
@@ -300,10 +343,125 @@
                 plugins: { legend: { labels: { color: '#111827' } } }
             }
         });
-        if (!labels.length) {
-            drawNoDataMessage(ctx);
-        }
     })();
+
+    // Update UI helpers
+    function updateText(selector, text){ const el=document.querySelector(selector); if(el) el.textContent=text; }
+    function fmt(n, digits=2){ const num = Number.parseFloat(n); return Number.isFinite(num) ? num.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }) : '0'; }
+    function fmtInt(n){ const num = Number.parseInt(n||0); return Number.isFinite(num) ? num.toLocaleString() : '0'; }
+
+    // Apply response to cards and charts
+    function applyDashboardData(json){
+        // Today metrics
+        const t = json.todayMetrics || {};
+        updateText('#kpiTodayWrap .text-[#F59E0B]', fmt(t.bjr));
+        updateText('#kpiTodayWrap .text-[#2563EB]', fmt((t.akp||0)*100));
+        // HK value is the third card's number element
+        const hkEl = document.querySelector('#kpiTodayWrap .grid > div:nth-child(3) .text-2xl'); if (hkEl) hkEl.textContent = fmtInt(t.total_tk);
+        const acvEl = document.querySelector('#kpiTodayWrap .grid > div:nth-child(4) .text-2xl');
+        if (acvEl) {
+            acvEl.textContent = `${fmt(t.acv_prod)}%`;
+            // ACV thresholds: <70 red, 70–85 amber, 85–110 green, >110 blue
+            ['text-[#DC2626]','text-[#F59E0B]','text-[#16A34A]','text-[#2563EB]'].forEach(c=>acvEl.classList.remove(c));
+            const v = Number.parseFloat(t.acv_prod||0);
+            const cls = (v < 70) ? 'text-[#DC2626]' : (v < 85 ? 'text-[#F59E0B]' : (v <= 110 ? 'text-[#16A34A]' : 'text-[#2563EB]'));
+            acvEl.classList.add(cls);
+        }
+
+        // Secondary
+        const s = json.todayMetrics || {};
+        const prodEl = document.querySelector('#kpiSecondaryWrap .grid > div:nth-child(1) .text-2xl'); if (prodEl) prodEl.textContent = fmt(s.total_produksi);
+        const selisihEl = document.querySelector('#kpiSecondaryWrap .grid > div:nth-child(2) .text-2xl'); if (selisihEl) selisihEl.innerHTML = `${fmt(s.selisih)} <span class="text-base text-gray-600">• ${fmt(s.selisih_persen)}%</span>`;
+        const refEl = document.querySelector('#kpiSecondaryWrap .grid > div:nth-child(3) .text-2xl');
+        if (refEl) {
+            refEl.innerHTML = `${fmt(s.refraksi_persen)}% <span class="text-gray-600 text-base">• ${fmt(s.refraksi_kg)} kg</span>`;
+            // Refraksi: ≤1 green, ≤2 amber, >2 red
+            ['text-[#16A34A]','text-[#F59E0B]','text-[#DC2626]'].forEach(c=>refEl.classList.remove(c));
+            const rv = Number.parseFloat(s.refraksi_persen||0);
+            refEl.classList.add(rv <= 1 ? 'text-[#16A34A]' : (rv <= 2 ? 'text-[#F59E0B]' : 'text-[#DC2626]'));
+        }
+        // Selisih warna: positive green, negative red
+        const selisihElColor = document.querySelector('#kpiSecondaryWrap .grid > div:nth-child(2) .text-2xl');
+        if (selisihElColor) {
+            ['text-[#16A34A]','text-[#DC2626]'].forEach(c=>selisihElColor.classList.remove(c));
+            const sv = Number.parseFloat(s.selisih||0);
+            selisihElColor.classList.add(sv >= 0 ? 'text-[#16A34A]' : 'text-[#DC2626]');
+        }
+
+        // Monthly
+        const m = json.monthlyMetrics || {};
+        const mm = document.querySelectorAll('#kpiMonthlyWrap .grid > div .text-2xl');
+        if (mm.length >= 8){
+            mm[0].textContent = fmt(m.bjr);
+            mm[1].textContent = `${fmt((m.akp||0)*100) }%`;
+            mm[2].textContent = `${fmt(m.total_produksi)} kg`;
+            mm[3].textContent = `${fmt(m.acv_prod)}%`;
+            // ACV monthly color
+            const acvMEl = mm[3];
+            ['text-[#DC2626]','text-[#F59E0B]','text-[#16A34A]','text-[#2563EB]'].forEach(c=>acvMEl.classList.remove(c));
+            const mv = Number.parseFloat(m.acv_prod||0);
+            acvMEl.classList.add(mv < 70 ? 'text-[#DC2626]' : (mv < 85 ? 'text-[#F59E0B]' : (mv <= 110 ? 'text-[#16A34A]' : 'text-[#2563EB]')));
+            mm[4].innerHTML = `${fmt(m.refraksi_kg)} kg <span class="text-gray-600 text-base">• ${fmt(m.refraksi_persen)}%</span>`;
+            // Refraksi monthly color
+            const refMEl = mm[4];
+            ['text-[#16A34A]','text-[#F59E0B]','text-[#DC2626]'].forEach(c=>refMEl.classList.remove(c));
+            const rvm = Number.parseFloat(m.refraksi_persen||0);
+            refMEl.classList.add(rvm <= 1 ? 'text-[#16A34A]' : (rvm <= 2 ? 'text-[#F59E0B]' : 'text-[#DC2626]'));
+            mm[5].innerHTML = `${fmtInt(m.restan_jjg)} <span class="text-base text-gray-600">• ${fmt(m.restan_persen)}%</span>`;
+            mm[6].textContent = fmt(m.jjg_per_pkk);
+            mm[7].textContent = fmt(m.ha_per_hk);
+            const tonHK = document.querySelector('#kpiMonthlyWrap .grid > div:nth-child(9) .text-2xl'); if (tonHK) tonHK.textContent = fmt(m.ton_per_hk);
+        }
+        const titleEl = document.querySelector('h3.text-lg.font-semibold.text-gray-900'); if (titleEl && json.summaryTitle) titleEl.textContent = json.summaryTitle;
+
+        // Charts
+        const filters = json.selectedFilters || {};
+        const year = Number.parseInt(filters.tahun || (new Date()).getFullYear());
+        const monthNum = filters.bulan ? (monthMap[(filters.bulan+'').toUpperCase()] || (new Date()).getMonth()+1) : (new Date()).getMonth()+1;
+        // PKS/Budget
+        const builtPKS = buildDaySeries(json.chartData?.daily_pks_budget || [], 'total_pks', year, monthNum);
+        const builtBudget = buildDaySeries(json.chartData?.daily_pks_budget || [], 'total_budget', year, monthNum);
+        if (charts.pksBudget){
+            charts.pksBudget.data.labels = builtPKS.labels;
+            charts.pksBudget.data.datasets[0].data = builtPKS.data;
+            charts.pksBudget.data.datasets[1].data = builtBudget.data;
+            charts.pksBudget.update('none');
+        }
+        // AKP
+        const akpSeries = json.chartData?.akp_daily || [];
+        const byDay = new Map(); akpSeries.forEach(d=>{ const dt=new Date(d.tanggal_panen); if(!isNaN(dt)){ byDay.set(dt.getDate(), Number.parseFloat(d.akp_pct)||0); }});
+        const N = lastDayOfMonth(year, monthNum);
+        const labels = Array.from({length:N}, (_,i)=>String(i+1).padStart(2,'0'));
+        const data = labels.map((_,i)=>{ const day=i+1; return byDay.has(day) ? Number(byDay.get(day).toFixed(2)) : null; });
+        if (charts.akpDaily){
+            charts.akpDaily.data.labels = labels;
+            charts.akpDaily.data.datasets[0].data = data;
+            charts.akpDaily.update('none');
+        }
+    }
+
+    const debouncedFetch = debounce(async function(){
+        const params = new URLSearchParams(getFilters());
+        // Show loading overlays
+        ['kpiToday','kpiSecondary','kpiMonthly','chartPksBudget','chartAkpDaily'].forEach(s=>setLoading(s, true));
+        // Abort previous
+        if (fetchAbortController) fetchAbortController.abort();
+        fetchAbortController = new AbortController();
+        try {
+            const res = await fetch(`{{ route('dashboard.json') }}?${params.toString()}`, { signal: fetchAbortController.signal, headers: { 'Accept':'application/json' } });
+            if (!res.ok) throw new Error('Network error');
+            const json = await res.json();
+            applyDashboardData(json);
+        } catch (e) {
+            if (e.name !== 'AbortError') console.warn('Fetch dashboard.json failed', e);
+        } finally {
+            ['kpiToday','kpiSecondary','kpiMonthly','chartPksBudget','chartAkpDaily'].forEach(s=>setLoading(s, false));
+        }
+    }, 600);
+
+    document.addEventListener('DOMContentLoaded', function(){
+        FILTER_IDS.forEach(id=>{ const el=document.getElementById(id); if (el) el.addEventListener('change', debouncedFetch); });
+    });
     </script>
     @endpush
 </div>
