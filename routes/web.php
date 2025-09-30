@@ -111,6 +111,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Protected Routes
 Route::middleware('auth')->group(function () {
+    // Debug routes to isolate view compilation issues
+    Route::get('/debug/min', function() { return view('debug.min'); });
+    Route::get('/debug/layout', function() { return view('debug.layout'); });
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     // Debug JSON endpoint for dashboard data (auth-protected)
