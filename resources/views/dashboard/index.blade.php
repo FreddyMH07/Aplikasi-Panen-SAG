@@ -12,6 +12,16 @@
     ];
     $initialActiveFilters = array_filter($initialActiveFilters, fn ($value) => filled($value));
     $nowJakarta = \Carbon\Carbon::now()->timezone('Asia/Jakarta');
+    $jsInitialFilters = [
+        'kebun' => request('kebun'),
+        'divisi' => request('divisi'),
+        'bulan' => request('bulan'),
+        'tahun' => request('tahun'),
+    ];
+    $jsChartData = [
+        'daily_pks_budget' => $chartData['daily_pks_budget'] ?? [],
+        'akp_daily' => $chartData['akp_daily'] ?? [],
+    ];
 @endphp
 
 @section('content')
@@ -461,16 +471,8 @@ document.addEventListener('DOMContentLoaded', () => {
         DECEMBER: 'Desember',
     };
 
-    const initialFilters = @json([
-        'kebun' => request('kebun'),
-        'divisi' => request('divisi'),
-        'bulan' => request('bulan'),
-        'tahun' => request('tahun'),
-    ]);
-    const initialChartData = {
-        daily_pks_budget: @json($chartData['daily_pks_budget'] ?? []),
-        akp_daily: @json($chartData['akp_daily'] ?? []),
-    };
+    const initialFilters = @json($jsInitialFilters);
+    const initialChartData = @json($jsChartData);
 
     const filterForm = document.getElementById('dashboardFilterForm');
     const applyButton = document.getElementById('applyFilters');
