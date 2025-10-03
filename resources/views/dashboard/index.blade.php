@@ -26,26 +26,58 @@
 
 @section('content')
 <div class="space-y-8">
-    <!-- Hero banner with greeting and active filters -->
-    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#1D4ED8] via-[#16A34A] to-[#059669] p-8 text-white shadow-lg">
-        <div class="absolute inset-0 opacity-10">
-            <div class="h-full w-full bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.4),_transparent_55%)]"></div>
+    <!-- Hero banner with agriculture theme -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#15803d] via-[#16a34a] to-[#22c55e] p-8 text-white shadow-xl">
+        <!-- Agricultural pattern overlay -->
+        <div class="absolute inset-0 opacity-[0.07]">
+            <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="palm-pattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+                        <circle cx="20" cy="20" r="2" fill="white"/>
+                        <circle cx="60" cy="60" r="2" fill="white"/>
+                        <path d="M40 30 Q35 35 40 40 Q45 35 40 30 M38 35 L42 35 M40 33 L40 37" stroke="white" fill="none" stroke-width="1.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#palm-pattern)"/>
+            </svg>
+        </div>
+        <!-- Decorative palm fronds -->
+        <div class="absolute right-0 top-0 h-full w-1/3 opacity-10">
+            <svg viewBox="0 0 200 200" class="h-full w-full">
+                <path d="M100 100 Q120 80 140 70 M100 100 Q130 90 150 85 M100 100 Q125 105 145 110" stroke="white" fill="none" stroke-width="3" stroke-linecap="round"/>
+                <path d="M100 100 Q80 80 60 70 M100 100 Q70 90 50 85 M100 100 Q75 105 55 110" stroke="white" fill="none" stroke-width="3" stroke-linecap="round"/>
+            </svg>
         </div>
         <div class="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-                <p class="text-sm font-semibold uppercase tracking-wider text-white/80">Dashboard Operasional</p>
-                <h2 class="mt-2 text-3xl font-semibold">Selamat Datang, {{ $userName ?? 'User' }}</h2>
-                <p class="mt-2 text-white/80">PT Sahabat Agro Group — {{ $todayFormatted ?? date('d F Y') }}</p>
+            <div class="flex items-start gap-4">
+                <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
+                    <i class="fas fa-seedling text-3xl text-white"></i>
+                </div>
+                <div>
+                    <p class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-white/90">
+                        <i class="fas fa-chart-line"></i>
+                        Dashboard Operasional Panen Sawit
+                    </p>
+                    <h2 class="mt-2 text-3xl font-bold">Selamat Datang, {{ $userName ?? 'User' }}</h2>
+                    <p class="mt-2 flex items-center gap-2 text-white/90">
+                        <i class="fas fa-building"></i>
+                        PT Sahabat Agro Group — {{ $todayFormatted ?? date('d F Y') }}
+                    </p>
+                </div>
             </div>
             <div class="flex flex-col gap-4 text-base">
                 <div class="flex flex-wrap gap-3">
-                    <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-sm font-semibold text-white">
-                        <span class="h-2 w-2 animate-pulse rounded-full bg-white"></span>
-                        Data Live Railway
+                    <span class="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm">
+                        <span class="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-300 shadow-lg shadow-emerald-400/50"></span>
+                        Data Real-Time
                     </span>
-                    <span class="inline-flex items-center rounded-full bg-white/10 px-3 py-1.5 text-sm text-white/90">
-                        <i class="fas fa-clock text-white/70"></i>
-                        <span class="ml-2">{{ $nowJakarta->format('d M Y, H:i') }} WIB</span>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm text-white backdrop-blur-sm">
+                        <i class="fas fa-clock"></i>
+                        {{ $nowJakarta->format('d M Y, H:i') }} WIB
+                    </span>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm text-white backdrop-blur-sm">
+                        <i class="fas fa-cloud-sun"></i>
+                        Musim Panen
                     </span>
                 </div>
                 <div id="activeFilterChips" class="flex flex-wrap gap-2">
@@ -62,20 +94,28 @@
     <div class="grid items-start gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
         <!-- Sidebar: Filters & notes -->
         <aside class="space-y-6">
-            <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="rounded-2xl border-2 border-green-100 bg-gradient-to-br from-white to-green-50/30 p-6 shadow-md">
                 <div class="flex items-start justify-between gap-4">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Filter Analitik</h3>
-                        <p class="text-sm text-gray-500">Atur rentang data untuk memperbarui kartu & grafik.</p>
+                        <div class="flex items-center gap-2">
+                            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100">
+                                <i class="fas fa-filter text-sm text-green-700"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900">Filter Analitik</h3>
+                        </div>
+                        <p class="mt-1 text-sm text-gray-600">Atur rentang data kebun & periode panen</p>
                     </div>
-                    <span id="filterStatusBadge" class="inline-flex items-center rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-[#15803d] transition">Siap</span>
+                    <span id="filterStatusBadge" class="inline-flex items-center rounded-full bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-800 shadow-sm transition">Siap</span>
                 </div>
                 <form id="dashboardFilterForm" action="{{ route('dashboard') }}" method="GET" class="mt-6 space-y-4">
                     <div class="space-y-2">
-                        <label for="kebun" class="block text-sm font-medium text-gray-900">Kebun</label>
+                        <label for="kebun" class="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                            <i class="fas fa-leaf text-green-600"></i>
+                            Kebun Sawit
+                        </label>
                         <div class="relative">
-                            <i class="fas fa-leaf pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <select name="kebun" id="kebun" class="block w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 shadow-sm transition focus:border-[#16A34A] focus:ring-[#16A34A]">
+                            <i class="fas fa-tree pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-green-500"></i>
+                            <select name="kebun" id="kebun" class="block w-full rounded-lg border-2 border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm font-medium text-gray-900 shadow-sm transition hover:border-green-300 focus:border-green-500 focus:ring-2 focus:ring-green-200">
                                 <option value="">Semua Kebun</option>
                                 @foreach(($kebunList ?? []) as $k)
                                     <option value="{{ $k }}" {{ request('kebun') == $k ? 'selected' : '' }}>{{ $k }}</option>
@@ -84,10 +124,13 @@
                         </div>
                     </div>
                     <div class="space-y-2">
-                        <label for="divisi" class="block text-sm font-medium text-gray-900">Divisi</label>
+                        <label for="divisi" class="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                            <i class="fas fa-sitemap text-green-600"></i>
+                            Divisi Operasional
+                        </label>
                         <div class="relative">
-                            <i class="fas fa-diagram-project pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <select name="divisi" id="divisi" class="block w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 shadow-sm transition focus:border-[#16A34A] focus:ring-[#16A34A]">
+                            <i class="fas fa-layer-group pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-green-500"></i>
+                            <select name="divisi" id="divisi" class="block w-full rounded-lg border-2 border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm font-medium text-gray-900 shadow-sm transition hover:border-green-300 focus:border-green-500 focus:ring-2 focus:ring-green-200">
                                 <option value="">Semua Divisi</option>
                                 @foreach(($divisiList ?? []) as $d)
                                     <option value="{{ $d }}" {{ request('divisi') == $d ? 'selected' : '' }}>{{ $d }}</option>
@@ -96,10 +139,13 @@
                         </div>
                     </div>
                     <div class="space-y-2">
-                        <label for="bulan" class="block text-sm font-medium text-gray-900">Bulan</label>
+                        <label for="bulan" class="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                            <i class="fas fa-calendar-alt text-green-600"></i>
+                            Periode Bulan
+                        </label>
                         <div class="relative">
-                            <i class="fas fa-calendar-days pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <select name="bulan" id="bulan" class="block w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 shadow-sm transition focus:border-[#16A34A] focus:ring-[#16A34A]">
+                            <i class="fas fa-calendar-days pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-green-500"></i>
+                            <select name="bulan" id="bulan" class="block w-full rounded-lg border-2 border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm font-medium text-gray-900 shadow-sm transition hover:border-green-300 focus:border-green-500 focus:ring-2 focus:ring-green-200">
                                 <option value="">Bulan Ini</option>
                                 @foreach(($bulanList ?? []) as $b)
                                     <option value="{{ strtoupper($b) }}" {{ strtoupper((string)request('bulan')) === strtoupper((string)$b) ? 'selected' : '' }}>{{ $b }}</option>
@@ -108,10 +154,13 @@
                         </div>
                     </div>
                     <div class="space-y-2">
-                        <label for="tahun" class="block text-sm font-medium text-gray-900">Tahun</label>
+                        <label for="tahun" class="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                            <i class="fas fa-calendar-check text-green-600"></i>
+                            Tahun Panen
+                        </label>
                         <div class="relative">
-                            <i class="fas fa-calendar pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <select name="tahun" id="tahun" class="block w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 shadow-sm transition focus:border-[#16A34A] focus:ring-[#16A34A]">
+                            <i class="fas fa-calendar pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-green-500"></i>
+                            <select name="tahun" id="tahun" class="block w-full rounded-lg border-2 border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm font-medium text-gray-900 shadow-sm transition hover:border-green-300 focus:border-green-500 focus:ring-2 focus:ring-green-200">
                                 <option value="">Tahun Ini</option>
                                 @for($y = ($yearNow ?? (int)date('Y'))+1; $y >= ($yearNow ?? (int)date('Y'))-5; $y--)
                                     <option value="{{ $y }}" {{ (string)request('tahun') === (string)$y ? 'selected' : '' }}>{{ $y }}</option>
@@ -120,33 +169,47 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-3 pt-2">
-                        <button type="button" id="applyFilters" class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-[#16A34A] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#15803d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15803d]">
-                            <i class="fas fa-filter"></i>
-                            Terapkan
+                        <button type="button" id="applyFilters" class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-green-600 to-green-700 px-4 py-3 text-sm font-bold text-white shadow-md transition hover:from-green-700 hover:to-green-800 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                            <i class="fas fa-search"></i>
+                            Tampilkan Data
                         </button>
-                        <button type="button" id="resetFilters" class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-600 transition hover:border-gray-300 hover:text-gray-900">
-                            <i class="fas fa-rotate-left"></i>
+                        <button type="button" id="resetFilters" class="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50">
+                            <i class="fas fa-redo"></i>
                             Reset
                         </button>
                     </div>
-                    <p class="text-xs text-gray-400">Klik "Terapkan" untuk memperbarui data tanpa memuat ulang halaman.</p>
+                    <p class="text-xs text-gray-500">
+                        <i class="fas fa-info-circle text-green-600"></i>
+                        Klik "Tampilkan Data" untuk memperbarui analitik panen
+                    </p>
                 </form>
             </div>
 
-            <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                <h3 class="text-lg font-semibold text-gray-900">Catatan Data</h3>
-                <ul class="mt-4 space-y-3 text-sm text-gray-600">
+            <div class="rounded-2xl border-2 border-amber-100 bg-gradient-to-br from-amber-50/50 to-white p-6 shadow-md">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100">
+                        <i class="fas fa-lightbulb text-sm text-amber-700"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900">Catatan Panen</h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-700">
                     <li class="flex items-start gap-3">
-                        <span class="mt-1 h-2 w-2 rounded-full bg-[#16A34A]"></span>
-                        <span>Data harian dikonsolidasikan dari sistem panen PT SAG setiap pukul 05.00 WIB.</span>
+                        <div class="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-green-100">
+                            <i class="fas fa-database text-xs text-green-700"></i>
+                        </div>
+                        <span>Data harian terintegrasi dari sistem panen sawit PT SAG setiap pukul 05.00 WIB.</span>
                     </li>
                     <li class="flex items-start gap-3">
-                        <span class="mt-1 h-2 w-2 rounded-full bg-[#2563EB]"></span>
-                        <span>Pembaharuan filter akan memicu refresh kartu KPI, ringkasan bulanan, serta grafik produksi.</span>
+                        <div class="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-blue-100">
+                            <i class="fas fa-sync text-xs text-blue-700"></i>
+                        </div>
+                        <span>Pembaharuan filter memicu refresh real-time pada KPI, ringkasan bulanan, dan grafik produksi TBS.</span>
                     </li>
                     <li class="flex items-start gap-3">
-                        <span class="mt-1 h-2 w-2 rounded-full bg-[#F59E0B]"></span>
-                        <span>Nilai KPI berwarna menunjukkan status capaian dibanding target operasional internal.</span>
+                        <div class="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-amber-100">
+                            <i class="fas fa-chart-bar text-xs text-amber-700"></i>
+                        </div>
+                        <span>Warna KPI menunjukkan status capaian terhadap target operasional perkebunan sawit.</span>
                     </li>
                 </ul>
             </div>
@@ -161,67 +224,95 @@
             @endphp
             <div class="space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Monitoring Produksi Harian</h3>
-                        <p class="text-sm text-gray-500">Ikhtisar kinerja panen & kualitas TBS hari ini.</p>
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-green-100 to-green-200">
+                            <i class="fas fa-chart-line text-xl text-green-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">Monitoring Produksi Harian</h3>
+                            <p class="text-sm text-gray-600">Ikhtisar kinerja panen & kualitas TBS hari ini</p>
+                        </div>
                     </div>
-                    <span class="rounded-full bg-[#16A34A]/10 px-3 py-1 text-xs font-semibold text-[#15803d]">Update harian</span>
+                    <span class="rounded-full bg-green-100 px-4 py-2 text-xs font-bold text-green-800 shadow-sm">
+                        <i class="fas fa-clock"></i>
+                        Update Harian
+                    </span>
                 </div>
                 <div id="kpiTodayWrap" class="relative">
                     <div id="kpiTodayLoading" class="hidden absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/70 backdrop-blur-[1px]">
                         <i class="fas fa-spinner animate-spin text-gray-400 text-xl"></i>
                     </div>
                     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                        <article class="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                            <div class="flex items-center gap-3">
-                                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[#F59E0B]/15 text-[#F59E0B]"><i class="fas fa-scale-balanced"></i></span>
+                        <article class="group relative overflow-hidden rounded-2xl border-2 border-amber-100 bg-gradient-to-br from-white to-amber-50/30 p-6 shadow-md transition hover:-translate-y-1 hover:border-amber-200 hover:shadow-xl">
+                            <div class="absolute right-0 top-0 h-full w-24 opacity-5">
+                                <i class="fas fa-apple-whole text-[80px] text-amber-600"></i>
+                            </div>
+                            <div class="relative flex items-center gap-3">
+                                <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-100 to-amber-200 text-amber-700 shadow-sm">
+                                    <i class="fas fa-weight-hanging text-lg"></i>
+                                </span>
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-600">BJR (Hari Ini)</p>
-                                    <p class="text-xs text-gray-400">Rata-rata berat tandan</p>
+                                    <p class="text-sm font-bold text-gray-800">BJR Hari Ini</p>
+                                    <p class="text-xs text-gray-500">Berat rata-rata TBS</p>
                                 </div>
                             </div>
-                            <div class="mt-6 flex items-end justify-between">
-                                <p class="text-3xl font-semibold text-[#F59E0B]" data-metric-value="today.bjr">{{ number_format($todayMetrics['bjr'] ?? 0, 2) }}</p>
-                                <span class="text-sm text-gray-400">kg/jjg</span>
+                            <div class="relative mt-6 flex items-end justify-between">
+                                <p class="text-4xl font-bold text-amber-600" data-metric-value="today.bjr">{{ number_format($todayMetrics['bjr'] ?? 0, 2) }}</p>
+                                <span class="text-sm font-semibold text-gray-500">kg/jjg</span>
                             </div>
                         </article>
-                        <article class="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                            <div class="flex items-center gap-3">
-                                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[#2563EB]/15 text-[#2563EB]"><i class="fas fa-bullseye-arrow"></i></span>
+                        <article class="group relative overflow-hidden rounded-2xl border-2 border-blue-100 bg-gradient-to-br from-white to-blue-50/30 p-6 shadow-md transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
+                            <div class="absolute right-0 top-0 h-full w-24 opacity-5">
+                                <i class="fas fa-bullseye text-[80px] text-blue-600"></i>
+                            </div>
+                            <div class="relative flex items-center gap-3">
+                                <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 shadow-sm">
+                                    <i class="fas fa-chart-pie text-lg"></i>
+                                </span>
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-600">AKP (Hari Ini)</p>
-                                    <p class="text-xs text-gray-400">Realisasi angka kerapatan panen</p>
+                                    <p class="text-sm font-bold text-gray-800">AKP Hari Ini</p>
+                                    <p class="text-xs text-gray-500">Kerapatan panen</p>
                                 </div>
                             </div>
-                            <div class="mt-6 flex items-end justify-between">
-                                <p class="text-3xl font-semibold text-[#2563EB]" data-metric-value="today.akp_pct">{{ number_format(($todayMetrics['akp'] ?? 0) * 100, 2) }}%</p>
-                                <span class="text-sm text-gray-400">%</span>
+                            <div class="relative mt-6 flex items-end justify-between">
+                                <p class="text-4xl font-bold text-blue-600" data-metric-value="today.akp_pct">{{ number_format(($todayMetrics['akp'] ?? 0) * 100, 2) }}%</p>
+                                <span class="text-sm font-semibold text-gray-500">%</span>
                             </div>
                         </article>
-                        <article class="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                            <div class="flex items-center gap-3">
-                                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[#0EA5E9]/15 text-[#0EA5E9]"><i class="fas fa-people-group"></i></span>
+                        <article class="group relative overflow-hidden rounded-2xl border-2 border-cyan-100 bg-gradient-to-br from-white to-cyan-50/30 p-6 shadow-md transition hover:-translate-y-1 hover:border-cyan-200 hover:shadow-xl">
+                            <div class="absolute right-0 top-0 h-full w-24 opacity-5">
+                                <i class="fas fa-users text-[80px] text-cyan-600"></i>
+                            </div>
+                            <div class="relative flex items-center gap-3">
+                                <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-100 to-cyan-200 text-cyan-700 shadow-sm">
+                                    <i class="fas fa-hard-hat text-lg"></i>
+                                </span>
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-600">HK (Hari Ini)</p>
-                                    <p class="text-xs text-gray-400">Total tenaga kerja panen</p>
+                                    <p class="text-sm font-bold text-gray-800">HK Hari Ini</p>
+                                    <p class="text-xs text-gray-500">Tenaga kerja panen</p>
                                 </div>
                             </div>
-                            <div class="mt-6 flex items-end justify-between">
-                                <p class="text-3xl font-semibold text-gray-900" data-metric-value="today.hk">{{ number_format($todayMetrics['total_tk'] ?? 0) }}</p>
-                                <span class="text-sm text-gray-400">orang</span>
+                            <div class="relative mt-6 flex items-end justify-between">
+                                <p class="text-4xl font-bold text-cyan-600" data-metric-value="today.hk">{{ number_format($todayMetrics['total_tk'] ?? 0) }}</p>
+                                <span class="text-sm font-semibold text-gray-500">orang</span>
                             </div>
                         </article>
-                        <article class="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                            <div class="flex items-center gap-3">
-                                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-[#16A34A]/15 text-[#16A34A]"><i class="fas fa-chart-line"></i></span>
+                        <article class="group relative overflow-hidden rounded-2xl border-2 border-green-200 bg-gradient-to-br from-white to-green-50/40 p-6 shadow-md transition hover:-translate-y-1 hover:border-green-300 hover:shadow-xl">
+                            <div class="absolute right-0 top-0 h-full w-24 opacity-5">
+                                <i class="fas fa-trophy text-[80px] text-green-600"></i>
+                            </div>
+                            <div class="relative flex items-center gap-3">
+                                <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-green-100 to-green-200 text-green-700 shadow-sm">
+                                    <i class="fas fa-chart-line text-lg"></i>
+                                </span>
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-600">ACV Prod (Hari Ini)</p>
-                                    <p class="text-xs text-gray-400">Perbandingan realisasi terhadap target</p>
+                                    <p class="text-sm font-bold text-gray-800">ACV Produksi</p>
+                                    <p class="text-xs text-gray-500">Target vs realisasi</p>
                                 </div>
                             </div>
-                            <div class="mt-6 flex items-end justify-between">
-                                <p class="text-3xl font-semibold {{ $acvColor }}" data-metric-value="today.acv_prod" data-threshold="acv">{{ number_format($acv, 2) }}%</p>
-                                <span class="text-sm text-gray-400">%</span>
+                            <div class="relative mt-6 flex items-end justify-between">
+                                <p class="text-4xl font-bold {{ $acvColor }}" data-metric-value="today.acv_prod" data-threshold="acv">{{ number_format($acv, 2) }}%</p>
+                                <span class="text-sm font-semibold text-gray-500">%</span>
                             </div>
                         </article>
                     </div>
@@ -237,9 +328,14 @@
             @endphp
             <div class="space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Kinerja Timbang & Kualitas</h3>
-                        <p class="text-sm text-gray-500">Produksi, selisih timbang, serta kualitas refraksi TBS.</p>
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-blue-200">
+                            <i class="fas fa-balance-scale text-xl text-blue-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">Kinerja Timbang & Kualitas TBS</h3>
+                            <p class="text-sm text-gray-600">Produksi, selisih timbang, dan refraksi buah sawit</p>
+                        </div>
                     </div>
                 </div>
                 <div id="kpiSecondaryWrap" class="relative">
@@ -247,43 +343,67 @@
                         <i class="fas fa-spinner animate-spin text-gray-400 text-xl"></i>
                     </div>
                     <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                        <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-600">Total Produksi (kg)</p>
-                                    <p class="text-xs text-gray-400">Realisasi panen hari ini</p>
-                                </div>
-                                <span class="inline-flex items-center rounded-full bg-[#16A34A]/10 px-2.5 py-1 text-xs font-medium text-[#15803d]">Volume</span>
+                        <article class="group relative overflow-hidden rounded-2xl border-2 border-green-100 bg-gradient-to-br from-white to-green-50/30 p-6 shadow-md transition hover:-translate-y-1 hover:border-green-200 hover:shadow-xl">
+                            <div class="absolute right-0 top-0 h-full w-20 opacity-5">
+                                <i class="fas fa-truck-loading text-[60px] text-green-600"></i>
                             </div>
-                            <p class="mt-6 text-3xl font-semibold text-gray-900" data-metric-value="today.total_produksi">{{ number_format($todayMetrics['total_produksi'] ?? 0, 2) }}</p>
+                            <div class="relative flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-green-100 to-green-200 text-green-700">
+                                        <i class="fas fa-box text-base"></i>
+                                    </span>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800">Total Produksi</p>
+                                        <p class="text-xs text-gray-500">Realisasi TBS hari ini</p>
+                                    </div>
+                                </div>
+                                <span class="rounded-lg bg-green-100 px-3 py-1 text-xs font-bold text-green-800">Volume</span>
+                            </div>
+                            <p class="relative mt-6 text-3xl font-bold text-green-700" data-metric-value="today.total_produksi">{{ number_format($todayMetrics['total_produksi'] ?? 0, 2) }} <span class="text-lg text-gray-500">kg</span></p>
                         </article>
-                        <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-600">Selisih Timbang</p>
-                                    <p class="text-xs text-gray-400">Perbandingan timbangan panen vs PKS</p>
-                                </div>
-                                <span class="inline-flex items-center rounded-full bg-[#2563EB]/10 px-2.5 py-1 text-xs font-medium text-[#2563EB]">Audit</span>
+                        <article class="group relative overflow-hidden rounded-2xl border-2 border-blue-100 bg-gradient-to-br from-white to-blue-50/30 p-6 shadow-md transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
+                            <div class="absolute right-0 top-0 h-full w-20 opacity-5">
+                                <i class="fas fa-exchange-alt text-[60px] text-blue-600"></i>
                             </div>
-                            <div class="mt-6 flex items-end justify-between">
-                                <p class="text-3xl font-semibold {{ $selColor }}" data-metric-value="today.selisih" data-threshold="diff">{{ number_format($sel ?? 0, 2) }}</p>
-                                <div class="text-right text-sm text-gray-500">
-                                    <span class="font-semibold text-gray-600">Persen</span>
-                                    <div><span data-metric-value="today.selisih_percent">{{ number_format($todayMetrics['selisih_persen'] ?? 0, 2) }}</span>%</div>
+                            <div class="relative flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700">
+                                        <i class="fas fa-balance-scale-right text-base"></i>
+                                    </span>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800">Selisih Timbang</p>
+                                        <p class="text-xs text-gray-500">Kebun vs PKS</p>
+                                    </div>
+                                </div>
+                                <span class="rounded-lg bg-blue-100 px-3 py-1 text-xs font-bold text-blue-800">Audit</span>
+                            </div>
+                            <div class="relative mt-6 flex items-end justify-between">
+                                <p class="text-3xl font-bold {{ $selColor }}" data-metric-value="today.selisih" data-threshold="diff">{{ number_format($sel ?? 0, 2) }} <span class="text-lg text-gray-500">kg</span></p>
+                                <div class="text-right text-sm">
+                                    <span class="block text-xs font-semibold text-gray-600">Persentase</span>
+                                    <div class="text-lg font-bold {{ $selColor }}"><span data-metric-value="today.selisih_percent">{{ number_format($todayMetrics['selisih_persen'] ?? 0, 2) }}</span>%</div>
                                 </div>
                             </div>
                         </article>
-                        <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-semibold text-gray-600">Refraksi</p>
-                                    <p class="text-xs text-gray-400">Persentase & bobot potongan</p>
-                                </div>
-                                <span class="inline-flex items-center rounded-full bg-[#F59E0B]/10 px-2.5 py-1 text-xs font-medium text-[#F59E0B]">Kualitas</span>
+                        <article class="group relative overflow-hidden rounded-2xl border-2 border-amber-100 bg-gradient-to-br from-white to-amber-50/30 p-6 shadow-md transition hover:-translate-y-1 hover:border-amber-200 hover:shadow-xl">
+                            <div class="absolute right-0 top-0 h-full w-20 opacity-5">
+                                <i class="fas fa-search text-[60px] text-amber-600"></i>
                             </div>
-                            <div class="mt-6 space-y-2">
-                                <p class="text-3xl font-semibold {{ $refColor }}" data-metric-value="today.refraksi_percent" data-threshold="refraksi">{{ number_format($todayMetrics['refraksi_persen'] ?? 0, 2) }}%</p>
-                                <p class="text-sm text-gray-500"><span data-metric-value="today.refraksi_kg">{{ number_format($todayMetrics['refraksi_kg'] ?? 0, 2) }}</span> kg</p>
+                            <div class="relative flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-100 to-amber-200 text-amber-700">
+                                        <i class="fas fa-clipboard-check text-base"></i>
+                                    </span>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800">Refraksi TBS</p>
+                                        <p class="text-xs text-gray-500">Potongan kualitas</p>
+                                    </div>
+                                </div>
+                                <span class="rounded-lg bg-amber-100 px-3 py-1 text-xs font-bold text-amber-800">QC</span>
+                            </div>
+                            <div class="relative mt-6 space-y-2">
+                                <p class="text-3xl font-bold {{ $refColor }}" data-metric-value="today.refraksi_percent" data-threshold="refraksi">{{ number_format($todayMetrics['refraksi_persen'] ?? 0, 2) }}%</p>
+                                <p class="text-sm font-semibold text-gray-600"><span data-metric-value="today.refraksi_kg">{{ number_format($todayMetrics['refraksi_kg'] ?? 0, 2) }}</span> kg dipotong</p>
                             </div>
                         </article>
                     </div>
@@ -300,11 +420,19 @@
             @endphp
             <div class="space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Ringkasan Bulanan</h3>
-                        <p id="monthlySummaryTitle" class="text-sm text-gray-500" data-metric-value="summary.title">{{ $summaryTitle }}</p>
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-200">
+                            <i class="fas fa-calendar-check text-xl text-emerald-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">Ringkasan Produksi Bulanan</h3>
+                            <p id="monthlySummaryTitle" class="text-sm text-gray-600" data-metric-value="summary.title">{{ $summaryTitle }}</p>
+                        </div>
                     </div>
-                    <span class="rounded-full bg-[#2563EB]/10 px-3 py-1 text-xs font-semibold text-[#2563EB]">Agregasi Bulanan</span>
+                    <span class="rounded-full bg-emerald-100 px-4 py-2 text-xs font-bold text-emerald-800 shadow-sm">
+                        <i class="fas fa-chart-bar"></i>
+                        Agregasi Bulanan
+                    </span>
                 </div>
                 <div id="kpiMonthlyWrap" class="relative">
                     <div id="kpiMonthlyLoading" class="hidden absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/70 backdrop-blur-[1px]">
@@ -312,58 +440,103 @@
                     </div>
                     <div class="space-y-5">
                         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                            <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                                <p class="text-sm font-semibold text-gray-600">BJR (Bulan)</p>
-                                <p class="mt-4 text-3xl font-semibold text-[#F59E0B]" data-metric-value="monthly.bjr">{{ number_format($monthlyMetrics['bjr'] ?? 0, 2) }}</p>
-                                <p class="text-xs text-gray-400">Rata-rata berat tandan</p>
+                            <article class="rounded-2xl border-2 border-amber-100 bg-gradient-to-br from-white to-amber-50/20 p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                                        <i class="fas fa-weight text-sm"></i>
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-800">BJR Bulanan</p>
+                                </div>
+                                <p class="text-3xl font-bold text-amber-600" data-metric-value="monthly.bjr">{{ number_format($monthlyMetrics['bjr'] ?? 0, 2) }}</p>
+                                <p class="text-xs text-gray-500 mt-1">Rata-rata berat tandan sawit</p>
                             </article>
-                            <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                                <p class="text-sm font-semibold text-gray-600">AKP (Bulan)</p>
-                                <p class="mt-4 text-3xl font-semibold text-[#2563EB]" data-metric-value="monthly.akp_pct">{{ number_format(($monthlyMetrics['akp'] ?? 0) * 100, 2) }}%</p>
-                                <p class="text-xs text-gray-400">Rata-rata kerapatan panen</p>
+                            <article class="rounded-2xl border-2 border-blue-100 bg-gradient-to-br from-white to-blue-50/20 p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-700">
+                                        <i class="fas fa-percentage text-sm"></i>
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-800">AKP Bulanan</p>
+                                </div>
+                                <p class="text-3xl font-bold text-blue-600" data-metric-value="monthly.akp_pct">{{ number_format(($monthlyMetrics['akp'] ?? 0) * 100, 2) }}%</p>
+                                <p class="text-xs text-gray-500 mt-1">Rata-rata kerapatan panen</p>
                             </article>
-                            <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                                <p class="text-sm font-semibold text-gray-600">Total Produksi PKS (Bulan)</p>
-                                <p class="mt-4 text-3xl font-semibold text-gray-900" data-metric-value="monthly.total_produksi">{{ number_format($monthlyMetrics['total_produksi'] ?? 0, 2) }}</p>
-                                <p class="text-xs text-gray-400">Akumulasi volume TBS</p>
+                            <article class="rounded-2xl border-2 border-green-100 bg-gradient-to-br from-white to-green-50/20 p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 text-green-700">
+                                        <i class="fas fa-warehouse text-sm"></i>
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-800">Total PKS</p>
+                                </div>
+                                <p class="text-3xl font-bold text-green-600" data-metric-value="monthly.total_produksi">{{ number_format($monthlyMetrics['total_produksi'] ?? 0, 2) }}</p>
+                                <p class="text-xs text-gray-500 mt-1">Akumulasi volume TBS bulanan</p>
                             </article>
                         </div>
                         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                            <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                                <p class="text-sm font-semibold text-gray-600">ACV Prod (Bulan)</p>
-                                <p class="mt-4 text-3xl font-semibold {{ $macvColor }}" data-metric-value="monthly.acv_prod" data-threshold="acv">{{ number_format($macv, 2) }}%</p>
-                                <p class="text-xs text-gray-400">Realisasi dibanding target</p>
+                            <article class="rounded-2xl border-2 border-emerald-100 bg-gradient-to-br from-white to-emerald-50/20 p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                                        <i class="fas fa-trophy text-sm"></i>
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-800">ACV Produksi</p>
+                                </div>
+                                <p class="text-3xl font-bold {{ $macvColor }}" data-metric-value="monthly.acv_prod" data-threshold="acv">{{ number_format($macv, 2) }}%</p>
+                                <p class="text-xs text-gray-500 mt-1">Realisasi vs target bulanan</p>
                             </article>
-                            <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                                <p class="text-sm font-semibold text-gray-600">Refraksi (kg & %)</p>
-                                <div class="mt-4 space-y-2">
-                                    <p class="text-3xl font-semibold {{ $mrefColor }}" data-metric-value="monthly.refraksi_percent" data-threshold="refraksi">{{ number_format($mref, 2) }}%</p>
-                                    <p class="text-sm text-gray-500"><span data-metric-value="monthly.refraksi_kg">{{ number_format($monthlyMetrics['refraksi_kg'] ?? 0, 2) }}</span> kg</p>
+                            <article class="rounded-2xl border-2 border-amber-100 bg-gradient-to-br from-white to-amber-50/20 p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                                        <i class="fas fa-clipboard-check text-sm"></i>
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-800">Refraksi Bulanan</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-3xl font-bold {{ $mrefColor }}" data-metric-value="monthly.refraksi_percent" data-threshold="refraksi">{{ number_format($mref, 2) }}%</p>
+                                    <p class="text-sm font-semibold text-gray-600"><span data-metric-value="monthly.refraksi_kg">{{ number_format($monthlyMetrics['refraksi_kg'] ?? 0, 2) }}</span> kg dipotong</p>
                                 </div>
                             </article>
-                            <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                                <p class="text-sm font-semibold text-gray-600">Restan (jjg & %)</p>
-                                <div class="mt-4 space-y-2">
-                                    <p class="text-3xl font-semibold text-[#DC2626]" data-metric-value="monthly.restan_jjg">{{ number_format($monthlyMetrics['restan_jjg'] ?? 0) }}</p>
-                                    <p class="text-sm text-gray-500"><span data-metric-value="monthly.restan_percent">{{ number_format($monthlyMetrics['restan_persen'] ?? 0, 2) }}</span>%</p>
+                            <article class="rounded-2xl border-2 border-red-100 bg-gradient-to-br from-white to-red-50/20 p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 text-red-700">
+                                        <i class="fas fa-exclamation-triangle text-sm"></i>
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-800">Buah Restan</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-3xl font-bold text-red-600" data-metric-value="monthly.restan_jjg">{{ number_format($monthlyMetrics['restan_jjg'] ?? 0) }}</p>
+                                    <p class="text-sm font-semibold text-gray-600"><span data-metric-value="monthly.restan_percent">{{ number_format($monthlyMetrics['restan_persen'] ?? 0, 2) }}</span>% TBS restan</p>
                                 </div>
                             </article>
                         </div>
                         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                            <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                                <p class="text-sm font-semibold text-gray-600">JJG / PKK</p>
-                                <p class="mt-4 text-3xl font-semibold text-gray-900" data-metric-value="monthly.jjg_per_pkk">{{ number_format($monthlyMetrics['jjg_per_pkk'] ?? 0, 2) }}</p>
-                                <p class="text-xs text-gray-400">Total PKK: <span data-metric-value="monthly.total_pkk">{{ number_format($monthlyMetrics['total_pkk'] ?? 0) }}</span></p>
+                            <article class="rounded-2xl border-2 border-purple-100 bg-gradient-to-br from-white to-purple-50/20 p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
+                                        <i class="fas fa-user-tie text-sm"></i>
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-800">JJG / PKK</p>
+                                </div>
+                                <p class="text-3xl font-bold text-purple-600" data-metric-value="monthly.jjg_per_pkk">{{ number_format($monthlyMetrics['jjg_per_pkk'] ?? 0, 2) }}</p>
+                                <p class="text-xs text-gray-500 mt-1">Total PKK: <span data-metric-value="monthly.total_pkk" class="font-semibold">{{ number_format($monthlyMetrics['total_pkk'] ?? 0) }}</span> pemanen</p>
                             </article>
-                            <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                                <p class="text-sm font-semibold text-gray-600">Ha / HK</p>
-                                <p class="mt-4 text-3xl font-semibold text-gray-900" data-metric-value="monthly.ha_per_hk">{{ number_format($monthlyMetrics['ha_per_hk'] ?? 0, 2) }}</p>
-                                <p class="text-xs text-gray-400">Efisiensi pemakaian tenaga kerja</p>
+                            <article class="rounded-2xl border-2 border-teal-100 bg-gradient-to-br from-white to-teal-50/20 p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-100 text-teal-700">
+                                        <i class="fas fa-map text-sm"></i>
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-800">Ha / HK</p>
+                                </div>
+                                <p class="text-3xl font-bold text-teal-600" data-metric-value="monthly.ha_per_hk">{{ number_format($monthlyMetrics['ha_per_hk'] ?? 0, 2) }}</p>
+                                <p class="text-xs text-gray-500 mt-1">Efisiensi luas panen per pekerja</p>
                             </article>
-                            <article class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                                <p class="text-sm font-semibold text-gray-600">Ton / HK</p>
-                                <p class="mt-4 text-3xl font-semibold text-gray-900" data-metric-value="monthly.ton_per_hk">{{ number_format($monthlyMetrics['ton_per_hk'] ?? 0, 2) }}</p>
-                                <p class="text-xs text-gray-400">Produktivitas tonase per tenaga kerja</p>
+                            <article class="rounded-2xl border-2 border-indigo-100 bg-gradient-to-br from-white to-indigo-50/20 p-5 shadow-md transition hover:-translate-y-1 hover:shadow-lg">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
+                                        <i class="fas fa-chart-area text-sm"></i>
+                                    </span>
+                                    <p class="text-sm font-bold text-gray-800">Ton / HK</p>
+                                </div>
+                                <p class="text-3xl font-bold text-indigo-600" data-metric-value="monthly.ton_per_hk">{{ number_format($monthlyMetrics['ton_per_hk'] ?? 0, 2) }}</p>
+                                <p class="text-xs text-gray-500 mt-1">Produktivitas tonase per HK</p>
                             </article>
                         </div>
                     </div>
@@ -373,19 +546,32 @@
             <!-- Charts -->
             <div class="space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900">Visualisasi Produksi</h3>
-                        <p class="text-sm text-gray-500">Perbandingan PKS vs budget dan tren realisasi AKP.</p>
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-blue-200">
+                            <i class="fas fa-chart-bar text-xl text-blue-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">Visualisasi Produksi Sawit</h3>
+                            <p class="text-sm text-gray-600">Grafik perbandingan PKS vs budget dan tren realisasi AKP</p>
+                        </div>
                     </div>
                 </div>
                 <div class="grid gap-6 lg:grid-cols-2">
-                    <div id="chartPksBudgetContainer" class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <div id="chartPksBudgetContainer" class="relative overflow-hidden rounded-2xl border-2 border-green-100 bg-gradient-to-br from-white to-green-50/20 p-6 shadow-lg">
                         <div class="flex items-start justify-between gap-3">
-                            <div>
-                                <h4 class="text-base font-semibold text-gray-900">PKS vs Budget Harian</h4>
-                                <p class="text-sm text-gray-500">Monitoring output gudang terhadap rencana anggaran.</p>
+                            <div class="flex items-center gap-3">
+                                <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-green-100 to-green-200 text-green-700">
+                                    <i class="fas fa-warehouse text-base"></i>
+                                </span>
+                                <div>
+                                    <h4 class="text-base font-bold text-gray-900">PKS vs Budget Harian</h4>
+                                    <p class="text-xs text-gray-600">Monitoring output pabrik kelapa sawit</p>
+                                </div>
                             </div>
-                            <span class="rounded-full bg-[#2563EB]/10 px-3 py-1 text-xs font-semibold text-[#2563EB]">Produksi</span>
+                            <span class="rounded-lg bg-green-100 px-3 py-1.5 text-xs font-bold text-green-800 shadow-sm">
+                                <i class="fas fa-chart-column"></i>
+                                Produksi
+                            </span>
                         </div>
                         <div class="relative mt-6 h-[320px]">
                             <div id="chartPksBudgetLoading" class="hidden absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/80 backdrop-blur-[1px]">
@@ -394,13 +580,21 @@
                             <canvas id="chartPksBudget" class="h-full w-full"></canvas>
                         </div>
                     </div>
-                    <div id="chartAkpDailyContainer" class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <div id="chartAkpDailyContainer" class="relative overflow-hidden rounded-2xl border-2 border-blue-100 bg-gradient-to-br from-white to-blue-50/20 p-6 shadow-lg">
                         <div class="flex items-start justify-between gap-3">
-                            <div>
-                                <h4 class="text-base font-semibold text-gray-900">Rasio AKP (%) per Hari</h4>
-                                <p class="text-sm text-gray-500">Tren kualitas panen berdasarkan angka kerapatan panen.</p>
+                            <div class="flex items-center gap-3">
+                                <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700">
+                                    <i class="fas fa-chart-line text-base"></i>
+                                </span>
+                                <div>
+                                    <h4 class="text-base font-bold text-gray-900">Rasio AKP (%) Harian</h4>
+                                    <p class="text-xs text-gray-600">Tren kualitas angka kerapatan panen</p>
+                                </div>
                             </div>
-                            <span class="rounded-full bg-[#16A34A]/10 px-3 py-1 text-xs font-semibold text-[#15803d]">Kualitas</span>
+                            <span class="rounded-lg bg-blue-100 px-3 py-1.5 text-xs font-bold text-blue-800 shadow-sm">
+                                <i class="fas fa-quality"></i>
+                                Kualitas
+                            </span>
                         </div>
                         <div class="relative mt-6 h-[320px]">
                             <div id="chartAkpDailyLoading" class="hidden absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/80 backdrop-blur-[1px]">
