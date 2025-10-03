@@ -29,7 +29,7 @@
     <!-- Hero banner with agriculture theme -->
     <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#15803d] via-[#16a34a] to-[#22c55e] p-8 text-white shadow-xl">
         <!-- Agricultural pattern overlay -->
-        <div class="absolute inset-0 opacity-[0.07]">
+        <div class="absolute inset-0 opacity-[0.03]">
             <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <pattern id="palm-pattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
@@ -42,7 +42,7 @@
             </svg>
         </div>
         <!-- Decorative palm fronds -->
-        <div class="absolute right-0 top-0 h-full w-1/3 opacity-10">
+        <div class="absolute right-0 top-0 h-full w-1/3 opacity-5">
             <svg viewBox="0 0 200 200" class="h-full w-full">
                 <path d="M100 100 Q120 80 140 70 M100 100 Q130 90 150 85 M100 100 Q125 105 145 110" stroke="white" fill="none" stroke-width="3" stroke-linecap="round"/>
                 <path d="M100 100 Q80 80 60 70 M100 100 Q70 90 50 85 M100 100 Q75 105 55 110" stroke="white" fill="none" stroke-width="3" stroke-linecap="round"/>
@@ -58,8 +58,8 @@
                         <i class="fas fa-chart-line"></i>
                         Dashboard Operasional Panen Sawit
                     </p>
-                    <h2 class="mt-2 text-3xl font-bold">Selamat Datang, {{ $userName ?? 'User' }}</h2>
-                    <p class="mt-2 flex items-center gap-2 text-white/90">
+                    <h2 class="mt-2 text-3xl font-bold drop-shadow-lg">Selamat Datang, {{ $userName ?? 'User' }}</h2>
+                    <p class="mt-2 flex items-center gap-2 text-white/95 drop-shadow-md">
                         <i class="fas fa-building"></i>
                         PT Sahabat Agro Group — {{ $todayFormatted ?? date('d F Y') }}
                     </p>
@@ -169,11 +169,11 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-3 pt-2">
-                        <button type="button" id="applyFilters" class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-green-600 to-green-700 px-4 py-3 text-sm font-bold text-white shadow-md transition hover:from-green-700 hover:to-green-800 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+                        <button type="button" id="applyFilters" class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-green-700 to-green-800 px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:from-green-800 hover:to-green-900 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-green-300">
                             <i class="fas fa-search"></i>
                             Tampilkan Data
                         </button>
-                        <button type="button" id="resetFilters" class="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50">
+                        <button type="button" id="resetFilters" class="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-gray-400 bg-white px-4 py-3 text-sm font-bold text-gray-800 shadow-sm transition hover:border-gray-500 hover:bg-gray-100 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-gray-200">
                             <i class="fas fa-redo"></i>
                             Reset
                         </button>
